@@ -8,8 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..800;1,62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: mesa de control comercial. Banda de marca, filtros, fila de KPIs, rejilla de análisis
-   (embudo, score, agenda, alertas, pipeline, sector, fuente), tabla maestra de leads y ficha lateral por lead. */
+/* Layout: mesa de control de leads. Banda de marca, filtros, fila de KPIs, rejilla de análisis
+   (embudo, score, agenda, alertas, cadencia, sector, fuente, datos de contacto, rol en la compra),
+   tabla maestra de leads y ficha lateral con datos de la empresa y del contacto. */
 :root{
   --navy:#183051; --cyan:#0097CD;
   --bg:#EDF1F5; --panel:#FFFFFF; --panel-2:#F4F7FA; --ink:#0F1D31; --ink-2:#3E4E63; --muted:#627287;
@@ -127,8 +128,8 @@ small{font-size:inherit}
 /* Rejilla de paneles */
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
 .panel{grid-column:span 12;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0;display:flex;flex-direction:column;gap:12px}
-@media (min-width:760px) and (max-width:1099.98px){.p-a,.p-b,.p-f,.p-g{grid-column:span 6}}
-@media (min-width:1100px){.p-a,.p-c{grid-column:span 7}.p-b,.p-d,.p-e{grid-column:span 5}.p-f{grid-column:span 4}.p-g{grid-column:span 3}}
+@media (min-width:760px) and (max-width:1099.98px){.p-a,.p-b,.p-f,.p-g,.p-h,.p-i{grid-column:span 6}}
+@media (min-width:1100px){.p-a,.p-c,.p-h{grid-column:span 7}.p-b,.p-d,.p-e,.p-i{grid-column:span 5}.p-f{grid-column:span 4}.p-g{grid-column:span 3}}
 .ph{display:flex;flex-direction:column;gap:2px}
 .ph h2{margin:0;font-family:var(--font-display);font-size:15.5px;font-weight:700;font-stretch:104%;letter-spacing:.005em}
 .ph p{margin:0;color:var(--muted);font-size:12.5px}
@@ -149,16 +150,16 @@ button.hb-row{appearance:none;border:0;background:none;text-align:left;width:100
 
 /* Embudo */
 .fn{display:flex;flex-direction:column;gap:2px}
-.fn-row{display:grid;grid-template-columns:minmax(96px,160px) minmax(0,1fr) 40px 64px;align-items:center;gap:10px;padding:5px 6px;border-radius:6px}
+.fn-row{display:grid;grid-template-columns:minmax(96px,170px) minmax(0,1fr) 40px 64px;align-items:center;gap:10px;padding:5px 6px;border-radius:6px}
 .fn-row:hover{background:var(--panel-2)}
 .fn-lab b{display:block;font-size:13px}
 .fn-lab small{display:block;font-size:11.5px;color:var(--muted);line-height:1.3}
 .fn-bar{display:block;height:18px;background:var(--bar);border-radius:0 4px 4px 0}
 .fn-v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
 .fn-c{text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.fn-hd{display:grid;grid-template-columns:minmax(96px,160px) minmax(0,1fr) 40px 64px;gap:10px;padding:0 6px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.fn-hd{display:grid;grid-template-columns:minmax(96px,170px) minmax(0,1fr) 40px 64px;gap:10px;padding:0 6px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .fn-hd span:nth-child(3),.fn-hd span:nth-child(4){text-align:right}
-@media (max-width:560px){.fn-row,.fn-hd{grid-template-columns:64px minmax(0,1fr) 30px 50px;gap:8px}.fn-lab small{display:none}}
+@media (max-width:560px){.fn-row,.fn-hd{grid-template-columns:74px minmax(0,1fr) 30px 50px;gap:8px}.fn-lab small{display:none}}
 
 /* Columnas del score */
 .cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:end;border-bottom:1px solid var(--line);padding-top:6px}
@@ -203,7 +204,7 @@ button.hb-row{appearance:none;border:0;background:none;text-align:left;width:100
 .chip-f button{border:0;background:none;cursor:pointer;width:24px;height:24px;border-radius:50%;color:var(--muted);font-size:16px;line-height:1}
 .chip-f button:hover{background:var(--grid);color:var(--ink)}
 .tbl-wrap{overflow:auto;max-height:72vh;border:1px solid var(--line);border-radius:10px}
-table{border-collapse:collapse;width:100%;min-width:1280px;font-size:13px}
+table{border-collapse:collapse;width:100%;min-width:1420px;font-size:13px}
 th{position:sticky;top:0;z-index:1;background:var(--panel-2);text-align:left;font-weight:600;color:var(--ink-2);font-size:12px;padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
 th button{appearance:none;border:0;background:none;width:100%;text-align:left;cursor:pointer;padding:9px 10px;font-weight:600;color:inherit;display:flex;gap:4px;align-items:center}
 th button:hover{color:var(--ink)}
@@ -212,8 +213,9 @@ td{padding:9px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
 tbody tr{cursor:pointer}
 tbody tr:hover{background:var(--panel-2)}
 tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
-.t-emp{min-width:240px}
-.t-emp b{display:block;font-weight:600}
+.t-emp{min-width:220px}
+.t-emp b,.t-con b{display:block;font-weight:600}
+.t-con{min-width:190px}
 .t-sm{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .t-mut{color:var(--muted)}
 .t-next{min-width:230px}
@@ -243,7 +245,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 
 /* Ficha lateral */
 .ovl{position:fixed;inset:0;background:var(--overlay);z-index:40}
-.drawer{position:fixed;top:0;right:0;height:100%;width:min(540px,100%);background:var(--panel);color:var(--ink);border-left:1px solid var(--line);z-index:41;overflow-y:auto;overscroll-behavior:contain;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px calc(env(safe-area-inset-bottom,0px) + 28px);display:flex;flex-direction:column;gap:16px}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(560px,100%);background:var(--panel);color:var(--ink);border-left:1px solid var(--line);z-index:41;overflow-y:auto;overscroll-behavior:contain;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px calc(env(safe-area-inset-bottom,0px) + 28px);display:flex;flex-direction:column;gap:16px}
 .dr-hd{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
 .dr-hd h3{margin:2px 0 4px;font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.2;text-wrap:balance}
 .eyebrow{margin:0;font-family:var(--font-mono);font-size:11.5px;color:var(--muted)}
@@ -281,7 +283,10 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 .kv div{min-width:0}
 .kv-wide{grid-column:1/-1}
 .kv dt{font-size:11.5px;color:var(--muted)}
-.kv dd{margin:0;font-weight:600;font-size:13.5px;overflow-wrap:anywhere}
+.kv dd{margin:0;font-weight:600;font-size:13.5px;overflow-wrap:anywhere;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.kv dd.t-mut{font-weight:500}
+.cp{appearance:none;border:1px solid var(--line);background:var(--panel);border-radius:6px;font-size:11.5px;font-weight:600;padding:1px 7px;cursor:pointer;color:var(--ink-2)}
+.cp:hover{background:var(--panel-2);color:var(--ink)}
 .dr-al{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 .dr-al li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;align-items:start}
 .dr-al svg{width:16px;height:16px;margin-top:2px}
@@ -308,10 +313,10 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <div class="ttl">
       <h1>Agente Seguimiento Gener. ICP Leads AccesGroup</h1>
       <div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      <p class="sub"><span>Generación, calificación ICP y seguimiento de leads B2B</span><span class="src" id="srcChip"><i></i><span></span></span></p>
+      <p class="sub"><span>Leads generados, calificación ICP, seguimiento y datos de empresas y contactos</span><span class="src" id="srcChip"><i></i><span></span></span></p>
     </div>
     <div class="hdr-act">
-      <button class="btn btn-hdr-pri" id="btnImport" type="button">Importar CSV de Zoho</button>
+      <button class="btn btn-hdr-pri" id="btnImport" type="button">Importar CSV de leads</button>
       <input id="fileIn" type="file" accept=".csv,.tsv,.txt,text/csv" hidden>
       <button class="btn btn-hdr" id="btnTpl" type="button">Copiar plantilla CSV</button>
       <button class="btn btn-hdr" id="btnDemo" type="button" hidden>Volver a datos de ejemplo</button>
@@ -321,7 +326,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 
 <main class="wrap main">
   <div class="notice" id="notice">
-    <p><b>Estás viendo datos de ejemplo.</b> Importa el CSV de Leads exportado de Zoho CRM, o arrástralo a esta página, para ver tu cartera real. Las columnas que falten se calculan o quedan vacías.</p>
+    <p><b>Estás viendo datos de ejemplo.</b> Importa tu base de leads en CSV, o arrástrala a esta página, para ver tus leads reales. Las columnas que falten se calculan o quedan vacías.</p>
   </div>
 
   <section class="filters" aria-label="Filtros">
@@ -337,7 +342,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <label class="fld"><span>Micro-ICP</span><select id="fMicro"></select></label>
     <label class="fld"><span>Responsable</span><select id="fResp"></select></label>
     <label class="fld"><span>Fuente</span><select id="fFuente"></select></label>
-    <label class="fld fld-q"><span>Buscar</span><input id="fQ" type="search" placeholder="Empresa, ID, ciudad, cargo o siguiente paso" autocomplete="off"></label>
+    <label class="fld fld-q"><span>Buscar</span><input id="fQ" type="search" placeholder="Empresa, contacto, correo, cargo o ciudad" autocomplete="off"></label>
     <button class="btn btn-ghost" id="fClear" type="button">Limpiar filtros</button>
   </section>
 
@@ -345,7 +350,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 
   <section class="grid">
     <article class="panel p-a" id="pFunnel">
-      <header class="ph"><h2>Embudo de conversión</h2><p>Leads que alcanzaron cada fase y conversión contra la fase anterior</p></header>
+      <header class="ph"><h2>Embudo de calificación</h2><p>Leads que alcanzaron cada fase y conversión contra la fase anterior</p></header>
       <div id="funnel"></div>
     </article>
     <article class="panel p-b" id="pBands">
@@ -360,10 +365,9 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
       <header class="ph"><h2>Alertas del agente</h2><p>Reglas de la metodología ACCES. Haz clic en una alerta para ver sus leads.</p></header>
       <div id="alerts"></div>
     </article>
-    <article class="panel p-e" id="pPipe">
-      <header class="ph"><h2>Pipeline Zoho por etapa</h2><p>Importe de tratos abiertos y número de tratos por etapa oficial</p></header>
-      <div id="pipe"></div>
-      <p class="foot" id="pipeFoot"></p>
+    <article class="panel p-e" id="pCad">
+      <header class="ph"><h2>Avance de la cadencia</h2><p>Leads activos según el último toque completado y su tasa de respuesta</p></header>
+      <div id="cadencia"></div>
     </article>
     <article class="panel p-f" id="pSector">
       <header class="ph"><h2>Leads por sector</h2><p>Sectores MEM_AIS_MX · score promedio. Clic para filtrar.</p></header>
@@ -372,6 +376,14 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <article class="panel p-g" id="pFuente">
       <header class="ph"><h2>Leads por fuente</h2><p>Origen del lead. Clic para filtrar.</p></header>
       <div id="fuente"></div>
+    </article>
+    <article class="panel p-h" id="pDatos">
+      <header class="ph"><h2>Calidad de datos de empresas y contactos</h2><p>Porcentaje de leads activos que tienen cada dato registrado</p></header>
+      <div id="datos"></div>
+    </article>
+    <article class="panel p-i" id="pRol">
+      <header class="ph"><h2>Rol del contacto en la compra</h2><p>¿Hablamos con quien decide? Clic para filtrar.</p></header>
+      <div id="rol"></div>
     </article>
     <article class="panel" id="pTable">
       <div class="tbl-hd">
@@ -395,10 +407,10 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <p>Reglas tomadas del Agente Maestro de Seguimiento Comercial B2B y del Calificador de Leads ICP de ACCES GROUP.</p>
     <dl>
       <div><dt>Score Total (0–100)</dt><dd>ICP Fit (0–30) + Intención (0–30) + Viabilidad (0–30) + Engagement (0–10). El score prioriza; no sustituye el juicio comercial.</dd></div>
-      <div><dt>Umbrales</dt><dd>0–29 fuera de perfil · 30–49 nutrir e investigar · 50–64 MQL · 65–74 SAL · 75–100 SQL o trato potencial.</dd></div>
-      <div><dt>Candado de decisor</dt><dd>Ninguna cuenta pasa a SQL ni a pipeline sin Economic Buyer mapeado, aunque el total sea alto. Las etapas se mueven solo con evidencia.</dd></div>
+      <div><dt>Umbrales</dt><dd>0–29 fuera de perfil · 30–49 nutrir e investigar · 50–64 MQL · 65–74 SAL · 75–100 SQL.</dd></div>
+      <div><dt>Candado de decisor</dt><dd>Ningún lead se entrega como SQL sin Economic Buyer mapeado, aunque el total sea alto. Las fases se mueven solo con evidencia.</dd></div>
       <div><dt>Cadencia sin fecha acordada</dt><dd>D+1 confirmar recepción · D+3 aclaración puntual · D+7 aportar valor · D+12 validar proceso y actores · D+20 cierre de ciclo temporal. La fecha acordada con el prospecto manda.</dd></div>
-      <div><dt>Prioridad diaria</dt><dd>Compromiso vencido → decisión próxima → negociación → reunión próxima → propuesta activa → cuenta estratégica → lead nuevo → reactivación → nutrición.</dd></div>
+      <div><dt>Prioridad diaria</dt><dd>Compromiso vencido → sin siguiente paso → reunión próxima → SQL por entregar → cuenta estratégica → lead nuevo → calificación en curso → reactivación → nutrición.</dd></div>
       <div><dt>Aliado sin presentación directa</dt><dd>Un lead de aliado tecnológico sin presentación directa tiene pre-score máximo de 40. Pide la presentación antes de invertir esfuerzo.</dd></div>
     </dl>
   </section>
@@ -419,7 +431,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <div class="modal-act"><button class="btn" id="mdClose" type="button">Cerrar</button></div>
   </div>
 </div>
-<div class="drop" id="drop" hidden>Suelta el CSV de Zoho para importarlo</div>
+<div class="drop" id="drop" hidden>Suelta el CSV de leads para importarlo</div>
 <div class="tip" id="tip" hidden role="tooltip"></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <noscript><p style="padding:16px">Este dashboard necesita JavaScript activado.</p></noscript>
@@ -438,51 +450,47 @@ const daysBetween=(a,b)=>Math.round((b-a)/DAY);
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>d?`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`:'';
 const nf=new Intl.NumberFormat('es-MX');
-const money=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',notation:'compact',maximumFractionDigits:1});
-const moneyFull=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
 const fdate=d=>d?d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}):'—';
 const fdateL=d=>d?d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}):'—';
-const pct=(a,b)=>b?Math.round(a/b*100)+'%':'—';
+const pctN=(a,b)=>b?Math.round(a/b*100):0;
+const pct=(a,b)=>b?pctN(a,b)+'%':'—';
 const sum=(arr,f)=>arr.reduce((a,x)=>a+(f(x)||0),0);
 const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- catálogos de la metodología ---------- */
 const SECTORES={
-  FIN:['Financiero','Sanciones regulatorias, fraude transaccional y reporte de incidentes con plazo'],
-  SALUD:['Salud','Robo de expedientes, paro de hospital por ransomware, multas por datos sensibles'],
-  MFG:['Manufactura','Paro de línea, ransomware en planta, cliente ancla exigiendo evidencia de seguridad'],
-  ENER:['Energía','Paro de despacho o suministro, controles volumétricos SAT, sabotaje OT'],
-  AUTO:['Automotriz','Pérdida de contrato por TISAX, paro de línea JIT, presión de la armadora'],
-  AERO:['Aeroespacial','Exclusión de cadena de suministro de defensa, auditoría de cliente extranjero'],
-  QUIM:['Químico','Incidente OT con riesgo físico, paro de proceso continuo'],
-  RETAIL:['Retail y Consumo','Fraude en pagos, caída de e-commerce en temporada alta, robo de datos de clientes'],
-  LOGTRANS:['Logística y Transporte','Robo de mercancía vía sistemas, paro de rastreo, exclusión de cadenas certificadas'],
-  FARMDM:['Farma y Disp. Médicos','Hallazgo de integridad de datos, robo de propiedad intelectual, retiro de lote'],
-  ALIBEB:['Alimentos y Bebidas','Paro de planta perecedera, ransomware en cadena de frío, auditoría de cliente ancla'],
-  CONST:['Construcción','Fraude BEC en pagos a proveedores, pérdida de licitación por requisitos'],
-  MIN:['Minería','Paro de mina o planta, exigencias de corporativo global, sabotaje'],
-  TURHOSP:['Turismo y Hospitalidad','Robo de datos de huéspedes y tarjetas, caída del sistema de reservas'],
-  OTRO:['Sin clasificar','Sector por revisar manualmente']
+  FIN:['Financiero','Sanciones regulatorias, fraude transaccional y reporte de incidentes con plazo','CNBV, Banxico, GAFI, PCI DSS'],
+  SALUD:['Salud','Robo de expedientes, paro de hospital por ransomware, multas por datos sensibles','LFPDPPP, NOM-024-SSA3, COFEPRIS'],
+  MFG:['Manufactura','Paro de línea, ransomware en planta, cliente ancla exigiendo evidencia de seguridad','ISO 27001, requisitos de clientes OEM, seguridad OT'],
+  ENER:['Energía','Paro de despacho o suministro, controles volumétricos SAT, sabotaje OT','ASEA, CRE/CNE, controles volumétricos SAT'],
+  AUTO:['Automotriz','Pérdida de contrato por TISAX, paro de línea JIT, presión de la armadora','TISAX, IATF 16949'],
+  AERO:['Aeroespacial','Exclusión de cadena de suministro de defensa, auditoría de cliente extranjero','AS9100, ITAR/EAR, CMMC'],
+  QUIM:['Químico','Incidente OT con riesgo físico, paro de proceso continuo','ASEA, NOM de seguridad de procesos'],
+  RETAIL:['Retail y Consumo','Fraude en pagos, caída de e-commerce en temporada alta, robo de datos de clientes','PCI DSS, LFPDPPP'],
+  LOGTRANS:['Logística y Transporte','Robo de mercancía vía sistemas, paro de rastreo, exclusión de cadenas certificadas','C-TPAT, OEA'],
+  FARMDM:['Farma y Disp. Médicos','Hallazgo de integridad de datos, robo de propiedad intelectual, retiro de lote','COFEPRIS, FDA, GxP'],
+  ALIBEB:['Alimentos y Bebidas','Paro de planta perecedera, ransomware en cadena de frío, auditoría de cliente ancla','FSSC 22000, HACCP'],
+  CONST:['Construcción','Fraude BEC en pagos a proveedores, pérdida de licitación por requisitos','Requisitos de licitación, CFDI'],
+  MIN:['Minería','Paro de mina o planta, exigencias de corporativo global, sabotaje','SEMARNAT, estándares de casa matriz'],
+  TURHOSP:['Turismo y Hospitalidad','Robo de datos de huéspedes y tarjetas, caída del sistema de reservas','PCI DSS, LFPDPPP'],
+  OTRO:['Sin clasificar','Sector por revisar manualmente','—']
 };
 const HIGH=new Set(['FIN','MFG','SALUD','ENER','AUTO','LOGTRANS']);
-const secName=k=>(SECTORES[k]||SECTORES.OTRO)[0];
+const sec=k=>SECTORES[k]||SECTORES.OTRO;
+const secName=k=>sec(k)[0];
 const secCode=k=>k&&k!=='OTRO'?'MEM_AIS_MX_'+k:'';
-const FASES=['Lead','MQL','SAL','SQL','Trato','Ganado','Perdido'];
-const FUNNEL=[['Lead','Registro recibido'],['MQL','Priorizado por Marketing'],['SAL','Aceptado por Comercial'],['SQL','Necesidad y viabilidad'],['Trato','Oportunidad en Zoho'],['Ganado','Cierre con evidencia']];
-const ETAPAS=[
-  {n:'Análisis de Requerimiento',p:[10,25]},{n:'Desarrollo de Solución Integral',p:[25,45]},
-  {n:'Generación de Propuesta',p:[45,60]},{n:'Revisión de Propuesta',p:[55,70]},
-  {n:'Presentación de Propuesta',p:[65,80]},{n:'Negociación',p:[80,95]},
-  {n:'Cierre de Ganado',p:[100,100]},{n:'Cierre de Perdido',p:[0,0]}];
+const FASES=['Lead','MQL','SAL','SQL','Descartado'];
+const FUNNEL=[['Lead','Generado y registrado'],['MQL','Priorizado por Marketing'],['SAL','Aceptado por Comercial'],['SQL','Necesidad y viabilidad'],['SQL con decisor','Economic Buyer mapeado']];
 const BANDS=[
   {k:'Fuera de perfil',min:0,max:29,a:'Registro insuficiente o fuera de perfil'},
   {k:'Nutrir',min:30,max:49,a:'Nutrir e investigar'},
   {k:'MQL',min:50,max:64,a:'Priorizar desde Marketing'},
   {k:'SAL',min:65,max:74,a:'Aceptar en Comercial'},
-  {k:'SQL',min:75,max:100,a:'Descubrimiento o trato potencial'}];
-const bandOf=t=>{const i=BANDS.findIndex(b=>t>=b.min&&t<=b.max);return Object.assign({i:Math.max(0,i)},BANDS[Math.max(0,i)]);};
+  {k:'SQL',min:75,max:100,a:'Descubrimiento comercial'}];
+const bandOf=t=>{const i=Math.max(0,BANDS.findIndex(b=>t>=b.min&&t<=b.max));return Object.assign({i},BANDS[i]);};
 const TEMPS=['Frío','Tibio','Caliente','Estratégico'];
+const ROLES=['Economic Buyer','Champion','Validador técnico','Usuario final','Influenciador','Sin identificar'];
 const CAD=['D+1','D+3','D+7','D+12','D+20'];
 const CAD_D=['Confirmar recepción','Aclaración puntual','Aportar valor','Validar proceso y actores','Cierre de ciclo temporal'];
 const BANT_N={B:'Budget · presupuesto',A:'Authority · autoridad',N:'Need · necesidad',T:'Timeline · tiempo'};
@@ -511,15 +519,16 @@ const bantPill=v=>{
 const RULES=[
   {id:'vencido',sev:'crit',t:'Compromisos vencidos',d:'La fecha del siguiente paso ya pasó. Retomar con valor nuevo, nunca con "solo dando seguimiento".',test:l=>l.seg.k==='vencido'},
   {id:'sinpaso',sev:'crit',t:'Sin siguiente paso',d:'Ninguna interacción se cierra sin siguiente paso, responsable, fecha y medio.',test:l=>l.seg.k==='sinpaso'},
-  {id:'candado',sev:'serious',t:'Candado de decisor',d:'SQL o trato sin Economic Buyer mapeado. No avanza en pipeline hasta mapearlo.',test:l=>!l.closed&&(l.fase==='SQL'||l.fase==='Trato')&&!l.eb},
+  {id:'candado',sev:'serious',t:'Candado de decisor',d:'SQL sin Economic Buyer mapeado. No se entrega como SQL hasta mapearlo.',test:l=>!l.closed&&l.fase==='SQL'&&!l.eb},
   {id:'silencio',sev:'warn',t:'Silencio prolongado',d:'Más de 14 días sin interacción. El silencio no es rechazo: reactivar con un disparador real.',test:l=>!l.closed&&l.diasSin!=null&&l.diasSin>14},
-  {id:'fase',sev:'warn',t:'Fase por encima del score',d:'La fase registrada supera lo que respalda el Score Total. Mover etapas solo con evidencia.',test:l=>!l.closed&&REQ[l.fase]!=null&&l.total<REQ[l.fase]},
+  {id:'fase',sev:'warn',t:'Fase por encima del score',d:'La fase registrada supera lo que respalda el Score Total. Mover fases solo con evidencia.',test:l=>!l.closed&&REQ[l.fase]!=null&&l.total<REQ[l.fase]},
+  {id:'datos',sev:'warn',t:'Contacto sin correo ni teléfono',d:'No hay forma directa de dar seguimiento. Enriquecer el contacto antes del siguiente toque.',test:l=>!l.closed&&!l.correo&&!l.telefono},
   {id:'aliado',sev:'warn',t:'Aliado sin presentación directa',d:'Lead de aliado tecnológico sin presentación directa: pre-score máximo 40.',test:l=>!l.closed&&l.aliado&&l.total>40},
   {id:'sla',sev:'warn',t:'Lead nuevo sin primer contacto',d:'Entró hace más de 2 días y no tiene interacción registrada.',test:l=>l.fase==='Lead'&&!l.ult&&l.diasEntrada!=null&&l.diasEntrada>2}
 ];
 
 function segOf(l){
-  if(l.closed) return {k:'cerrado',label:l.fase==='Ganado'?'Ganado':'Perdido',sev:l.fase==='Ganado'?'ok':'none',d:null};
+  if(l.closed) return {k:'cerrado',label:'Descartado',sev:'none',d:null};
   if(!l.fsig) return {k:'sinpaso',label:'Sin siguiente paso',sev:'crit',d:null};
   const d=daysBetween(TODAY,l.fsig);
   if(d<0) return {k:'vencido',label:`Vencido hace ${-d} d`,sev:'crit',d};
@@ -528,31 +537,29 @@ function segOf(l){
   return {k:'programado',label:`En ${d} d`,sev:'ok',d};
 }
 function prioOf(l){
-  if(l.closed) return {r:99,m:l.fase==='Ganado'?'Handoff a PMO':'Cerrado'};
-  const s=l.seg, soon=s.d!=null&&s.d<=3, st=l.etapa;
+  if(l.closed) return {r:99,m:'Descartado'};
+  const s=l.seg, soon=s.d!=null&&s.d<=3;
   if(s.k==='vencido') return {r:1,m:'Compromiso vencido'};
   if(s.k==='sinpaso') return {r:1.5,m:'Sin siguiente paso'};
-  if((st===4||st===5)&&soon) return {r:2,m:'Decisión próxima'};
-  if(st===5) return {r:4,m:'En negociación'};
-  if(l.medio==='Videollamada'&&soon) return {r:5,m:'Reunión próxima'};
-  if(st===2||st===3||st===4) return {r:6,m:'Propuesta activa'};
-  if(l.temp==='Estratégico') return {r:7,m:'Cuenta estratégica'};
-  if(l.fase==='SQL'||l.fase==='Trato') return {r:7.5,m:'Desarrollo de oportunidad'};
-  if(l.fase==='Lead'&&l.diasEntrada!=null&&l.diasEntrada<=7) return {r:8,m:'Lead nuevo'};
-  if(l.diasSin!=null&&l.diasSin>14) return {r:9,m:'Reactivación'};
-  if(l.band.i<=1) return {r:10,m:'Nutrición'};
-  return {r:8.5,m:'Seguimiento'};
+  if((l.medio==='Videollamada'||l.medio==='Llamada')&&soon) return {r:2,m:'Reunión próxima'};
+  if(l.fase==='SQL') return {r:3,m:'SQL por entregar'};
+  if(l.temp==='Estratégico') return {r:4,m:'Cuenta estratégica'};
+  if(l.fase==='Lead'&&l.diasEntrada!=null&&l.diasEntrada<=7) return {r:5,m:'Lead nuevo'};
+  if(l.fase==='MQL'||l.fase==='SAL') return {r:6,m:'Calificación en curso'};
+  if(l.diasSin!=null&&l.diasSin>14) return {r:7,m:'Reactivación'};
+  if(l.band.i<=1) return {r:8,m:'Nutrición'};
+  return {r:6.5,m:'Seguimiento'};
 }
 function nbaOf(l){
-  if(l.fase==='Ganado') return 'Preparar el handoff a PMO y CSM, programar kickoff y registrar por qué compró.';
-  if(l.fase==='Perdido') return 'Documentar el postmortem y dejar fecha de reactivación ligada a un disparador real.';
+  if(l.closed) return 'Dejar en nutrición con contenido del sector y reactivar solo ante un disparador real.';
   if(l.seg.k==='sinpaso') return 'Definir el siguiente paso con responsable, fecha y medio antes de cualquier otro toque.';
+  if(!l.correo&&!l.telefono) return 'Enriquecer el contacto (correo, teléfono o LinkedIn) antes del siguiente toque.';
   if(l.seg.k==='vencido') return `Retomar el compromiso vencido${l.sigPaso?` «${l.sigPaso}»`:''} aportando valor nuevo: un dato, un caso o una pregunta concreta.`;
-  if((l.fase==='SQL'||l.fase==='Trato')&&!l.eb) return 'Mapear al Economic Buyer y al proceso de decisión antes de avanzar etapa (candado de decisor).';
+  if(l.fase==='SQL'&&!l.eb) return 'Mapear al Economic Buyer y el proceso de decisión antes de entregar el lead como SQL (candado de decisor).';
   if(l.aliado&&l.total>40) return 'Pedir al aliado una presentación directa con el decisor antes de invertir más esfuerzo.';
   if(l.diasSin!=null&&l.diasSin>14) return 'Reactivar con un disparador real del sector; si no lo hay, enviar cierre de ciclo temporal sin presión.';
   const miss=['B','A','N','T'].filter(k=>!l.bant[k]||l.bant[k]==='No identificado'||l.bant[k]==='Inferido');
-  if(miss.length&&l.fi>=2&&l.fi<=4) return `${l.sigPaso||'Siguiente conversación'}: validar ${miss.map(k=>BANT_N[k].split(' · ')[1]).join(', ')} sin inventar respuestas.`;
+  if(miss.length&&l.fi>=1) return `${l.sigPaso||'Siguiente conversación'}: validar ${miss.map(k=>BANT_N[k].split(' · ')[1]).join(', ')} sin inventar respuestas.`;
   return l.sigPaso||'Mantener la cadencia con un toque que aporte valor.';
 }
 function microOf(l){
@@ -567,10 +574,10 @@ function prep(l){
   l.band=bandOf(l.total);
   if(!l.micro) l.micro=microOf(l);
   if(!l.temp) l.temp=l.total<40?'Frío':l.total<65?'Tibio':'Caliente';
-  l.closed=l.fase==='Ganado'||l.fase==='Perdido';
+  if(!l.rol) l.rol='Sin identificar';
+  l.closed=l.fase==='Descartado';
   l.fi=FASES.indexOf(l.fase);
-  l.maxIdx=l.fase==='Ganado'?5:l.fase==='Perdido'?(l.etapa!=null?4:(l.faseMax!=null?l.faseMax:0)):l.fi;
-  if(l.etapa!=null&&l.prob==null){const p=ETAPAS[l.etapa].p;l.prob=Math.round((p[0]+p[1])/2);}
+  l.maxIdx=l.closed?(l.faseMax!=null?l.faseMax:0):(l.fase==='SQL'&&l.eb?4:l.fi);
   l.diasSin=l.ult?daysBetween(l.ult,TODAY):null;
   l.diasEntrada=l.entrada?daysBetween(l.entrada,TODAY):null;
   l.seg=segOf(l);
@@ -587,6 +594,7 @@ function demo(){
   const ri=(a,b)=>a+Math.floor(r()*(b-a+1));
   const pick=a=>a[Math.floor(r()*a.length)];
   const wpick=list=>{const x=r();let acc=0;for(const it of list){acc+=it[1];if(x<acc)return it;}return list[list.length-1];};
+  const slug=t=>norm(t).slice(0,24);
   const EMP=[
     ['Financiera Altiplano SOFIPO','FIN','Monterrey'],['Caja Popular Valle del Norte','FIN','Chihuahua'],
     ['Pagos Ágiles IFPE','FIN','Ciudad de México'],['Arrendadora Cumbres SOFOM','FIN','Guadalajara'],
@@ -610,13 +618,17 @@ function demo(){
     ['Minera Sierra Alta','MIN','Chihuahua'],['Metalúrgica del Desierto','MIN','Torreón'],
     ['Hoteles Playa Dorada','TURHOSP','Cancún'],['Resorts Riviera Azul','TURHOSP','Puerto Vallarta'],
     ['Restauranteras Grupo Fogón','TURHOSP','Monterrey']];
-  const EQ={'Monterrey':'Equipo Nuevo León','Apodaca':'Equipo Nuevo León','Saltillo':'Equipo Nuevo León','Ramos Arizpe':'Equipo Nuevo León','Monclova':'Equipo Nuevo León','Nuevo Laredo':'Equipo Nuevo León','San Pedro Garza García':'Equipo Nuevo León',
-    'Chihuahua':'Equipo Chihuahua','Ciudad Juárez':'Equipo Chihuahua','Durango':'Equipo Chihuahua','Torreón':'Equipo Chihuahua','Hermosillo':'Equipo Chihuahua',
-    'Ciudad de México':'Equipo CDMX','Puebla':'Equipo CDMX','Querétaro':'Equipo CDMX','Tula':'Equipo CDMX','Veracruz':'Equipo CDMX','León':'Equipo CDMX','Cancún':'Equipo CDMX',
-    'Guadalajara':'Equipo Jalisco','Zapopan':'Equipo Jalisco','Culiacán':'Equipo Jalisco','Tijuana':'Equipo Jalisco','Puerto Vallarta':'Equipo Jalisco'};
+  const CITY={'Monterrey':['Equipo Nuevo León','81'],'Apodaca':['Equipo Nuevo León','81'],'Saltillo':['Equipo Nuevo León','844'],'Ramos Arizpe':['Equipo Nuevo León','844'],'Monclova':['Equipo Nuevo León','866'],'Nuevo Laredo':['Equipo Nuevo León','867'],'San Pedro Garza García':['Equipo Nuevo León','81'],
+    'Chihuahua':['Equipo Chihuahua','614'],'Ciudad Juárez':['Equipo Chihuahua','656'],'Durango':['Equipo Chihuahua','618'],'Torreón':['Equipo Chihuahua','871'],'Hermosillo':['Equipo Chihuahua','662'],
+    'Ciudad de México':['Equipo CDMX','55'],'Puebla':['Equipo CDMX','222'],'Querétaro':['Equipo CDMX','442'],'Tula':['Equipo CDMX','773'],'Veracruz':['Equipo CDMX','229'],'León':['Equipo CDMX','477'],'Cancún':['Equipo CDMX','998'],
+    'Guadalajara':['Equipo Jalisco','33'],'Zapopan':['Equipo Jalisco','33'],'Culiacán':['Equipo Jalisco','667'],'Tijuana':['Equipo Jalisco','664'],'Puerto Vallarta':['Equipo Jalisco','322']};
   const FUENTES=[['Marketing',.36,['Webinar','Formulario web','Evento externo','LinkedIn','Campaña de email']],['Comercial',.26,['Prospección outbound','Referido','Reactivación']],
     ['Dirección',.12,['Cuenta asignada por Dirección','Introducción directa']],['Partner',.14,['Lead de fabricante','Mayorista','Co-selling']],['Cliente actual',.12,['Cross-sell','Renovación','Hallazgo de auditoría']]];
-  const CARGOS=['CISO','Director de TI','Gerente de Infraestructura','Director de Finanzas','Director de Operaciones','Oficial de Cumplimiento','Gerente de Riesgos','Director General'];
+  const CARGOS=[['CISO','Seguridad de la información'],['Director de TI','Tecnología'],['Gerente de Infraestructura','Tecnología'],['Director de Finanzas','Finanzas'],
+    ['Director de Operaciones','Operaciones'],['Oficial de Cumplimiento','Cumplimiento'],['Gerente de Riesgos','Riesgos'],['Director General','Dirección General']];
+  const NOMBRES=['Laura','Jorge','Mariana','Alejandro','Sofía','Héctor','Daniela','Fernando','Paola','Raúl','Gabriela','Óscar','Verónica','Andrés','Claudia','Iván','Lucía','Martín'];
+  const APELLIDOS=['Méndez','Garza','Treviño','Salinas','Ortega','Villarreal','Cárdenas','Ruiz','Navarro','Montes','Delgado','Ibarra','Rosales','Fuentes','Lozano','Padilla','Escobedo','Arriaga'];
+  const TAM=['11–50','51–200','201–500','501–1,000','1,001–5,000','Más de 5,000'];
   const GANCHOS={FIN:['Reporte de incidentes con plazo ante CNBV','Fraude transaccional en canales digitales','Revisión de controles PCI DSS'],
     SALUD:['Ransomware en hospitales del sector','Protección de expedientes clínicos (NOM-024)','Datos personales sensibles (LFPDPPP)'],
     MFG:['Cliente OEM exige evidencia de seguridad','Riesgo de paro de línea por ransomware','Segmentación de red OT en planta'],
@@ -629,59 +641,70 @@ function demo(){
   const PASOS={Lead:['Primer contacto por LinkedIn con gancho sectorial','Correo 1 de la cadencia 3×3×30','Llamada de 20 min para validar contexto'],
     MQL:['Compartir caso sectorial y proponer llamada breve','Validar interés y rol del contacto'],
     SAL:['Agendar conversación inicial de microcalificación','Confirmar actores involucrados'],
-    SQL:['Sesión de descubrimiento comercial','Mapear comité de compra','Validar presupuesto y timeline (BANT)']};
-  const PASOS_ET=['Sesión técnica de levantamiento','Revisión interna con preventa','Entregar propuesta técnica y económica','Resolver dudas de alcance con especialistas','Presentar propuesta al comité','Revisar condiciones con Compras y sponsor'];
-  const MEDIOS={Lead:['LinkedIn','Correo','Llamada'],MQL:['Correo','LinkedIn','Llamada'],SAL:['Llamada','Correo','WhatsApp'],SQL:['Videollamada','Correo','Llamada'],Trato:['Videollamada','Correo','WhatsApp'],Ganado:['Videollamada'],Perdido:['Correo']};
-  const FASE_W=[['Lead',.22],['MQL',.17],['SAL',.14],['SQL',.14],['Trato',.21],['Ganado',.06],['Perdido',.06]];
-  const RANGE={Lead:[[2,11],[3,13],[0,3]],MQL:[[12,19],[11,18],[3,6]],SAL:[[17,23],[16,22],[5,8]],SQL:[[21,28],[20,27],[7,9]],Trato:[[20,29],[19,28],[7,10]],Ganado:[[24,30],[23,30],[8,10]],Perdido:[[10,22],[9,20],[2,7]]};
+    SQL:['Sesión de descubrimiento comercial','Mapear comité de compra','Validar presupuesto y timeline (BANT)'],
+    Descartado:['Nutrición trimestral con contenido del sector']};
+  const MEDIOS={Lead:['LinkedIn','Correo','Llamada'],MQL:['Correo','LinkedIn','Llamada'],SAL:['Llamada','Correo','WhatsApp'],SQL:['Videollamada','Correo','Llamada'],Descartado:['Correo']};
+  const FASE_W=[['Lead',.30],['MQL',.22],['SAL',.17],['SQL',.23],['Descartado',.08]];
+  const RANGE={Lead:[[2,11],[3,13],[0,3]],MQL:[[12,19],[11,18],[3,6]],SAL:[[17,23],[16,22],[5,8]],SQL:[[21,28],[20,27],[7,9]],Descartado:[[3,12],[3,12],[0,4]]};
   return EMP.map(([empresa,sector,ciudad],i)=>{
     const high=HIGH.has(sector);
     const fase=wpick(FASE_W)[0];
     const [ir,vr,er]=RANGE[fase];
-    const fit=ri(high?18:10,high?29:22), intent=ri(ir[0],ir[1]), viab=ri(vr[0],vr[1]), eng=ri(er[0],er[1]);
+    const fit=fase==='Descartado'?ri(4,14):ri(high?18:10,high?29:22), intent=ri(ir[0],ir[1]), viab=ri(vr[0],vr[1]), eng=ri(er[0],er[1]);
     const F=wpick(FUENTES), fuente=F[0], canal=pick(F[2]);
     const aliado=fuente==='Partner'&&r()<.55;
     const entrada=addDays(-(fase==='Lead'?ri(0,18):ri(20,150)));
     const contacted=!(fase==='Lead'&&r()<.45);
-    const ult=contacted?addDays(-Math.min(ri(0,fase==='Perdido'?40:24),daysBetween(entrada,TODAY))):null;
-    const closed=fase==='Ganado'||fase==='Perdido';
+    const ult=contacted?addDays(-Math.min(ri(0,fase==='Descartado'?40:24),daysBetween(entrada,TODAY))):null;
+    const closed=fase==='Descartado';
     let fsig=null;
     if(!closed){const x=r();fsig=x<.07?null:x<.3?addDays(ri(-8,-1)):addDays(ri(0,14));}
-    else if(fase==='Ganado') fsig=addDays(ri(1,10));
-    let etapa=null, faseMax=null;
-    if(fase==='Trato') etapa=wpick([[0,.24],[1,.2],[2,.18],[3,.14],[4,.12],[5,.12]])[0];
-    if(fase==='Ganado') etapa=6;
-    if(fase==='Perdido'){faseMax=ri(1,4);if(faseMax===4) etapa=7;}
-    const eb=fase==='Ganado'||(fase==='SQL'||fase==='Trato'?r()<.68:r()<.18);
-    const importe=etapa!=null?ri(18,340)*10000:null;
-    let prob=null;
-    if(etapa!=null){const [lo,hi]=ETAPAS[etapa].p;prob=Math.max(lo,Math.min(hi,Math.round((lo+hi)/2+(eb?5:-10))));}
+    const eb=fase==='SQL'?r()<.68:r()<.15;
     const toque=fase==='Lead'?(contacted?ri(1,2):0):fase==='MQL'?ri(1,3):fase==='SAL'?ri(2,4):ri(3,5);
     const lvl=FASES.indexOf(fase);
-    const respondio=fase==='Perdido'?r()<.5:lvl>=2?true:fase==='MQL'?r()<.5:contacted&&r()<.15;
-    const medio=pick(MEDIOS[fase]);
-    const sigPaso=fase==='Trato'?PASOS_ET[etapa]:fase==='Ganado'?'Kickoff con PMO y handoff a CSM':fase==='Perdido'?'Reactivar con disparador del sector':pick(PASOS[fase]);
-    const temp=fuente==='Dirección'&&r()<.6?'Estratégico':'';
+    const respondio=fase==='Descartado'?r()<.4:lvl>=2?true:fase==='MQL'?r()<.5:contacted&&r()<.15;
+    const [cargo,area]=pick(CARGOS);
+    const nom=pick(NOMBRES), ape=pick(APELLIDOS);
+    const [resp,lada]=CITY[ciudad];
+    const dom=`${slug(empresa)}.example`;
+    const tel=lada.length===2?`+52 ${lada} 0${ri(100,999)} ${ri(1000,9999)}`:`+52 ${lada} 0${ri(10,99)} ${ri(1000,9999)}`;
+    const rol=eb&&(cargo==='Director General'||cargo==='Director de Finanzas')?'Economic Buyer':r()<.15?'Sin identificar':
+      (cargo==='CISO'||cargo==='Director de TI'||cargo==='Gerente de Infraestructura')?pick(['Validador técnico','Champion']):
+      (cargo==='Oficial de Cumplimiento'||cargo==='Gerente de Riesgos')?pick(['Influenciador','Champion']):
+      cargo==='Director de Operaciones'?'Usuario final':pick(['Economic Buyer','Influenciador']);
     const bp=strong=>strong?(r()<.7?'Confirmado':'Parcial'):pick(['Parcial','Inferido','No identificado']);
-    const bant={B:bp(lvl>=4&&r()<.7),A:eb?'Confirmado':(lvl>=3?'Parcial':'No identificado'),N:bp(lvl>=2),T:bp(lvl>=3)};
-    return {id:'L-'+(1001+i),empresa,sector,ciudad,fuente,canal,resp:EQ[ciudad],cargo:pick(CARGOS),contacto:'',fase,faseMax,temp,
-      fit,intent,viab,eng,total:null,micro:'',eb,aliado,entrada,ult,sigPaso,fsig,medio,toque,respondio,etapa,importe,prob,
-      gancho:pick(GANCHOS[sector]),bant};
+    return {id:'L-'+(1001+i),empresa,web:r()<.9?`www.${dom}`:'',sector,ciudad,empleados:r()<.88?TAM[Math.min(5,Math.max(0,ri(high?2:1,high?5:4)))]:'',
+      fuente,canal,resp,contacto:r()<.94?`${nom} ${ape}`:'',cargo,area,rol,
+      correo:r()<.85?`${norm(nom)}.${norm(ape)}@${dom}`:'',telefono:r()<.7?tel:'',linkedin:r()<.72?'Registrado':'',
+      canalPref:pick(['Correo','WhatsApp','LinkedIn','Llamada']),consent:fuente==='Marketing'?r()<.92:r()<.6,
+      fase,faseMax:closed?ri(0,2):null,temp:fuente==='Dirección'&&r()<.6?'Estratégico':'',micro:closed&&r()<.5?'ANTI':'',
+      fit,intent,viab,eng,total:null,eb,aliado,entrada,ult,
+      sigPaso:pick(PASOS[fase]),fsig,medio:pick(MEDIOS[fase]),toque,respondio,gancho:pick(GANCHOS[sector]),
+      bant:{B:bp(lvl===3&&r()<.6),A:eb?'Confirmado':(lvl>=2&&lvl<4?'Parcial':'No identificado'),N:bp(lvl>=1&&lvl<4),T:bp(lvl===3)}};
   });
 }
 
 /* ---------- importación CSV ---------- */
 const COLS={
-  id:['idlead','id','leadid','recordid','idoportunidad'],
-  empresa:['empresa','company','cuenta','accountname','companyname','nombreempresa','razonsocial'],
+  id:['idlead','id','leadid'],
+  empresa:['empresa','company','cuenta','companyname','nombreempresa','razonsocial'],
+  web:['sitioweb','web','website','dominio','domain','url','paginaweb'],
   sector:['sector','industria','industry','giro'],
-  ciudad:['ciudad','city','ubicacion'],
-  fuente:['fuentelead','fuente','leadsource','origen'],
+  ciudad:['ciudad','city','ubicacion','sede'],
+  empleados:['empleados','tamano','tamanoempresa','employees','numempleados','numerodeempleados'],
+  fuente:['fuentelead','fuente','origen','source'],
   canal:['canalfuente','campana','campaign','evento'],
-  resp:['responsable','owner','leadowner','ejecutivo','propietario'],
-  cargo:['cargocontacto','cargo','title','puesto','designation'],
-  contacto:['contacto','contactname','fullname','nombrecontacto'],
-  fase:['faselead','fase','leadstatus','estatuslead','estatus'],
+  resp:['responsable','owner','ejecutivo','propietario'],
+  contacto:['contacto','nombrecontacto','contactname','fullname','nombre'],
+  cargo:['cargocontacto','cargo','title','puesto','jobtitle'],
+  area:['area','departamento','department'],
+  rol:['rolcompra','rolencompra','rol','buyingrole'],
+  correo:['correo','email','correoelectronico','mail'],
+  telefono:['telefono','phone','tel','celular','movil'],
+  linkedin:['linkedin','perfillinkedin','linkedinurl'],
+  canalPref:['canalpreferido','preferredchannel'],
+  consent:['consentimientocontacto','consentimiento','optin'],
+  fase:['faselead','fase','estatuslead','estatus','status'],
   temp:['temperatura','temperature','rating'],
   micro:['microicp','icp','bloqueicp'],
   fit:['scoreicpfit','icpfit'],
@@ -691,23 +714,21 @@ const COLS={
   total:['scoretotal','total','score','scoreicp','prescore','leadscore'],
   eb:['economicbuyer','eb','decisor','accesodecisor'],
   aliado:['aliadosinpresentacion','aliado'],
-  entrada:['fechaentrada','createdtime','fechacreacion','created'],
-  ult:['fechaultimainteraccion','ultimainteraccion','lastactivitytime','ultimocontacto'],
+  entrada:['fechaentrada','fechacreacion','created'],
+  ult:['fechaultimainteraccion','ultimainteraccion','ultimocontacto'],
   sig:['siguientepaso','nextstep','proximopaso'],
   fsig:['fechasiguientepaso','fechaproximopaso','nextstepdate'],
   medio:['mediorecomendado','medio','canalrecomendado'],
   toque:['toquecadencia','toque','pasocadencia'],
   respondio:['respondio','respuesta','replied'],
-  etapa:['etapacrm','etapa','stage'],
-  importe:['importe','amount','monto','valor'],
-  prob:['probabilidadcierre','probabilidad','probability'],
   b:['bantbudget','budget','presupuesto'],a:['bantauthority','authority','autoridad'],n:['bantneed','need','necesidad'],t:['banttimeline','timeline'],
   gancho:['gancho','triggereventprobable','triggerevent','trigger','descripcion','description']
 };
-const TPL=['ID_Lead','Empresa','Sector','Ciudad','Fuente_Lead','Canal_Fuente','Responsable','Cargo_Contacto','Fase_Lead','Temperatura','Micro_ICP',
-  'Score_ICP_Fit','Score_Intencion','Score_Viabilidad','Score_Engagement','Score_Total','Economic_Buyer','Aliado_Sin_Presentacion',
-  'Fecha_Entrada','Fecha_Ultima_Interaccion','Siguiente_Paso','Fecha_Siguiente_Paso','Medio_Recomendado','Toque_Cadencia','Respondio',
-  'Etapa_CRM','Importe','Probabilidad_Cierre','BANT_Budget','BANT_Authority','BANT_Need','BANT_Timeline','Gancho'];
+const TPL=['ID_Lead','Empresa','Sitio_Web','Sector','Ciudad','Empleados','Fuente_Lead','Canal_Fuente','Responsable',
+  'Contacto','Cargo_Contacto','Area','Rol_Compra','Correo','Telefono','LinkedIn','Canal_Preferido','Consentimiento_Contacto',
+  'Fase_Lead','Temperatura','Micro_ICP','Score_ICP_Fit','Score_Intencion','Score_Viabilidad','Score_Engagement','Score_Total',
+  'Economic_Buyer','Aliado_Sin_Presentacion','Fecha_Entrada','Fecha_Ultima_Interaccion','Siguiente_Paso','Fecha_Siguiente_Paso',
+  'Medio_Recomendado','Toque_Cadencia','Respondio','BANT_Budget','BANT_Authority','BANT_Need','BANT_Timeline','Gancho'];
 
 function parseCSV(text){
   text=text.replace(/^﻿/,'');
@@ -750,10 +771,8 @@ function sectorOf(v){
 }
 function faseOf(v){
   const n=norm(v);
-  if(/ganad|won|cerradoganado/.test(n)) return 'Ganado';
-  if(/perdid|lost|descart/.test(n)) return 'Perdido';
-  if(/trato|oportunidad|deal/.test(n)) return 'Trato';
-  if(/sql/.test(n)) return 'SQL';
+  if(/descart|perdid|antiicp|nocalifica|lost/.test(n)) return 'Descartado';
+  if(/sql|oportunidad|trato|ganad/.test(n)) return 'SQL';
   if(/sal/.test(n)) return 'SAL';
   if(/mql/.test(n)) return 'MQL';
   return 'Lead';
@@ -767,33 +786,41 @@ function fuenteOf(v){
   if(/comercial|outbound|referid|prospecc|reactiv|coldcall|llamadaenfrio/.test(n)) return 'Comercial';
   return String(v).trim();
 }
+function rolOf(v){
+  const n=norm(v); if(!n) return '';
+  if(/economic|eb$|decisor|comprador|aprueba|firma/.test(n)) return 'Economic Buyer';
+  if(/champion|promotor|aliadointerno/.test(n)) return 'Champion';
+  if(/tecnic|valida/.test(n)) return 'Validador técnico';
+  if(/usuario|opera/.test(n)) return 'Usuario final';
+  if(/influ/.test(n)) return 'Influenciador';
+  if(/sinident|descono|pendiente/.test(n)) return 'Sin identificar';
+  return String(v).trim();
+}
 function tempOf(v){const n=norm(v);if(!n)return '';if(/estrat/.test(n))return 'Estratégico';if(/calient|hot/.test(n))return 'Caliente';if(/tib|warm/.test(n))return 'Tibio';if(/fri|cold/.test(n))return 'Frío';return '';}
 function medioOf(v){const n=norm(v);if(!n)return '';if(/whats/.test(n))return 'WhatsApp';if(/correo|mail/.test(n))return 'Correo';if(/linked/.test(n))return 'LinkedIn';if(/video|reunion|meet|zoom|teams/.test(n))return 'Videollamada';if(/llam|tel|call/.test(n))return 'Llamada';return String(v).trim();}
-function etapaIdx(v){const n=norm(v);if(!n)return null;const T=[/anali/,/desarroll/,/generac/,/revisi/,/presentac/,/negoc/,/ganad|won/,/perdid|lost/];const i=T.findIndex(re=>re.test(n));return i<0?null:i;}
 function bantOf(v){const n=norm(v);if(!n)return null;if(/confirm/.test(n))return 'Confirmado';if(/parcial/.test(n))return 'Parcial';if(/infer/.test(n))return 'Inferido';if(/noaplica|^na$/.test(n))return 'No aplica';if(/noident|descon|^no$/.test(n))return 'No identificado';return 'Parcial';}
 function microNorm(v){const n=norm(v);if(/anti/.test(n))return 'ANTI';const m=n.match(/icp([123])/);return m?'ICP'+m[1]:'';}
 
 function fromRow(r,idx,n){
   const g=k=>idx[k]!=null?String(r[idx[k]]??'').trim():'';
   const num=k=>{const v=g(k);if(!v)return null;const x=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(x)?null:x;};
-  const etapa=etapaIdx(g('etapa'));
-  let fase=faseOf(g('fase'));
-  if(etapa===6) fase='Ganado'; else if(etapa===7) fase='Perdido'; else if(etapa!=null&&FASES.indexOf(fase)<4) fase='Trato';
-  return {id:g('id')||`L-${pad(n+1).padStart(4,'0')}`,empresa:g('empresa'),sector:sectorOf(g('sector')),ciudad:g('ciudad'),
-    fuente:fuenteOf(g('fuente')),canal:g('canal'),resp:g('resp')||'Sin asignar',cargo:g('cargo'),contacto:g('contacto'),
-    fase,faseMax:null,temp:tempOf(g('temp')),micro:microNorm(g('micro')),
+  return {id:g('id')||`L-${String(n+1).padStart(4,'0')}`,empresa:g('empresa'),web:g('web'),sector:sectorOf(g('sector')),ciudad:g('ciudad'),empleados:g('empleados'),
+    fuente:fuenteOf(g('fuente')),canal:g('canal'),resp:g('resp')||'Sin asignar',
+    contacto:g('contacto'),cargo:g('cargo'),area:g('area'),rol:rolOf(g('rol')),correo:g('correo'),telefono:g('telefono'),linkedin:g('linkedin'),
+    canalPref:medioOf(g('canalPref')),consent:yes(g('consent')),
+    fase:faseOf(g('fase')),faseMax:null,temp:tempOf(g('temp')),micro:microNorm(g('micro')),
     fit:num('fit'),intent:num('intent'),viab:num('viab'),eng:num('eng'),total:num('total'),
     eb:yes(g('eb')),aliado:yes(g('aliado')),entrada:dateOf(g('entrada')),ult:dateOf(g('ult')),
     sigPaso:g('sig'),fsig:dateOf(g('fsig')),medio:medioOf(g('medio')),toque:Math.max(0,Math.min(5,Math.round(num('toque')||0))),
-    respondio:yes(g('respondio')),etapa,importe:num('importe'),prob:num('prob'),gancho:g('gancho'),
+    respondio:yes(g('respondio')),gancho:g('gancho'),
     bant:{B:bantOf(g('b')),A:bantOf(g('a')),N:bantOf(g('n')),T:bantOf(g('t'))}};
 }
 function importText(text,name){
   const rows=parseCSV(text);
   if(rows.length<2) throw new Error('El archivo no tiene filas de datos debajo del encabezado.');
-  const hdr=rows[0].map(norm), idx={};
-  for(const [k,al] of Object.entries(COLS)){const i=hdr.findIndex(h=>al.includes(h));if(i>=0)idx[k]=i;}
-  if(idx.empresa==null) throw new Error('No encontré la columna "Empresa". Usa la plantilla o renombra la columna de la cuenta a "Empresa".');
+  const hdr=rows[0].map(norm), idx={}, used=new Set();
+  for(const [k,al] of Object.entries(COLS)){const i=hdr.findIndex((h,j)=>!used.has(j)&&al.includes(h));if(i>=0){idx[k]=i;used.add(i);}}
+  if(idx.empresa==null) throw new Error('No encontré la columna "Empresa". Usa la plantilla o renombra la columna de la empresa a "Empresa".');
   const seen=new Map();
   const leads=rows.slice(1).map((r,n)=>fromRow(r,idx,n)).filter(l=>l.empresa).map(l=>{
     const c=seen.get(l.id)||0; seen.set(l.id,c+1); if(c) l.id=`${l.id}-${c+1}`; return l;});
@@ -804,7 +831,7 @@ function importText(text,name){
 
 /* ---------- estado y filtros ---------- */
 let LEADS=[], SOURCE={kind:'demo',name:'Datos de ejemplo'};
-const state={periodo:'all',sector:'',micro:'',resp:'',fuente:'',q:'',alert:'',sort:{k:'prio',d:1}};
+const state={periodo:'all',sector:'',micro:'',resp:'',fuente:'',rol:'',q:'',alert:'',sort:{k:'prio',d:1}};
 function filtered(){
   const q=norm(state.q);
   return LEADS.filter(l=>{
@@ -813,7 +840,8 @@ function filtered(){
     if(state.micro&&l.micro!==state.micro) return false;
     if(state.resp&&l.resp!==state.resp) return false;
     if(state.fuente&&l.fuente!==state.fuente) return false;
-    if(q&&!norm([l.empresa,l.id,l.ciudad,l.cargo,l.sigPaso,l.contacto,secName(l.sector)].join(' ')).includes(q)) return false;
+    if(state.rol&&l.rol!==state.rol) return false;
+    if(q&&!norm([l.empresa,l.id,l.ciudad,l.contacto,l.cargo,l.correo,l.web,l.sigPaso,secName(l.sector)].join(' ')).includes(q)) return false;
     return true;
   });
 }
@@ -828,13 +856,14 @@ function populateFilters(){
   state.micro=fillSelect($('#fMicro'),'Todos',['ICP1','ICP2','ICP3','ANTI'].filter(k=>LEADS.some(l=>l.micro===k)).map(k=>[k,k==='ANTI'?'Anti-ICP':k]),state.micro);
   state.resp=fillSelect($('#fResp'),'Todos',uniq(l=>l.resp).sort((a,b)=>a.localeCompare(b,'es')).map(k=>[k,k]),state.resp);
   state.fuente=fillSelect($('#fFuente'),'Todas',uniq(l=>l.fuente).sort((a,b)=>a.localeCompare(b,'es')).map(k=>[k,k]),state.fuente);
+  if(state.rol&&!LEADS.some(l=>l.rol===state.rol)) state.rol='';
 }
 
 /* ---------- render ---------- */
 const empty=t=>`<p class="empty">${esc(t)}</p>`;
 function hbars(el,rows,o={}){
-  if(!rows.length||rows.every(r=>!r.v)){el.innerHTML=empty(o.emptyText||'Sin leads con los filtros actuales.');return;}
-  const m=Math.max(1,...rows.map(r=>r.v));
+  if(!rows.length||(!o.keepZero&&rows.every(r=>!r.v))){el.innerHTML=empty(o.emptyText||'Sin leads con los filtros actuales.');return;}
+  const m=o.max||Math.max(1,...rows.map(r=>r.v));
   el.innerHTML=`<div class="hb">${rows.map(r=>{
     const w=r.v>0?Math.max(1.5,r.v/m*100):0, btn=!!o.key, on=btn&&o.active===r.key;
     const attrs=btn?`type="button" data-${o.key}="${esc(r.key)}" aria-pressed="${on}"`:'';
@@ -847,24 +876,23 @@ function hbars(el,rows,o={}){
 function tile(label,value,sub,sev,sevLabel,tip){
   return `<div class="kpi"${tip?` data-tip="${esc(tip)}"`:''}><div class="kpi-top"><span class="kpi-l">${esc(label)}</span>${sev?pill(sev,sevLabel):''}</div><div class="kpi-v">${value}</div><div class="kpi-s">${esc(sub)}</div></div>`;
 }
+const completo=l=>!!(l.contacto&&l.cargo&&l.correo&&l.telefono);
 function renderKPIs(set){
   const act=set.filter(l=>!l.closed);
   const nuevos=set.filter(l=>l.diasEntrada!=null&&l.diasEntrada<=30).length;
   const avg=act.length?sum(act,l=>l.total)/act.length:0;
-  const sqlFase=act.filter(l=>l.fase==='SQL'||l.fase==='Trato');
-  const sqlOk=sqlFase.filter(l=>l.eb).length, bloq=sqlFase.length-sqlOk;
+  const sqls=act.filter(l=>l.fase==='SQL'), sqlOk=sqls.filter(l=>l.eb).length, bloq=sqls.length-sqlOk;
   const venc=act.filter(l=>l.seg.k==='vencido'||l.seg.k==='sinpaso').length;
   const hoy=act.filter(l=>l.seg.k==='hoy').length;
   const contact=set.filter(l=>l.toque>0||l.ult), resp=contact.filter(l=>l.respondio).length;
-  const tratos=act.filter(l=>l.etapa!=null&&l.etapa<6);
-  const pond=sum(tratos,l=>(l.importe||0)*(l.prob||0)/100), bruto=sum(tratos,l=>l.importe);
+  const comp=act.filter(completo).length, sinMedio=act.filter(l=>!l.correo&&!l.telefono).length;
   $('#kpis').innerHTML=[
-    tile('Leads en seguimiento',nf.format(act.length),`${nuevos} entraron en los últimos 30 días`,null,null,'Leads activos: sin Cierre de Ganado ni de Perdido.'),
+    tile('Leads en seguimiento',nf.format(act.length),`${nuevos} entraron en los últimos 30 días`,null,null,'Leads activos: todos menos los descartados.'),
     tile('Score ICP promedio',`${act.length?Math.round(avg):'—'}<small>/100</small>`,act.length?`Clasificación media: ${bandOf(Math.round(avg)).k}`:'Sin leads activos',null,null,'Promedio del Score Total de los leads activos.'),
-    tile('SQL con decisor mapeado',nf.format(sqlOk),bloq?`${bloq} bloqueados por candado de decisor`:'Ningún SQL bloqueado',bloq?'serious':null,'Revisar','SQL y tratos con Economic Buyer mapeado. Sin decisor, no avanzan en pipeline.'),
+    tile('SQL con decisor mapeado',nf.format(sqlOk),bloq?`${bloq} bloqueados por candado de decisor`:'Ningún SQL bloqueado',bloq?'serious':null,'Revisar','SQL con Economic Buyer mapeado. Sin decisor no se entregan como SQL.'),
     tile('Seguimientos vencidos',nf.format(venc),`${hoy} programados para hoy`,venc?'crit':'ok',venc?'Atender hoy':'Al día','Leads activos con fecha de siguiente paso vencida o sin siguiente paso.'),
     tile('Tasa de respuesta',contact.length?pct(resp,contact.length):'—',`${resp} de ${contact.length} contactados respondieron`,null,null,'Leads que respondieron sobre los que recibieron al menos un toque.'),
-    tile('Pipeline ponderado',esc(money.format(pond)),`${money.format(bruto)} bruto · ${tratos.length} tratos abiertos`,null,null,'Suma de importe × probabilidad de cierre de los tratos abiertos.')
+    tile('Contactos con datos completos',act.length?pct(comp,act.length):'—',sinMedio?`${sinMedio} sin correo ni teléfono`:'Todos tienen correo o teléfono',sinMedio?'warn':null,'Completar','Leads activos con nombre, cargo, correo y teléfono del contacto.')
   ].join('');
 }
 function renderFunnel(set){
@@ -884,6 +912,7 @@ function renderBands(set){
     <div class="cols-x">${BANDS.map(b=>`<div><b>${esc(b.k)}</b><small>${b.min}–${b.max}</small></div>`).join('')}</div>`;
 }
 const byPrio=(a,b)=>a.pr.r-b.pr.r||(a.fsig?a.fsig.getTime():Infinity)-(b.fsig?b.fsig.getTime():Infinity)||b.total-a.total;
+const quien=l=>[l.contacto,l.cargo].filter(Boolean).join(' · ');
 function renderAgenda(set){
   const items=set.filter(l=>!l.closed&&(l.seg.k==='vencido'||l.seg.k==='sinpaso'||(l.seg.d!=null&&l.seg.d<=7))).sort(byPrio);
   $('#agendaSub').textContent=`${items.length} acciones vencidas o en los próximos 7 días, en el orden de prioridad diaria del agente`;
@@ -891,7 +920,7 @@ function renderAgenda(set){
   const top=items.slice(0,8);
   $('#agenda').innerHTML=`<div class="ag-list">${top.map(l=>`<button class="ag" type="button" data-id="${esc(l.id)}">
       <span class="ag-st">${pill(l.seg.sev,l.seg.label)}</span>
-      <span class="ag-main"><b>${esc(l.empresa)}</b><span>${esc(l.sigPaso||'Definir siguiente paso')}</span><small>${esc([l.pr.m,l.medio,`Toque ${l.toque} de 5`].filter(Boolean).join(' · '))}</small></span>
+      <span class="ag-main"><b>${esc(l.empresa)}</b>${quien(l)?`<small>${esc(quien(l))}</small>`:''}<span>${esc(l.sigPaso||'Definir siguiente paso')}</span><small>${esc([l.pr.m,l.medio,`Toque ${l.toque} de 5`].filter(Boolean).join(' · '))}</small></span>
       <span class="ag-side"><b>${esc(fdate(l.fsig))}</b><small>${esc(l.resp)}</small></span></button>`).join('')}</div>
     ${items.length>top.length?`<button class="btn more" id="agMore" type="button">Ver las ${items.length} en la tabla</button>`:''}`;
 }
@@ -900,14 +929,14 @@ function renderAlerts(set){
     const n=set.filter(l=>l.flags.includes(r.id)).length, on=state.alert===r.id;
     return `<button class="al" type="button" data-alert="${r.id}" aria-pressed="${on}" ${n||on?'':'disabled'}>${ICONS[r.sev]}<span><b>${esc(r.t)}</b><small>${esc(r.d)}</small></span><span class="al-n">${n}</span></button>`;}).join('')}</div>`;
 }
-function renderPipe(set){
-  const open=set.filter(l=>!l.closed&&l.etapa!=null&&l.etapa<6);
-  hbars($('#pipe'),ETAPAS.slice(0,6).map((e,i)=>{
-    const ls=open.filter(l=>l.etapa===i), v=sum(ls,l=>l.importe), p=sum(ls,l=>(l.importe||0)*(l.prob||0)/100);
-    return {key:String(i),label:e.n,v,extra:` · ${ls.length}`,tip:`${e.n}\n${ls.length} tratos · ${moneyFull.format(v)}\nPonderado: ${moneyFull.format(p)}\nProbabilidad base ${e.p[0]}–${e.p[1]}%`};
-  }),{fmt:v=>money.format(v),emptyText:'Sin tratos abiertos con los filtros actuales.'});
-  const won=set.filter(l=>l.fase==='Ganado'), lost=set.filter(l=>l.fase==='Perdido');
-  $('#pipeFoot').textContent=`Cierre de Ganado: ${won.length} (${money.format(sum(won,l=>l.importe))}) · Cierre de Perdido: ${lost.length}`;
+function renderCad(set){
+  const act=set.filter(l=>!l.closed);
+  const labels=['Sin primer toque',...CAD.map((d,i)=>`Toque ${i+1} · ${d}`)];
+  hbars($('#cadencia'),labels.map((lab,i)=>{
+    const ls=act.filter(l=>l.toque===i), rs=ls.filter(l=>l.respondio).length;
+    return {key:String(i),label:lab,v:ls.length,extra:i&&ls.length?` · ${pct(rs,ls.length)} resp.`:'',
+      tip:`${lab}${i?`\n${CAD_D[i-1]}`:''}\n${ls.length} leads activos${i?` · ${rs} respondieron`:''}`};
+  }),{keepZero:act.length>0,emptyText:'Sin leads activos con los filtros actuales.'});
 }
 function groupRows(set,keyf){
   const g=new Map();
@@ -917,21 +946,33 @@ function groupRows(set,keyf){
 function renderSector(set){
   hbars($('#sector'),groupRows(set,l=>l.sector).map(([k,ls])=>{
     const avg=Math.round(sum(ls,l=>l.total)/ls.length);
-    return {key:k,label:secName(k),v:ls.length,extra:` · ${avg} pts`,tip:`${secName(k)}${secCode(k)?`\n${secCode(k)}`:''}\n${ls.length} leads · score promedio ${avg}\nDolor típico: ${(SECTORES[k]||SECTORES.OTRO)[1]}`};
+    return {key:k,label:secName(k),v:ls.length,extra:` · ${avg} pts`,tip:`${secName(k)}${secCode(k)?`\n${secCode(k)}`:''}\n${ls.length} leads · score promedio ${avg}\nDolor típico: ${sec(k)[1]}`};
   }),{key:'sector',active:state.sector});
 }
 function renderFuente(set){
   hbars($('#fuente'),groupRows(set,l=>l.fuente).map(([k,ls])=>{
-    const sql=ls.filter(l=>l.maxIdx>=3).length;
-    return {key:k,label:k,v:ls.length,tip:`${k}\n${ls.length} leads · ${sql} llegaron a SQL o más (${pct(sql,ls.length)})`};
+    const q=ls.filter(l=>l.maxIdx>=3).length;
+    return {key:k,label:k,v:ls.length,tip:`${k}\n${ls.length} leads · ${q} llegaron a SQL (${pct(q,ls.length)})`};
   }),{key:'fuente',active:state.fuente});
 }
+function renderDatos(set){
+  const act=set.filter(l=>!l.closed), n=act.length;
+  const F=[['Nombre del contacto',l=>l.contacto],['Cargo',l=>l.cargo],['Correo',l=>l.correo],['Teléfono',l=>l.telefono],['LinkedIn',l=>l.linkedin],
+    ['Rol en la compra identificado',l=>l.rol&&l.rol!=='Sin identificar'],['Consentimiento de contacto',l=>l.consent],['Sitio web de la empresa',l=>l.web],['Tamaño de la empresa',l=>l.empleados]];
+  hbars($('#datos'),F.map(([lab,f])=>{const c=act.filter(f).length;return {key:lab,label:lab,v:pctN(c,n),extra:` · ${c}`,tip:`${lab}\n${c} de ${n} leads activos lo tienen registrado\nFaltan ${n-c}`};}),
+    {max:100,keepZero:n>0,fmt:v=>v+'%',emptyText:'Sin leads activos con los filtros actuales.'});
+}
+function renderRol(set){
+  const rows=groupRows(set,l=>l.rol).sort((a,b)=>{const ia=ROLES.indexOf(a[0]),ib=ROLES.indexOf(b[0]);return (ia<0?99:ia)-(ib<0?99:ib);});
+  hbars($('#rol'),rows.map(([k,ls])=>{const q=ls.filter(l=>l.fase==='SQL').length;return {key:k,label:k,v:ls.length,tip:`${k}\n${ls.length} contactos · ${q} en SQL`};}),{key:'rol',active:state.rol});
+}
 const tempHtml=t=>{const n=TEMPS.indexOf(t)+1;return `<span class="temp"><i aria-hidden="true">${[1,2,3,4].map(k=>`<span class="${k<=n?'on':''}"></span>`).join('')}</i>${esc(t||'—')}</span>`;};
-const ebHtml=l=>l.eb?pill('ok','Mapeado'):(!l.closed&&(l.fase==='SQL'||l.fase==='Trato'))?pill('serious','Sin EB'):'<span class="t-mut">Pendiente</span>';
-const COLDEF=[['prio','Seguimiento'],['empresa','Lead'],['sector','Sector'],['micro','ICP'],['total','Score'],['fase','Fase'],['temp','Temperatura'],['eb','Decisor'],['ult','Último contacto'],['sig','Siguiente paso'],['resp','Responsable']];
+const ebHtml=l=>l.eb?pill('ok','Mapeado'):(!l.closed&&l.fase==='SQL')?pill('serious','Sin EB'):'<span class="t-mut">Pendiente</span>';
+const COLDEF=[['prio','Seguimiento'],['empresa','Empresa'],['contacto','Contacto'],['sector','Sector'],['micro','ICP'],['total','Score'],['fase','Fase'],['temp','Temperatura'],['eb','Decisor'],['ult','Último contacto'],['sig','Siguiente paso'],['resp','Responsable']];
 const SORTS={
   prio:byPrio,
   empresa:(a,b)=>a.empresa.localeCompare(b.empresa,'es'),
+  contacto:(a,b)=>(a.contacto||'~').localeCompare(b.contacto||'~','es'),
   sector:(a,b)=>secName(a.sector).localeCompare(secName(b.sector),'es'),
   micro:(a,b)=>a.micro.localeCompare(b.micro),
   total:(a,b)=>a.total-b.total,
@@ -949,14 +990,18 @@ function renderTable(set){
   $('#thead').innerHTML=COLDEF.map(([key,t])=>`<th scope="col" aria-sort="${key===k?(d>0?'ascending':'descending'):'none'}"><button type="button" data-sort="${key}">${esc(t)}<span class="arr" aria-hidden="true">${key===k?(d>0?'▲':'▼'):''}</span></button></th>`).join('');
   $('#tblCount').textContent=`Mostrando ${rows.length} de ${LEADS.length} leads · clic en una fila para abrir la ficha`;
   const rule=RULES.find(r=>r.id===state.alert);
-  $('#alertChip').innerHTML=rule?`<span class="chip-f">Alerta: ${esc(rule.t)}<button type="button" id="alertClear" aria-label="Quitar filtro de alerta">×</button></span>`:'';
+  const chips=[];
+  if(rule) chips.push(`<span class="chip-f">Alerta: ${esc(rule.t)}<button type="button" data-clear="alert" aria-label="Quitar filtro de alerta">×</button></span>`);
+  if(state.rol) chips.push(`<span class="chip-f">Rol: ${esc(state.rol)}<button type="button" data-clear="rol" aria-label="Quitar filtro de rol">×</button></span>`);
+  $('#alertChip').innerHTML=chips.join(' ');
   $('#tbody').innerHTML=rows.length?rows.map(l=>`<tr tabindex="0" data-id="${esc(l.id)}">
     <td>${pill(l.seg.sev,l.seg.label)}<span class="t-sm">${esc(l.pr.m)}</span></td>
-    <td class="t-emp"><b>${esc(l.empresa)}</b><span class="t-sm"><span class="mono">${esc(l.id)}</span>${[l.cargo,l.ciudad].filter(Boolean).map(x=>' · '+esc(x)).join('')}</span></td>
+    <td class="t-emp"><b>${esc(l.empresa)}</b><span class="t-sm"><span class="mono">${esc(l.id)}</span>${[l.ciudad,l.empleados?l.empleados+' empl.':''].filter(Boolean).map(x=>' · '+esc(x)).join('')}</span></td>
+    <td class="t-con">${l.contacto?`<b>${esc(l.contacto)}</b>`:'<span class="t-mut">Sin nombre</span>'}<span class="t-sm">${esc([l.cargo,l.rol!=='Sin identificar'?l.rol:''].filter(Boolean).join(' · ')||'—')}</span><span class="t-sm">${esc([l.correo?'Correo':'',l.telefono?'Teléfono':'',l.linkedin?'LinkedIn':''].filter(Boolean).join(' · ')||'Sin medios de contacto')}</span></td>
     <td>${esc(secName(l.sector))}<span class="t-sm mono">${esc(secCode(l.sector))}</span></td>
     <td><span class="icp icp-${esc(l.micro)}">${esc(l.micro==='ANTI'?'Anti-ICP':l.micro)}</span></td>
     <td><div class="sc"><b>${l.total}</b><span class="sc-track"><i style="width:${l.total}%;background:var(--seq-${l.band.i+1})"></i></span></div><span class="t-sm">${esc(l.band.k)}</span></td>
-    <td>${esc(l.fase)}${l.etapa!=null&&l.etapa<6?`<span class="t-sm">${esc(ETAPAS[l.etapa].n)}</span>`:''}</td>
+    <td>${esc(l.fase)}</td>
     <td>${tempHtml(l.temp)}</td>
     <td>${ebHtml(l)}</td>
     <td>${l.diasSin==null?'<span class="t-mut">Sin contacto</span>':(l.diasSin===0?'Hoy':`Hace ${l.diasSin} d`)}<span class="t-sm">${esc(l.ult?fdate(l.ult):'')}</span></td>
@@ -981,7 +1026,7 @@ function render(){
   const set=filtered();
   syncControls();
   renderKPIs(set); renderFunnel(set); renderBands(set); renderAgenda(set); renderAlerts(set);
-  renderPipe(set); renderSector(set); renderFuente(set); renderTable(set); renderSource();
+  renderCad(set); renderSector(set); renderFuente(set); renderDatos(set); renderRol(set); renderTable(set); renderSource();
 }
 function load(leads,source){
   LEADS=leads.map(prep); SOURCE=source; state.alert='';
@@ -993,19 +1038,19 @@ const meter=(lab,v,max)=>`<div class="mt"><span>${esc(lab)}</span><span class="m
 const cadHtml=l=>`<ol class="cad">${CAD.map((d,i)=>`<li class="${i<l.toque?'done':i===l.toque?'cur':''}"><i></i><b>${d}</b><small>${esc(CAD_D[i])}</small></li>`).join('')}</ol>`;
 function drawerHtml(l){
   const flags=RULES.filter(r=>l.flags.includes(r.id));
-  const et=l.etapa!=null?ETAPAS[l.etapa]:null;
-  const kv=(t,v,wide)=>`<div${wide?' class="kv-wide"':''}><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`;
-  return `<div class="dr-hd"><div><p class="eyebrow">${esc([l.id,secCode(l.sector)].filter(Boolean).join(' · '))}</p><h3 id="drTitle">${esc(l.empresa)}</h3><p class="dr-meta">${esc([l.contacto,l.cargo,l.ciudad,secName(l.sector)].filter(Boolean).join(' · '))}</p></div><button class="x" type="button" aria-label="Cerrar ficha">×</button></div>
+  const kv=(t,v,o={})=>`<div${o.wide?' class="kv-wide"':''}><dt>${esc(t)}</dt><dd${v?'':' class="t-mut"'}>${v?`<span>${esc(v)}</span>${o.copy?`<button class="cp" type="button" data-copy="${esc(v)}">Copiar</button>`:''}`:'Sin dato'}</dd></div>`;
+  return `<div class="dr-hd"><div><p class="eyebrow">${esc([l.id,secCode(l.sector)].filter(Boolean).join(' · '))}</p><h3 id="drTitle">${esc(l.empresa)}</h3><p class="dr-meta">${esc([quien(l),l.ciudad].filter(Boolean).join(' · '))}</p></div><button class="x" type="button" aria-label="Cerrar ficha">×</button></div>
   <section class="dr-sec"><div class="dr-score-top"><div class="big">${l.total}<small>/100</small></div><div class="dr-tags"><span class="tag">${esc(l.band.k)}</span><span class="icp icp-${esc(l.micro)}">${esc(l.micro==='ANTI'?'Anti-ICP':l.micro)}</span>${tempHtml(l.temp)}</div></div>
     ${meter('ICP Fit',l.fit,30)}${meter('Intención',l.intent,30)}${meter('Viabilidad',l.viab,30)}${meter('Engagement',l.eng,10)}</section>
   <section class="dr-sec"><h4>Siguiente mejor acción</h4><p class="nba">${esc(l.nba)}</p>
     <div class="dr-row">${pill(l.seg.sev,l.seg.label)}<span>${esc([l.fsig?fdateL(l.fsig):'',l.medio,l.resp].filter(Boolean).join(' · '))}</span></div>
     <p class="dr-note">Paso registrado: ${esc(l.sigPaso||'—')} · Prioridad: ${esc(l.pr.m)}</p></section>
+  <section class="dr-sec"><h4>Datos del contacto</h4><dl class="kv">${kv('Nombre',l.contacto)}${kv('Cargo',l.cargo)}${kv('Área',l.area)}${kv('Rol en la compra',l.rol)}${kv('Correo',l.correo,{copy:true,wide:true})}${kv('Teléfono',l.telefono,{copy:true})}${kv('LinkedIn',l.linkedin,{copy:/linkedin\.com/i.test(l.linkedin)})}${kv('Canal preferido',l.canalPref)}${kv('Consentimiento de contacto',l.consent?'Registrado':'')}</dl></section>
+  <section class="dr-sec"><h4>Datos de la empresa</h4><dl class="kv">${kv('Sector',secName(l.sector))}${kv('Código',secCode(l.sector))}${kv('Ciudad',l.ciudad)}${kv('Empleados',l.empleados)}${kv('Sitio web',l.web,{copy:true})}${kv('Micro-ICP',l.micro==='ANTI'?'Anti-ICP':l.micro)}${kv('Regulación que presiona',l.sector!=='OTRO'?sec(l.sector)[2]:'',{wide:true})}${kv('Dolor típico del sector',l.sector!=='OTRO'?sec(l.sector)[1]:'',{wide:true})}${kv('Gancho comercial',l.gancho,{wide:true})}</dl></section>
   <section class="dr-sec"><h4>Cadencia de seguimiento · toque ${l.toque} de 5</h4>${cadHtml(l)}<p class="dr-note">Cada toque aporta valor, evidencia o una decisión. Nunca "solo dando seguimiento".</p></section>
   <section class="dr-sec"><h4>BANT</h4><div class="bant">${['B','A','N','T'].map(k=>`<div><span>${esc(BANT_N[k])}</span>${bantPill(l.bant[k])}</div>`).join('')}</div></section>
-  ${et?`<section class="dr-sec"><h4>Oportunidad en Zoho</h4><dl class="kv">${kv('Etapa',et.n)}${kv('Probabilidad de cierre',l.prob!=null?l.prob+'%':'—')}${kv('Importe',l.importe!=null?moneyFull.format(l.importe):'—')}${kv('Ponderado',l.importe!=null&&l.prob!=null?moneyFull.format(l.importe*l.prob/100):'—')}</dl></section>`:''}
   <section class="dr-sec"><h4>Alertas del agente</h4>${flags.length?`<ul class="dr-al">${flags.map(r=>`<li>${ICONS[r.sev]}<div><b>${esc(r.t)}</b><small>${esc(r.d)}</small></div></li>`).join('')}</ul>`:`<div>${pill('ok','Sin alertas')}</div>`}</section>
-  <section class="dr-sec"><h4>Contexto</h4><dl class="kv">${kv('Fuente',[l.fuente,l.canal].filter(Boolean).join(' · '))}${kv('Responsable',l.resp)}${kv('Entrada',fdateL(l.entrada))}${kv('Última interacción',l.ult?`${fdateL(l.ult)} (hace ${l.diasSin} d)`:'Sin contacto')}${kv('Economic Buyer',l.eb?'Mapeado':'No mapeado')}${kv('Respondió',l.respondio?'Sí':'No')}${kv('Gancho comercial',l.gancho||'—',true)}</dl></section>`;
+  <section class="dr-sec"><h4>Origen y seguimiento</h4><dl class="kv">${kv('Fuente',[l.fuente,l.canal].filter(Boolean).join(' · '))}${kv('Responsable',l.resp)}${kv('Entrada',l.entrada?fdateL(l.entrada):'')}${kv('Última interacción',l.ult?`${fdateL(l.ult)} (hace ${l.diasSin} d)`:'')}${kv('Economic Buyer',l.eb?'Mapeado':'No mapeado')}${kv('Respondió',l.respondio?'Sí':'No')}</dl></section>`;
 }
 let lastFocus=null;
 function openDrawer(id){
@@ -1023,14 +1068,19 @@ function closeDrawer(){
 
 /* ---------- CSV de salida, portapapeles, avisos ---------- */
 const csvCell=v=>{const s=v==null?'':String(v);return /[",\n;]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};
-const leadRow=l=>[l.id,l.empresa,secCode(l.sector),l.ciudad,l.fuente,l.canal,l.resp,l.cargo,l.fase,l.temp,l.micro,l.fit,l.intent,l.viab,l.eng,l.total,
-  l.eb?'Sí':'No',l.aliado?'Sí':'No',iso(l.entrada),iso(l.ult),l.sigPaso,iso(l.fsig),l.medio,l.toque,l.respondio?'Sí':'No',
-  l.etapa!=null?ETAPAS[l.etapa].n:'',l.importe,l.prob,l.bant.B,l.bant.A,l.bant.N,l.bant.T,l.gancho];
+const leadRow=l=>[l.id,l.empresa,l.web,secCode(l.sector),l.ciudad,l.empleados,l.fuente,l.canal,l.resp,
+  l.contacto,l.cargo,l.area,l.rol,l.correo,l.telefono,l.linkedin,l.canalPref,l.consent?'Sí':'No',
+  l.fase,l.temp,l.micro,l.fit,l.intent,l.viab,l.eng,l.total,l.eb?'Sí':'No',l.aliado?'Sí':'No',
+  iso(l.entrada),iso(l.ult),l.sigPaso,iso(l.fsig),l.medio,l.toque,l.respondio?'Sí':'No',l.bant.B,l.bant.A,l.bant.N,l.bant.T,l.gancho];
 const toCSV=rows=>[TPL.join(','),...rows.map(r=>r.map(csvCell).join(','))].join('\n');
 function templateCSV(){
   return toCSV([
-    ['L-0001','Hospital Ejemplo Norte','MEM_AIS_MX_SALUD','Monterrey','Marketing','Webinar','Equipo Nuevo León','CISO','SQL','Caliente','ICP1',24,21,20,8,73,'Sí','No',iso(addDays(-40)),iso(addDays(-4)),'Sesión de descubrimiento comercial',iso(addDays(3)),'Videollamada',3,'Sí','','','','Parcial','Confirmado','Confirmado','Parcial','Ransomware en hospitales del sector'],
-    ['L-0002','Manufacturera Ejemplo Bajío','MEM_AIS_MX_MFG','Querétaro','Comercial','Referido','Equipo CDMX','Director de TI','Trato','Caliente','ICP1',26,24,22,8,80,'Sí','No',iso(addDays(-75)),iso(addDays(-2)),'Presentar propuesta al comité',iso(addDays(1)),'Videollamada',4,'Sí','Presentación de Propuesta',1250000,75,'Confirmado','Confirmado','Confirmado','Parcial','Cliente OEM exige evidencia de seguridad']
+    ['L-0001','Hospital Ejemplo Norte','www.hospitalejemplo.example','MEM_AIS_MX_SALUD','Monterrey','501–1,000','Marketing','Webinar','Equipo Nuevo León',
+     'Nombre Apellido','CISO','Seguridad de la información','Validador técnico','nombre.apellido@hospitalejemplo.example','+52 81 0123 4567','linkedin.com/in/ejemplo','Correo','Sí',
+     'SQL','Caliente','ICP1',24,21,20,8,73,'Sí','No',iso(addDays(-40)),iso(addDays(-4)),'Sesión de descubrimiento comercial',iso(addDays(3)),'Videollamada',3,'Sí','Parcial','Confirmado','Confirmado','Parcial','Ransomware en hospitales del sector'],
+    ['L-0002','Manufacturera Ejemplo Bajío','www.manufacturaejemplo.example','MEM_AIS_MX_MFG','Querétaro','1,001–5,000','Comercial','Referido','Equipo CDMX',
+     'Nombre Apellido','Director de TI','Tecnología','Champion','nombre.apellido@manufacturaejemplo.example','+52 442 012 3456','','WhatsApp','No',
+     'SAL','Tibio','ICP1',26,18,17,6,67,'No','No',iso(addDays(-25)),iso(addDays(-2)),'Confirmar actores involucrados',iso(addDays(1)),'Llamada',2,'Sí','Inferido','Parcial','Confirmado','No identificado','Cliente OEM exige evidencia de seguridad']
   ]);
 }
 let toastT=0;
@@ -1041,26 +1091,26 @@ function openModal(title,desc,text){
 }
 function copyText(text,okMsg,title){
   try{
-    navigator.clipboard.writeText(text).then(()=>toast(okMsg),()=>openModal(title,'Tu navegador no permitió copiar. Selecciona el texto y cópialo; guárdalo como archivo .csv.',text));
-  }catch(e){openModal(title,'Selecciona el texto y cópialo; guárdalo como archivo .csv.',text);}
+    navigator.clipboard.writeText(text).then(()=>toast(okMsg),()=>openModal(title,'Tu navegador no permitió copiar. Selecciona el texto y cópialo.',text));
+  }catch(e){openModal(title,'Selecciona el texto y cópialo.',text);}
 }
 
 /* ---------- archivos ---------- */
-const STORE='acces-icp-dashboard:csv';
+const STORE='acces-icp-dashboard:leads-csv';
 function readFile(file){
   const go=enc=>{const fr=new FileReader();fr.onload=()=>{
     const text=String(fr.result||'');
     if(enc==='utf-8'&&(text.match(/\uFFFD/g)||[]).length>2){go('windows-1252');return;}
     try{const n=importText(text,file.name);toast(`Importados ${n} leads de ${file.name}.`);try{localStorage.setItem(STORE,JSON.stringify({name:file.name,text}));}catch(e){}}
     catch(err){toast(err.message);}
-  };fr.onerror=()=>toast('No pude leer el archivo. Intenta exportarlo de nuevo como CSV.');fr.readAsText(file,enc);};
+  };fr.onerror=()=>toast('No pude leer el archivo. Intenta guardarlo de nuevo como CSV.');fr.readAsText(file,enc);};
   go('utf-8');
 }
 
 /* ---------- eventos ---------- */
 $('#btnImport').addEventListener('click',()=>$('#fileIn').click());
 $('#fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(f)readFile(f);e.target.value='';});
-$('#btnTpl').addEventListener('click',()=>copyText(templateCSV(),'Plantilla CSV copiada. Pégala en una hoja y guárdala como .csv.','Plantilla CSV para Zoho'));
+$('#btnTpl').addEventListener('click',()=>copyText(templateCSV(),'Plantilla CSV copiada. Pégala en una hoja y guárdala como .csv.','Plantilla CSV de leads'));
 $('#btnCopyView').addEventListener('click',()=>{
   const set=filtered().filter(l=>!state.alert||l.flags.includes(state.alert)).sort(byPrio);
   copyText(toCSV(set.map(leadRow)),`${set.length} leads copiados como CSV.`,'Vista actual en CSV');
@@ -1070,7 +1120,7 @@ $('#fPeriodo').addEventListener('click',e=>{const b=e.target.closest('button[dat
 [['#fSector','sector'],['#fMicro','micro'],['#fResp','resp'],['#fFuente','fuente']].forEach(([s,k])=>$(s).addEventListener('change',e=>{state[k]=e.target.value;render();}));
 let qT=0;
 $('#fQ').addEventListener('input',e=>{clearTimeout(qT);qT=setTimeout(()=>{state.q=e.target.value;render();},120);});
-$('#fClear').addEventListener('click',()=>{Object.assign(state,{periodo:'all',sector:'',micro:'',resp:'',fuente:'',q:'',alert:''});render();});
+$('#fClear').addEventListener('click',()=>{Object.assign(state,{periodo:'all',sector:'',micro:'',resp:'',fuente:'',rol:'',q:'',alert:''});render();});
 const toTable=()=>$('#pTable').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});
 $('#agenda').addEventListener('click',e=>{
   if(e.target.closest('#agMore')){state.sort={k:'prio',d:1};state.alert='';render();toTable();return;}
@@ -1079,14 +1129,19 @@ $('#agenda').addEventListener('click',e=>{
 $('#alerts').addEventListener('click',e=>{const b=e.target.closest('[data-alert]');if(!b||b.disabled)return;state.alert=state.alert===b.dataset.alert?'':b.dataset.alert;render();if(state.alert)toTable();});
 $('#sector').addEventListener('click',e=>{const b=e.target.closest('[data-sector]');if(!b)return;state.sector=state.sector===b.dataset.sector?'':b.dataset.sector;render();});
 $('#fuente').addEventListener('click',e=>{const b=e.target.closest('[data-fuente]');if(!b)return;state.fuente=state.fuente===b.dataset.fuente?'':b.dataset.fuente;render();});
+$('#rol').addEventListener('click',e=>{const b=e.target.closest('[data-rol]');if(!b)return;state.rol=state.rol===b.dataset.rol?'':b.dataset.rol;render();});
 $('#pTable').addEventListener('click',e=>{
-  if(e.target.closest('#alertClear')){state.alert='';render();return;}
+  const c=e.target.closest('[data-clear]');
+  if(c){state[c.dataset.clear]='';render();return;}
   const s=e.target.closest('[data-sort]');
   if(s){const k=s.dataset.sort;state.sort=state.sort.k===k?{k,d:-state.sort.d}:{k,d:(k==='total'||k==='ult')?-1:1};render();return;}
   const tr=e.target.closest('tr[data-id]');if(tr)openDrawer(tr.dataset.id);
 });
 $('#tbody').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const tr=e.target.closest('tr[data-id]');if(tr){e.preventDefault();openDrawer(tr.dataset.id);}}});
-$('#drawer').addEventListener('click',e=>{if(e.target.closest('.x'))closeDrawer();});
+$('#drawer').addEventListener('click',e=>{
+  if(e.target.closest('.x')){closeDrawer();return;}
+  const cp=e.target.closest('[data-copy]');if(cp)copyText(cp.dataset.copy,`Copiado: ${cp.dataset.copy}`,'Copiar dato');
+});
 $('#ovl').addEventListener('click',closeDrawer);
 $('#mdClose').addEventListener('click',()=>{$('#modal').hidden=true;});
 $('#modal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#modal').hidden=true;});
