@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agente Seguimiento Gener. ICP Leads AccesGroup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..800;1,62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: mesa de control comercial. Banda de marca, filtros, fila de KPIs, rejilla de análisis
+   (embudo, score, agenda, alertas, pipeline, sector, fuente), tabla maestra de leads y ficha lateral por lead. */
+:root{
+  --navy:#183051; --cyan:#0097CD;
+  --bg:#EDF1F5; --panel:#FFFFFF; --panel-2:#F4F7FA; --ink:#0F1D31; --ink-2:#3E4E63; --muted:#627287;
+  --line:#D6DEE7; --grid:#E5EAF0;
+  --accent:#183051; --accent-ink:#FFFFFF; --link:#0A78A8;
+  --bar:#0A86BD; --bar-soft:#D3EAF5;
+  --seq-1:#86C8E6; --seq-2:#45A9D8; --seq-3:#0A86BD; --seq-4:#1D5F96; --seq-5:#183051;
+  --hdr:#183051; --hdr-ink:#FFFFFF; --hdr-muted:#B3C6DC; --plate:#FFFFFF;
+  --ok:#0CA30C; --warn:#FAB219; --serious:#EC835A; --crit:#D03B3B; --info:#0A86BD;
+  --ok-bg:rgba(12,163,12,.10); --warn-bg:rgba(250,178,25,.18); --serious-bg:rgba(236,131,90,.16);
+  --crit-bg:rgba(208,59,59,.10); --info-bg:rgba(10,134,189,.10);
+  --overlay:rgba(9,18,32,.45);
+  --font-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#09121E; --panel:#101C2C; --panel-2:#16243A; --ink:#E5ECF4; --ink-2:#B9C6D6; --muted:#8C9DB2;
+    --line:#24364F; --grid:#1B2B40;
+    --accent:#5CC3EC; --accent-ink:#06121F; --link:#5CC3EC;
+    --bar:#2AA8DD; --bar-soft:#17324A;
+    --seq-1:#2A6C9C; --seq-2:#2386C0; --seq-3:#2AA8DD; --seq-4:#5CC3EC; --seq-5:#9AD8F2;
+    --hdr:#0C1828; --hdr-ink:#E9F0F7; --hdr-muted:#90A6BE; --plate:#FFFFFF;
+    --info:#2AA8DD;
+    --ok-bg:rgba(12,163,12,.20); --warn-bg:rgba(250,178,25,.18); --serious-bg:rgba(236,131,90,.20);
+    --crit-bg:rgba(208,59,59,.22); --info-bg:rgba(42,168,221,.14);
+    --overlay:rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#09121E; --panel:#101C2C; --panel-2:#16243A; --ink:#E5ECF4; --ink-2:#B9C6D6; --muted:#8C9DB2;
+  --line:#24364F; --grid:#1B2B40;
+  --accent:#5CC3EC; --accent-ink:#06121F; --link:#5CC3EC;
+  --bar:#2AA8DD; --bar-soft:#17324A;
+  --seq-1:#2A6C9C; --seq-2:#2386C0; --seq-3:#2AA8DD; --seq-4:#5CC3EC; --seq-5:#9AD8F2;
+  --hdr:#0C1828; --hdr-ink:#E9F0F7; --hdr-muted:#90A6BE; --plate:#FFFFFF;
+  --info:#2AA8DD;
+  --ok-bg:rgba(12,163,12,.20); --warn-bg:rgba(250,178,25,.18); --serious-bg:rgba(236,131,90,.20);
+  --crit-bg:rgba(208,59,59,.22); --info-bg:rgba(42,168,221,.14);
+  --overlay:rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+[hidden]{display:none!important}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--font-body);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+small{font-size:inherit}
+.wrap{width:100%;max-width:1440px;margin-inline:auto;padding-inline:clamp(16px,3vw,32px)}
+
+/* Banda de marca */
+.hdr{background:var(--hdr);color:var(--hdr-ink)}
+.hdr-in{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;padding-block:18px}
+.plate{display:inline-flex;align-items:center;background:var(--plate);border-radius:10px;padding:8px 12px;flex:none}
+.plate img{display:block;height:30px;width:auto}
+.ttl{flex:1 1 380px;min-width:0}
+.ttl h1{margin:0;font-family:var(--font-display);font-style:italic;font-weight:800;font-stretch:112%;text-transform:uppercase;font-size:clamp(17px,2.15vw,26px);line-height:1.12;letter-spacing:.005em;text-wrap:balance}
+.strip{display:flex;gap:5px;margin-block:8px 6px}
+.strip i{display:block;width:20px;height:4px;border-radius:1px}
+.strip i:nth-child(1){background:#0097CD}.strip i:nth-child(2){background:#46B05A}.strip i:nth-child(3){background:#FFFFFF}.strip i:nth-child(4){background:#46B05A}
+.sub{margin:0;color:var(--hdr-muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.src{display:inline-flex;align-items:center;gap:6px;color:var(--hdr-ink);font-weight:600}
+.src i{width:8px;height:8px;border-radius:50%;background:#FAB219}
+.src.is-real i{background:#0CA30C}
+.hdr-act{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--panel-2)}
+.btn-hdr{background:transparent;color:var(--hdr-ink);border-color:rgba(255,255,255,.32)}
+.btn-hdr:hover{background:rgba(255,255,255,.09)}
+.btn-hdr-pri{background:#FFFFFF;color:#183051;border-color:#FFFFFF}
+.btn-hdr-pri:hover{background:#E6F4FA}
+.btn-ghost{background:transparent}
+
+.main{display:flex;flex-direction:column;gap:16px;padding-block:18px 40px}
+
+.notice{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;background:var(--info-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;color:var(--ink-2)}
+.notice p{margin:0;flex:1 1 320px}
+.notice b{color:var(--ink)}
+
+/* Filtros */
+.filters{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld>span{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fld select,.fld input{height:36px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:0 10px;min-width:0;max-width:100%}
+.fld select{min-width:150px}
+.fld-q{flex:1 1 220px}
+.fld-q input{width:100%}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel);height:36px}
+.seg button{border:0;background:none;padding:0 12px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:640px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1180px){.kpis{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 8px;flex-wrap:wrap}
+.kpi-l{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.kpi-v{font-family:var(--font-display);font-weight:700;font-size:30px;line-height:1.05;letter-spacing:-.01em}
+.kpi-v small{font-size:14px;font-weight:600;color:var(--muted);margin-left:2px}
+.kpi-s{font-size:12.5px;color:var(--muted)}
+
+/* Pills de estado: icono + etiqueta, nunca solo color */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:2px 8px 2px 6px;border-radius:999px;color:var(--ink);white-space:nowrap;background:var(--panel-2)}
+.pill svg{width:13px;height:13px;flex:none}
+.pill-crit{background:var(--crit-bg)}.pill-serious{background:var(--serious-bg)}.pill-warn{background:var(--warn-bg)}
+.pill-info,.pill-half{background:var(--info-bg)}.pill-ok{background:var(--ok-bg)}
+
+/* Rejilla de paneles */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
+.panel{grid-column:span 12;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0;display:flex;flex-direction:column;gap:12px}
+@media (min-width:760px) and (max-width:1099.98px){.p-a,.p-b,.p-f,.p-g{grid-column:span 6}}
+@media (min-width:1100px){.p-a,.p-c{grid-column:span 7}.p-b,.p-d,.p-e{grid-column:span 5}.p-f{grid-column:span 4}.p-g{grid-column:span 3}}
+.ph{display:flex;flex-direction:column;gap:2px}
+.ph h2{margin:0;font-family:var(--font-display);font-size:15.5px;font-weight:700;font-stretch:104%;letter-spacing:.005em}
+.ph p{margin:0;color:var(--muted);font-size:12.5px}
+.empty{margin:0;padding:18px 0;color:var(--muted);font-size:13px;text-align:center}
+.foot{margin:0;color:var(--muted);font-size:12.5px;border-top:1px solid var(--grid);padding-top:10px}
+
+/* Barras horizontales */
+.hb{display:flex;flex-direction:column;gap:2px}
+.hb-row{display:grid;grid-template-columns:minmax(84px,40%) minmax(0,1fr) auto;align-items:center;gap:10px;font-size:13px;padding:5px 6px;border-radius:6px}
+button.hb-row{appearance:none;border:0;background:none;text-align:left;width:100%;cursor:pointer}
+.hb-row:hover,.hb-row.is-on{background:var(--panel-2)}
+.hb-row.is-on .hb-lab{font-weight:700;color:var(--ink)}
+.hb-lab{color:var(--ink-2);line-height:1.25;min-width:0;overflow-wrap:anywhere}
+.hb-track{height:16px;display:flex;align-items:center}
+.hb-bar{display:block;height:16px;background:var(--bar);border-radius:0 4px 4px 0}
+.hb-val{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;white-space:nowrap;text-align:right}
+.hb-val small{color:var(--muted);font-weight:500}
+
+/* Embudo */
+.fn{display:flex;flex-direction:column;gap:2px}
+.fn-row{display:grid;grid-template-columns:minmax(96px,160px) minmax(0,1fr) 40px 64px;align-items:center;gap:10px;padding:5px 6px;border-radius:6px}
+.fn-row:hover{background:var(--panel-2)}
+.fn-lab b{display:block;font-size:13px}
+.fn-lab small{display:block;font-size:11.5px;color:var(--muted);line-height:1.3}
+.fn-bar{display:block;height:18px;background:var(--bar);border-radius:0 4px 4px 0}
+.fn-v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.fn-c{text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.fn-hd{display:grid;grid-template-columns:minmax(96px,160px) minmax(0,1fr) 40px 64px;gap:10px;padding:0 6px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.fn-hd span:nth-child(3),.fn-hd span:nth-child(4){text-align:right}
+@media (max-width:560px){.fn-row,.fn-hd{grid-template-columns:64px minmax(0,1fr) 30px 50px;gap:8px}.fn-lab small{display:none}}
+
+/* Columnas del score */
+.cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:end;border-bottom:1px solid var(--line);padding-top:6px}
+.col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:156px;border-radius:6px 6px 0 0}
+.col:hover{background:var(--panel-2)}
+.col-v{font-weight:700;font-variant-numeric:tabular-nums;font-size:13px}
+.col-bar{display:block;width:24px;border-radius:4px 4px 0 0}
+.cols-x{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;text-align:center}
+.cols-x b{display:block;font-size:12.5px}
+.cols-x small{display:block;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Agenda */
+.ag-list{display:flex;flex-direction:column}
+.ag{appearance:none;border:0;border-top:1px solid var(--grid);background:none;text-align:left;width:100%;display:grid;grid-template-columns:128px minmax(0,1fr) auto;gap:12px;align-items:start;padding:10px 6px;cursor:pointer}
+.ag:first-child{border-top:0}
+.ag:hover{background:var(--panel-2)}
+.ag-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ag-main b{font-size:13.5px}
+.ag-main span{color:var(--ink-2);font-size:13px}
+.ag-main small{color:var(--muted);font-size:12px}
+.ag-side{text-align:right;display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--muted);white-space:nowrap}
+.ag-side b{color:var(--ink);font-size:13px;font-variant-numeric:tabular-nums}
+@media (max-width:560px){.ag{grid-template-columns:minmax(0,1fr) auto}.ag-st{grid-column:1/-1}}
+.more{align-self:flex-start}
+
+/* Alertas */
+.al-list{display:flex;flex-direction:column;gap:2px}
+.al{appearance:none;border:1px solid transparent;background:none;width:100%;text-align:left;display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:10px;align-items:start;padding:9px 8px;border-radius:8px;cursor:pointer}
+.al:hover{background:var(--panel-2)}
+.al[aria-pressed="true"]{background:var(--panel-2);border-color:var(--line)}
+.al:disabled{cursor:default;opacity:.55}
+.al:disabled:hover{background:none}
+.al svg{width:16px;height:16px;margin-top:2px}
+.al b{display:block;font-size:13.5px}
+.al small{display:block;color:var(--muted);font-size:12px;line-height:1.4}
+.al-n{font-family:var(--font-display);font-weight:700;font-size:20px;line-height:1.2;font-variant-numeric:tabular-nums}
+
+/* Tabla */
+.tbl-hd{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px}
+.tbl-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip-f{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 4px 2px 10px;font-size:12.5px;background:var(--panel-2)}
+.chip-f button{border:0;background:none;cursor:pointer;width:24px;height:24px;border-radius:50%;color:var(--muted);font-size:16px;line-height:1}
+.chip-f button:hover{background:var(--grid);color:var(--ink)}
+.tbl-wrap{overflow:auto;max-height:72vh;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:1280px;font-size:13px}
+th{position:sticky;top:0;z-index:1;background:var(--panel-2);text-align:left;font-weight:600;color:var(--ink-2);font-size:12px;padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
+th button{appearance:none;border:0;background:none;width:100%;text-align:left;cursor:pointer;padding:9px 10px;font-weight:600;color:inherit;display:flex;gap:4px;align-items:center}
+th button:hover{color:var(--ink)}
+th .arr{color:var(--muted);font-size:10px}
+td{padding:9px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--panel-2)}
+tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
+.t-emp{min-width:240px}
+.t-emp b{display:block;font-weight:600}
+.t-sm{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.t-mut{color:var(--muted)}
+.t-next{min-width:230px}
+.mono{font-family:var(--font-mono);font-size:11.5px}
+.sc{display:flex;align-items:center;gap:8px}
+.sc b{font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.sc-track{width:56px;height:6px;background:var(--bar-soft);border-radius:3px;overflow:hidden;flex:none}
+.sc-track i{display:block;height:100%;border-radius:0 3px 3px 0}
+.icp{display:inline-block;font-family:var(--font-mono);font-size:11.5px;font-weight:500;padding:1px 7px;border-radius:5px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel);white-space:nowrap}
+.icp-ICP1{background:var(--bar-soft);border-color:var(--bar);color:var(--ink)}
+.icp-ANTI{text-decoration:line-through}
+.temp{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.temp i{display:inline-flex;gap:2px}
+.temp i span{width:5px;height:11px;border-radius:1px;background:var(--bar-soft)}
+.temp i span.on{background:var(--bar)}
+
+/* Metodología */
+.method{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.method h2{margin:0;font-family:var(--font-display);font-size:15.5px;font-weight:700}
+.method>p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+.method dl{display:grid;grid-template-columns:1fr;gap:14px 24px;margin:14px 0 0}
+@media (min-width:600px){.method dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:960px){.method dl{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.method dt{font-weight:700;font-size:13px}
+.method dd{margin:4px 0 0;color:var(--ink-2);font-size:13px;line-height:1.55}
+.foot-pg{color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:space-between}
+
+/* Ficha lateral */
+.ovl{position:fixed;inset:0;background:var(--overlay);z-index:40}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(540px,100%);background:var(--panel);color:var(--ink);border-left:1px solid var(--line);z-index:41;overflow-y:auto;overscroll-behavior:contain;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px calc(env(safe-area-inset-bottom,0px) + 28px);display:flex;flex-direction:column;gap:16px}
+.dr-hd{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.dr-hd h3{margin:2px 0 4px;font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.2;text-wrap:balance}
+.eyebrow{margin:0;font-family:var(--font-mono);font-size:11.5px;color:var(--muted)}
+.dr-meta{margin:0;color:var(--ink-2);font-size:13px}
+.x{flex:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-size:20px;line-height:1;color:var(--ink)}
+.x:hover{background:var(--panel-2)}
+.dr-sec{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--grid);padding-top:14px}
+.dr-sec h4{margin:0;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.dr-score-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px}
+.big{font-family:var(--font-display);font-weight:700;font-size:46px;line-height:1}
+.big small{font-size:16px;color:var(--muted);font-weight:600}
+.dr-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--accent);color:var(--accent-ink)}
+.mt{display:grid;grid-template-columns:92px minmax(0,1fr) 54px;align-items:center;gap:10px;font-size:13px}
+.mt-track{height:8px;background:var(--bar-soft);border-radius:4px;overflow:hidden}
+.mt-track span{display:block;height:100%;background:var(--bar);border-radius:0 4px 4px 0}
+.mt b{text-align:right;font-variant-numeric:tabular-nums}
+.mt b small{color:var(--muted);font-weight:500}
+.nba{margin:0;font-size:15px;font-weight:600;line-height:1.45}
+.dr-row{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;color:var(--ink-2)}
+.dr-note{margin:0;font-size:12.5px;color:var(--muted)}
+.cad{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));list-style:none;padding:0;margin:0}
+.cad li{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding-inline:2px}
+.cad li::before{content:"";position:absolute;top:6px;right:50%;width:100%;height:2px;background:var(--grid)}
+.cad li:first-child::before{display:none}
+.cad li.done::before,.cad li.cur::before{background:var(--bar)}
+.cad i{position:relative;width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:var(--panel)}
+.cad li.done i{background:var(--bar);border-color:var(--bar)}
+.cad li.cur i{border-color:var(--bar);box-shadow:0 0 0 3px var(--bar-soft)}
+.cad b{font-size:12px;font-family:var(--font-mono)}
+.cad small{font-size:11px;color:var(--muted);line-height:1.3}
+.bant{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bant div{display:flex;flex-direction:column;gap:4px;align-items:flex-start;font-size:12.5px;color:var(--ink-2)}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;margin:0}
+.kv div{min-width:0}
+.kv-wide{grid-column:1/-1}
+.kv dt{font-size:11.5px;color:var(--muted)}
+.kv dd{margin:0;font-weight:600;font-size:13.5px;overflow-wrap:anywhere}
+.dr-al{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.dr-al li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;align-items:start}
+.dr-al svg{width:16px;height:16px;margin-top:2px}
+.dr-al b{display:block;font-size:13.5px}
+.dr-al small{display:block;font-size:12.5px;color:var(--muted)}
+
+/* Modal, arrastre, tooltip, aviso */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:var(--overlay)}
+.modal-box{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;width:min(720px,100%);max-height:90vh;display:flex;flex-direction:column;gap:10px;padding:18px}
+.modal-box h3{margin:0;font-family:var(--font-display);font-size:17px}
+.modal-box p{margin:0;color:var(--ink-2);font-size:13px}
+.modal-box textarea{width:100%;min-height:220px;resize:vertical;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:10px;font-family:var(--font-mono);font-size:12px;line-height:1.5}
+.modal-act{display:flex;justify-content:flex-end;gap:8px}
+.drop{position:fixed;inset:12px;z-index:70;display:grid;place-items:center;border:2px dashed #0097CD;border-radius:16px;background:var(--overlay);color:#FFFFFF;font-size:18px;font-weight:700;pointer-events:none;text-align:center;padding:16px}
+.tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--panel);font-size:12.5px;line-height:1.45;padding:7px 9px;border-radius:6px;max-width:280px;white-space:pre-line}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--panel);padding:10px 14px;border-radius:8px;font-size:13.5px;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:no-preference){.hb-bar,.fn-bar,.col-bar{transition:width .25s ease,height .25s ease}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <span class="plate"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAABICAYAAADIzHiKAAA1OElEQVR42u19d3xdV5H/d+ac+yS5O44sySoOiVNwk2w5laJkF0JNIjnIlIVlYSGNLCX0trKA3V8ogQRIIMACIVS/JZYTSggLWIFQkiiWXJQATsBWlx1X1Xfvmfn9ce+TnqUn6UmWWPbzefP5XOtj6d13555z5szMd8ohZEJ1yqgnwVd2VUDpYTgnIBBmk1QBECGW042BgY/h7Rd9e+S5WcpSltJS5kJYpwwAKGh6EPMXvxj9xxXGEHRWpRgwHkAkGBq+AjdXPoxt2wy2bHHZqcpSlsYTT+vT9SSw9mYMDwyCrUBEoKKzdykQDAdgZhi9E3c/7mFfrQJK2anKUpZOR4DrSbBNDa6r+BOGh2/DvAUGUIm0+GxdAMhiaDDA/MVr4evN4XOnudFkKUtZEzqtn0rYCkL+vnkwib3wvDL4wwrQ7AqYqsJ6CtUTSLg1uHljF7ZuJdTXZ/3h9POmWV7+bublb/r+dnrskWKbMras7cNdTe+G8f4biWHBbBu4RITAF8xfvATu2CdB9AZs2/a/oIXrGFU7p35u4+UCzNnmQqitZfT2EpYvV8TjMn6R1DFqWwm9vTS3vKQ8J+TFpeUlOWanzUv0vLmm+GrNnM+xYwAAI3OioRDX0chn5nh9zGxwksDSnY89iPmLXoKBkw5EZg7Yc4jFDPz+Ktxw8d8a0Pqb76bjhHaihVV5nbfq+EEGgP37L/bTfCa6P52wzy4vlZXXecdHeHkwkeZ5s8nL/55mraoyaGx0U7zD5GumqsrOtjBPIcCaHmXeutMAOwWF11wAY3ZBnBe5w7McWoJDTp5BYnAXWC/G0mcEtVsENMcLoa6OUV8vBeXVF5GN1ZDznep4P5wIQsYzTv2f9zyx/ZeoA6Mepzc5tbUm0mwAgDMra4q8gC4W0k1QrCVCERRLQfBCbwODROgB6M+keFxZft29q+HJib7vdHhZsebVpRLzL4LiQkDXqFIBQc8AIdq8tQ/AIQX/CYrfW8IjHc33/TnlCw2QES8EQAvW16xl6xVDfIHOEZBpmJyvx3v3bP99JmNQVFlbRuLKnWItQc5VoAigBYDOI5AHYABAHxS9SnjakNkHQ7s6H4//cZwWn+m8ZCTAmcZg73r0E8hb9GEM9s2NFlZ1WLDE4OTRt+NtF34Bdb+yqL8imGvtt7K31xs6fkaL8fLOgwTph0oV7MUQDPdv627e/upwh22cIW91DNQrAK2svM7rkMNXA3gDVC8ntouJGAqN4uXJn8k9k0DRT3F+ANI/KPjruUcOf/fAgcah6QtxHSe1RFHlK+ep5GxW6OtI9QVkvAUEmpgXopEUAXF+AqDfCOhrvefyNsTjLjNewucXllf/jmN5l2iQmHXdMDJ/NgcuMXB/d0vDNWN4Sz5QS1bXnhHE9DWqsoVIN5Gx8wkMhKMwOg7J2yj8mRwndb4Pon1QfYicbuva09A0ds5nV4BVCUSKf/tJDtYuXwjOHS/IMhRqJEPz4WMvjJkP5xTAXAFax4BgLTof6AGAOQO0oklcXlHzIWu8/3BBYpgwwcZEcETGqAZN3c0Nl8zY7E5ZOEXlNf+kxB8gw2sBgkoAiDiAwnAapZk3hY7+nQyxBRFBxe0V6Id6dt33QOqCzJAXWl5e/RZm8x5icx5UoeIQ/jM9XkAEiHtMnHygZ/f2X0ZrZKKFSwB0aWXt4ljg/5mIl4XRDp0LDCRgE7PO+e/qad7++dENOGUD21jzTlV6D7Mt1tExECCp3DQ5CpQ6AuEYRH8nMsQGRAxxgYDop8p6W0/Tfb86XSuJ0ggMg0jwxT/8I/IW3I3E0KJwlx2zBY6asQrF72D4GjinkSqY5Z0SARYssjh59B687aJ/wTY12EJz4AuHO2LBRbVnse/2qCIvmiCakDNiUnGHc6HnHmjZcWzaQhwtmvw11efYGH+B2L5MVaAucJFW42liFQpVAUjJGAsQIPLZrua17412+4mFOLl5bbhqPVHsC4bMC1UEKqfLC0DGM4BCRbZ2N99XP6EQJ3lYV3MJW/4dVPS08JoptAORITj3gq7dDb8Jnx36+kWVrzxTXew7bL0r1QVQcTMdA4yYKUoCgiVjw/+q+15CEu890vLjjplu/jxO824F8Onm+TD2q7Cxc0CcD+Plw9ozT7mI8rFgST5UW3Hjxho49wvMW0hQnX3BIhj0n3SI5f0z7n78+dhCDtu2zb65HiKeioT/WWI7P1o8NClnKkrEy3zgrGgToOkKb8H66leamPk9sX2ZBAmnEgiITOSS0LRHi8iAYFUCUec7st4tBRv2/ABVVcnvo7S8xONueXnNPzFijzDxCyXwA9XZ4IWMOt+pOGEb21pYsfnr4WKtHS8MEXLLhjYw2xAHmRPhDTdfEXfEU39fiEaHfyhb97qlKrGH2HpXij/sqzo9jTFI2tUMCqM+GvhOJRBm77UxzvlD0fprXhKtGz49AY4j9HvnJT6A+Yueg77jPsQpAv/Uy/kC4gBD/QMwuBFECoN3wR8eBltg9tFGgipgDMHhDmxTEw72LAIb0c5fWFH9MmavWoJEZj69qpCx5NScHwrCTp6W8JZf8y9s7QMEnCmBH4TPnK24OjGIjPhDvjGxVxUeP+PbAAS1YwRnhJfqm43xvg3oAg18Fy64WeIlWvziD/lsY28qWF/9JSDuok1llJYvj9xKvXhOQWtVCYeaWg/u+fFRoI5RF2rfBA/cw8bbIMFwAkTerDvg0Rw7N5xgtsXCdH/phl2FkaammQlwnTK2QPCF5vNgY+/BYJ+AEDpTYy9VRd4Ci0TiNly/6Snc8ZMcXL9pD4LE5zBvgYHo7PunBIOhAYf5izfi2abrEd/iULfTzNq3r16tK6uqchX0OUA182INCp1BI2umtVk0NgYF62tewyb2DRUnqk6SO/TU5tgpVyYLxgsFJ+fVy8uv/nAEJnGq8BZWVN/INvYFFd9BRTIEJKfLC4W8DPsmlnN9YXnN9WhsDFBbO/qsMNzEBK2IPIE5iv+TEjEY+hgArFy5M4b6eimsqHkV29hV4id8gGIZmMZy6pXhnKg6JhsTcSchuLZt1/1dkabWmQnwmnh4s/VvQ05e7iT+rEMsj9F/4mlY3Io6ZRx5mY86ZXjz/xP9Jw4glsPRy8w2MRIDAjIfx1d3FwA7ZaTI4vS0L6O+XoaPLX2PMbHz1QUyHc0TIrJYm6pBJvWz43FXuOHqTWT4mypOovg/T4nGh+4JgTi8QASoZOS2EFkJhn1m++/LN9ZcgnjcVVZe56GxMVhecfWLiO2d6nwXrokZ8jL6+6nE2EbWxqcLK65eHQE4SatAzyh/RZGCztWpQpOqDopgRhfgVNUJ0aMAcOaZfZGpru9RVZ0SNIven8gy8egVyYyGz9H0cWNVR2yMAidU/Gt6djf8KHp3mb5AAAhBoS0Odz5ejdyFr8TAJCEhBWAsQYNbcP2mAawBheGmnYy3PPckVN4LL0ZJLG6WTQ+C7yvyFpyBxPB/or5esOZ0/aM6Rjwu+ZXV54D5A+ISEgEVmW7kDBUQcF5SOCfxk2gkNKPmXiLOCf3syZ6nCqiQ8QzZmAFUVOQw1PUqJEHscfj7kXjGZMCWZ7zcGAneDABNZx+VospXnslq74EqRbHWScYz1DBkYyEvikBFDqm4Q6rik/UMWc+Miauk5YUAa7zchVDzhsgS4KRVYDRnLRszL0R7J+aHbMywjVm2ng1/TuPyYjmAGuP0CQBoamryCyuufi5Am1QCTGWBcPL9NXhGnGsNr+DPUD0GYmLr2XAscCoupOrIWKPQIyruxT0t9/8KVVV2JsILADYCrhTfap6PAbkNzleQ0gRxT4d5iwz6T9yPt110f5gZFaHB9VcE4f83xXHX4w9h3sIr5yRDi8hg4KRDLPdN+HLT17CFfndaGVq1rYQ4xAT4LFk7X0Pfl6fDUAS0rsy/sHX5ocfQPammj9c79avrTCx2gfjDAYjspH4aGw6R7mCnkt5LhN8ZT3vtkC/DbBeTButF8DoifjWgpGGIg0+ZMyLDNmZEXFfgD/4/SdhvJH1+La++la23QoJMeQEk8H/CwHcD1cdiCTzL7GlinlsiCXchMd5AbF+hoUWpp2hQVQdiwzZm1AUHAn/o42z97wEgNDYG0UIGsVYSGURuBU+4mwSJewk4BjABMg2FQQqCUcWRnsD7azJsJDCXGeMZDfxgEndGiZjU+Z8lS1+NHT7y1wMHGoeiCTb5q/vzOS9vpQT+ZQBeAaIqtp4V5wOqPhnPU9V2FndVZ8uO5tPLHQAstu40qL8iwJ2PfQgLl56Nk0cdmE1aTWAMITHUD4tbRgQ/lfbVhv+35hYkhp4AGwN1OvsZWhpaAf7wHdiml47AhzMErgo2bL6KyFytEwNXk4UyIiTaLLCJoXMAdEepg268pq+X/DXV54D57RIkJvczQ3CMVaUXojd3N29P95JHAfwVwP2FG2q+qaBvMdl81UBStZSKGxYJvuSs+eShx37YDYDQChRtrK6EmjeJmwKwU3VkPAOVv6q4m3paGn6a5lNHADwD4AeFGzZfS0rfAJmFqk6hEBAx25hRCfpE/M/H3PBnQvAohRovF6ARrLgoNODSKRIVIsMqrrunpeGNs7KeqqosGiGkegFNluan6th4xknQ0NO8/d3jPxB3h1rRDaAbwB8AfG55Ze06uOBdIHoT25gnLniG/OFXdO790VOnK7yhANdfEeCulvPh0bsxeFLAE2gfVUHeQoO+Y5/ETZuexlI1qB8Ti60nCbXhhn246/EvYsGSW9B3LMgQnJkmoNXvMH/xhTj0+Fvxti1fnkFsmLB6tRZVvnKeBvpZ8CTAVRILmMhCVXJkjA3UPhfAIyNJ7Gk0PVt6NxsvV4LExOOiKsSWRfRA4IKXPLvn/j8CtQZVI8UKOhKyipLmuxu3P7hi/bUvEdZfgWgBkTEAoM41GMjWjubtLSOLFQAaGwMVej8bwxo4N2H8XkPzXdW1eAhe3tZ8f+cI6BTGTNPwct8PC8qvPkLk/RQgS8YaqELE/y4H9mNde6K0wnELuF5Wr66NHYG/DuKQdj4UCmOgKnuAOsbqVov83pnjLY2NwShuQWdOkeqsIAYUu5OuUFdT5VBKNlXEby0n56q3qX4PgDcXlVd/X1neRcPD13e1/ujgbAjvqEa56/EfY96il2PgRPqdWFWQO48xPPg0XE4FliOB/DWCnTvHf+OKhdFLLFgMHXwKsZxlGBp0pyqyafjoEyeGCKwHiDwL178WNz3vEOrqMi85HMm4qq6zNmer+MPp3l2JCCJymIj6ifgsTWdRKAK2MeuCxB09LdvfmWZyCICuuKB6meTSn0G0JNoMKL22JyWifnFyWc/u7XtReZ2Hpq/4k77P6toYWuOJ5euqX2tzcr+rvv+Ykqvrbo60Zfi+SZ9SCtZf9Rxi+ySA2MTWhUqYwkmHaXj4wq7WHx1EZaWHpqaMeClYX/N2k5N7h/OHHobS1p6WUzKPxiC2oRm7Yt3V5wubvRNvbuFYi0t8qnvxkQ8jrKgLpim0p4JLyRBiec13yXqvndiEViGypHCtw3zyeUeb/uf4yDqtqooqsJZrSnUS0uc9j2Z6nS5Z3NX0BsRyXo7BkxObdMyA6jBUX4+b1/Zl+N2Hceej10Jj98GYM5CTG+1RGVjTyc/5w+GV/h6GP+ywYEk++uRjAG7AmjUZ+q7hAsrfcNUqVvM+Cfz0wJWqkM0xpEPvVcUlbO0N6osbP7lKkcm3OtUUTDHRDBobA5fDVxljl04aY1YVtp4Rl3h/z+6GvaHATCG8ANAaTwB13Lun/nsF5TUneuzBh0JBqwvfK17vUngRYnstm1jO5JYAFGyMOv/fujMV3hReeryuLxX6h/f3NG//yaigrNYRXk4xY3cyGiGOuZytZyd2Z5RUBar0YLRJzlpevBJO8qRqhljVKbFZkyOLHimsqP50YOihw03bu9DYKONcpuidws2qjoGtGu6Ts5cGbAHcDKJJUENVkGEkBgcAejPuaroeNJEtyQoVC9DCUHuiH/5wJ9gkMDj4KOA8AP7kCScShVQ0AdAa2Nj5CBIThLSIMdQvgLwedz/9fmw55/hIHvek8gsgDiU1nyVj5qUFriLT0fnDT/a0NNxTsKHm7AlnlkBQByKsCrVPfQKpqXFJE430lUkNOxEuQ8YacYm93ed6X0FzrUFTfBoLtF4AUE/L9h+PCswYYRndXF6hKprezxz1e0WC3/S0NGyLtJQ/LV6aIN3AT1K1XAY3Xhj6oROMEZFRCZRIry0sr74srISiTGOvAuMZdUM/7Gl5YF8UhZERl0dpfwYKhlQCJbZrwPabNkgcL6yo2UWEJhHaS6T7Yi6x/+Ce+qNoRHKsQ/ciTqdVuDCRAN8N4KIJJxJEEAewWYrcBW/N6Pk6eiuGBwBjh5AY/B1u3nRr5tGdX1kULt4TVbhMlNIoiM0zCE7+GJ1nn0TtNgOawg+OFlJRRfU1YO+qqYArIg3BCqG/KE8ErBCpKBQoXm5cSS/wTJgaVx/yHY+7kktq8/wh/2IVR2FyQjqhoRCggdyFeNxF4Mp0J1xHTNTxAkNhnu9rz5RgcAPU0aSIOxGg/AUAlNavz8RFS9YCTyW8oVkLItqkUbRqsggSmdjbaCYpycQIfPtQtBgIiEdmL8CivxAXYBLkO2W+AwktFF5MZC4n4suZw2KHhMnpLazYvBfQnWTw466m7U+Mvv/smc+jfs+dj/0C8xf9wxRhHwUwvVCNalhTxYYRywOGBp+P7orfAXEL1E6gWfZZ1K9N4K7HbseiZe/AiWcdiNP55QprFYp++G4dbq48kEEJJAF1VLD+6Tzivt1E5jmRT8vjtI+NGQn8H/a0bH8VACzfUH2pgfmtTpQfHWpshvNf0tXS8NCoxgknrGB9zVpitGBi80MBkCoGTSDnd+7b0TaiIWaLkr7ehs0vJKJGlQkjBEpEJKLP5kJWzahIY/rrUJdddvVCb4D3g8zyKfPQVd30spZUwYZUXGfuksXnH2i8Z+jUdwoLWQorqn9JJnb5FKGkdDH2ZAUWU5jcElYfiQ8Av4Xq3d3N2+9N2WBnpWYgXEwxfhf8RADmySaJIo2d+ZXM63XOhZlm7jYAwBo41JOMu1rjhPq1Cdz9+Dp4OTei79hkSRWC3AWMwP8Ebq48gG1qpqxfrqoyQL2A+t7PNufsMAtq3PcrmAkS9KtH70suIi+gNhEZGMm0GT88ScAnTKlMaqyoJQwTziW2PGGmUog8A9B9nft2tGOGmTmTUsSTqjuXyAJKE/ICNgD0iVB46xhzmZgcJXDYfn5uRsIb6eAw1TfDC2BitiA8eaDxniHUpX0nZfXepRIkiMNAdEabzwgvYb63qqg630mQCKAKInMZG++ewoprHymsqLlwpC56VgR4mxq8tXI3EsN3Yd4inptqIkrmMV+Mgsf+BVu2OGxTk9Y3BQCHO2BjMYik1xDJTh19x/YhOHQHtm0zqJ1qsdcxGhtdccXmc4n4PVEcNi1wxeyxiPtM7+P3PZNMtu+I5fcQaXckvzqxiRalVI4RGpCWRZVoOpFrFRXl74t26bnrAaa0cio3j8AA0Z4RgGkuKRojgm5gNskKpNlehOE7gR4DAOwc+071AtRxZ0u8WcS9WpWCKPwVzCAteFSoAYTC7AfEfCmIH85ff9Xm2RJixr6tijplzDN16D/RBS9m5iSPmYiQGBKw9x/46t4zsA8a7YIhJdM5v/T4P2Heoism7fCRFGmmd+AdLx9OuiWT7/JhqWCgcjsbmwfVNLt8mDwhLvEX6MJPJ4UeAEdI8IEoDqjp0VGFKp4b+nQ7T1mEoliWwRiBCe2nCP6cCDCWZ/Ih0oiXvxnxhXP21aSsKoDoH04BFscKcW2t6W3Z0aB+cKWqPsU2xxIZHs3znoFsJMs7XRAAmms49v1kPvrpCjGP5BO/acMxqHwQXu7c5DEDDH9IMW9BIRID9agnwZo14SKtq2Psg+Kre88AmU8hGJZJEgsc5i00GO7/Hm6o/EVGaZRJ4Kq8poaN9/IJwzga1ogC7n09u7/dP1IfnIzxgfZHu7imR6IFRHr2svOvXhh9hlL+vCgTK1SVhuZcTgjzMpNzOvo3kdtwkyQl3TB1BdKMChh8gERcMECGQ6sivjr9ZERC1bNvx05/wL9Inf9BVTxD1jNsY4bIcDQ4wWjBQoZCTbAQDYjZY6d3V1Ze50Xx8NP0gZMF8jdVfgv9x3+NvPlmbkxpNhjoc/DybsRdTZWhKb3NAJeH4FNi8GOYt3AFhofSt+YJ2+sQhgaOw8r7oErYt0+nHLb4ai1Y/+L5SrhtwlJBVRfm6CZ2djfnbMeql+agt5eizCWLqiqrhKcnRSbD6pnlNsdEJmpKcX+G+dUKnXnWWsgrZ7JLZDZdknuavFBGyxrQ/NUvLyDgvKkqkIi9GRQweJ7x8iyR9nTvuq8tQuMnXjfxuANqzbN/vP9kV/N9t5IZXqci1zrn36sqfwURKHo+We9UoZ5KmAlWne/IeOs73OEXj4BapxFGipgO7QzYlnfC9x8FM6U3M0+TxAE5eQbB8O2AvhD7dhLqrwjw5aZNsDnXY+DEBLnYAEAOufMtThytx82XtGOJGtTXT6V9wwICuubDxsSeEyYujEvaVxCzSHCcff1nIO6wHw77R/4eIublmx9VCrvVpBkWCtFrz4D88wDsPcV3VNeHsJHk5FEOUPGM9Woy+2sKlJOIhjOSK6GVM57/DHlJ5o17sdy1yrxAZaJSzii91PlfI8JvwoqCDDWfkMJTUqG2CBicAIhMNpmrI6A+rCqrreWueHwAwH0A7iu5pDZPBuQCJ34FEW1Q6HlQvYCIVrKNWZUgLMKYtMKMlIhVNPFKAD85HXcpRYAjYGkLPYE7H/0SFp5xM/qOpg/hnC6gNdjnMH/R8/Glpjfixiu+iW3bDA7r7WC2EA3GgUQUCW9OrkHfsRas2fQF1G4z2JIBcBWvl6K1my9QplvCUkGkLdQgNiwS7FWLyoLy6kuJTkG0Q+RK3dkRQGomA0rUYW004SlfwL1T+2gOgFwcCuNOl6HsULTgpLCi5ib25YHOeLwtfbriiAB3T4VyqQoUehkAHZ9lNKk2BQAt2Hjt28yA+35nPP7sZLwkF68jrTSTViARqSrg0R3dj2/fe9ooQHrhjd6zXkda4CbLQyNQsT0eHwSwK7q+AQChUA9foEi8TEE3ENtSdcEk/eGUFEJEfF642Y3J3JuRAAMIAa06RmxeHQZO1MLLyUfgC2a70yQhBLSM90nc8afv4dm+12PR0ufh5BHAGJtm8wWILIwBSN+JKygsXYxnAFzFIWLcZw3l5Ii4CUoFiVUciPh5ZOzzeEIZ07BL5GQLHwowjSvud4JnzIh/lzZhhlUCITZrCsqrL+xpoUcziBdGDcfrg4Lymq3s5dUJDX+wsKLmXd3x+H9PpAFFab+ZzB8n4jDbiC9Ztu7q85/dc/+fpu7pPJrzW1hR8wW2OTdL3tDbi9ZvfntXPP6zCbVxcoxGKpAmGNiwf9WhIdF2VFVZ9PURFiyYHlYzeprEqVRZ6aGp3i9Yf/XFbHM+icTgDV1748lqoTBv+pR2s3WUevpE++/rR4Q6f3Xt103MPURs10a9zXiiLUShuVO4t4ww90KBEcVzykY4fiUlq3rufPRNWLDk6+g/MVf9ngW58xmD/T8FoQyx3GIkhibyfzzk5CqG+r+Ct110S0Y9q5NJC+uvuZa82H+HPZ6mfI+UoPyp6ye1VeoktwuxZRW3u7t5e0U40OHOvnzd5rPZaLJ4YKJkEEfGMyr+L7ubG/4RdXWMnTt5TPL96AKKzNSiis0fhLH/qYHvE7MHYqjKfw0GQ+89vufHR0cXYqipz1xXs9FaaprURVJ1bGLGucQPe1oaXoWqKpvmaJc0vNTcRiZ2iwTDPrHxwkYd8nl1Jz/Us/vn/acIRdKUrbzOKwx6W8nYVWlN6GRap/Mf7mlpqIrmVqepcZNms47z1Rsbg6Ly6iuVzQ/Y2CUSBJ2Ae8tIIcjUJyokxyGGxsah5eXV11mbc/eEeeajaaq/7mne/sI02VlTJfCMuADpJ2/bNoPaWsFdjz+CeQsuxWD/3DVtn7/YoO94DYYOPwy73GDekAMWjX5mqJ9AdgEUPv6tsjOjXOdoQPNXt84zsWAPsVmpEsz+IWxpgVsiiBwHeed2N8cPpfpVBeUtT7Cx5WGb1gmLGRxZz4hzt/c03/eudOZp8hdnXPTSRTmJvE/DeNdF7XBGumGwibE4tx8I3tHdvOMnqRO/cuUbc4eWHH+K2ayc1F8b2VCCf+9u3v7xyXgprKjNB8ntzOZ1MpLFFPqobHJYJNgD6M3du+57eKzZembF5nOt6r7otInxm0qyAilI3Nrdsv2DszZbI11Br3k1sb2XCJ6I85mNF6m6u0wiuDXKiksF504NQyV92EPLGa3xROH66lvYy7ltUgG2MSMu0dDT3FAzxroxANyKFSsqrKX3qWKDKjwitAP6jba2zntS53JiAd6yxeHLTZtgYr9H4CPqETTbsUmHnDzC0MCvcNOmF2WEnlIG6XMj2rf6VvZy3j9pxc2cCDGTOv+Snt33/2G0KqUxKCiv/pixOR+dmh8VMjFWCX4uik9pwvz+UGu8L7nol6/bc5YxuEqhb2fjnZ02LKYIwswjgojcLomhTx5q/UkvqqoiXmq+ZGzshgzGJmwsIG4HEd0GGm7qavrRQHIxF/UtWyWi1xD4ZmZTMiEvxlioCFT/0yTs59pb48eSvBRuuOZaoth/q/MnKmcNNxL1bwyYdjgSy276URJio4eb1vcA9TLazK/mJmJzp0p0RjURh5sggY1HIsERKL4Fou907/phE6aIBRZtrK5U5e0ElOhE7ZLCDclIMHRrd8uOD6WUnzIAKSkpuZkZnwc0HgR6LzOfINJ/IKL3qOL3Q0PD1YcOHRrApC0sR03pL2PB0uvRf2JuhCB5dEr/sTfhxk3fxN13e7juulMdza1bCVu3akbCm2zOXn7tamJ9AqrJcAb9jcQ3CFuoJP6lu7nhnlTzK7+y+hzjqDXCHibnKZlbrQJR10GgdgV8APkAVhrj5aq4sOH4hNaRChTO5C7wgqG+f+tpafji6tW1sdbWeKJoXc1GtfRYhBdOYZmEGwrEQUQOEtARLeTlAM5i69nMeCExOfNsMDT4mp7d9/1g1UtfmrP/wQeHCyuqb2WTyUarfVCS6c9l2A5IxT3TbZdfmCzPLCyv/ghZ7+NhE0Ol8XXe6sBsmL0wp1l1t0J/R6DdQmiHYtAIsRhdCqEyIn2BKl7KzFYn7USjQuyxavCy7l3bH4wUDgC40tKiK42xPwsC92YRPMKMjQDmMQc7Ewk+GYuZp0Tw6/b2jmqEvYQm0XZbtxJWXHUGlPfB2DPhJ2gOTl4Q2BggQQ/6BtfixM+OZS6sE2vfgvLqh9jGXjxJXalEi2EmINzEDb5HivuHP9PT0vDekd11pGi8+qtsY2+ZIJw1fnMjIiLm0Y1cw15vKi6MZ0/iFqj6bHM85xL3XbD4yKsbL79cUB9mG4VjVPNDtt7mjBL3Q15GEvVHeXEjfE66Eaj67OV44g9/rbul4bqw+QIQnoFU83Oy9kVT4hQzXXqqYBuD+MP3d7c0XLOy6o25Q8eP325M7HpxCReN4cSnbygcCDZ5PEoYMUyBAohTz0FCpMEnFl4yJOI62AbnR9ZMcjOXkpLifQDa29s7XlJauqIdoF5A9zGb16u6FwUBBmMx+0giEWzo7OxsnqyUTIHLGddvOozA/whiebNbGZPqsPsJQd7CIuTG6lBfL4jPEPUeac5e86ophBdEhtmL2Zlck6+kZHF/VNTQeLlEyQEKgF3M+6g4/1liM3XKasg7q4qo+C483SAQRBnymQiviP9bNv4bGhsbA9RHyQthFhJ5bN8vzg2Mmo1T8kKqTtSl8gJN8jklL0HiR91Lym8MIzWh8Oavrl0A6FqITJ3sEuaqzuCCD4Uq4fcA4IYHCIqzw3JJTKXRKdrcVCUQCfxAgkSgEr6/SiAaJJwEiUCDRATOTdYKF0LGIyK6o6vpRwMpSRxSVFR0JhFWA/SNlPG8Jwj0ehHpF8EFnZ2dvw0CN8SsVyIDU4RQu42xulZR+PgjyF1wyRwBWgpigTEKf+gi3HTRLtRuM4hvmV6PK9TRsst2zbf9Zi8zl6YtFQzborCKe1pJv4bplMkRKYlaJbqFic5QTVdsETVdU9nfvfjIcyPfJnzGaBufawx7DSGYpTzLTf8UCsdezErg77S55tr238ePjEM2R7Xwm4yNfT0yX2d6dAgmM5vZi1nx/R1n+GZLa2uyKUCIiEemfNOcJA2NiQ44cVf2Nm//OQCuqqrip44v22asVxO2U5rCmpkddzEgG7Pi/Obco4suPXDgrMRIzTggZWVlZwPytAhe2t7e/lBJSfFeIl0EUA4RemOxvMr9+/cnSkpWPAvgy+3tnR+yUy6GWgBbSHB38zvhgt+G7zjrg01RhpaFP/w5AJdHXTOmo30Z8XrnDVzzUbaxsklMVA2PwNSbupsbHpoJs4UV1VeB7MVR32KTLuFAgZKivuUruoCDI8X9UZ5tbzy+o2D91e8wXu4d4oLIHD7tTVGhcMRkyXhWg8S9C/oG37q/+cHhtEXkUcOAnsbt3yhcf00Jx3I/JkFCoCqzx4uxMIYl8O/sbrnv7d1hWI1CEGmnQSPEGWy0bCEjR7nMCajIKkG/GIoSQGqpsTEeALi2oKLmM2y9WyACFZmDTWwkPBmQ8Tx1rsuCthw4cM/Q2DJNEeki0oQqNgL4GREKVHGriD7geeapwcHBfwTwEDMvAfRJZMzoCKD12FewcOlb0Xc0gfAw49kmh7wFFkPHX48bL/5Oxp0mR7TJtWsi4Cpp0o0DJTiC77ubG2qw6qU5KB7MXMvn5RkMDrrCY0vvJRt7zSS+oxAbduq/qHfXjl+MS2AYPdTszWTMXUScE4WBpnv63Smn3rGJQcQ/AsVHupvv+1JqqGaqsVteXvNOZr6NiPn0eSHLxoO4oFNU3tfbsv0740JPyTGoqLnbmNh1cxcpGInNN3c3b984Ji4MAFq4vnozjPkUsz1H5bRPIhyPsyTHQ/3dGJbXdO9reDLNvBgArqRkxbeI6GVtbR1FpaUrfq2q32lv7/piaemKPaq4BwAx862+7wq6uroOZ2YyJDO0cs2HMXCiF/OXxMCGYOzsXmxs2E7U+yz+64l8bEFmJ7OPVJa426J2qgEUY6pW1AexiAsGHbn3AiDsv9hHY2OQ8TU46NDYGCjoTwQKouekuxIAB6zmvFPihEmKQK2e3Q1fp8A9T9XtZBuLTjVIHlESVbqMVLtER6ikHicCELHlyC8fFPG/iiFsDIW3Llp8U7RvSVoFLdtvB/QKqDzKNmbC40CRIS/RMSNsmW3MAnRSxP+8S3BlKLwjfp6mjEHYQkexTsUFIMz8mJRJL0oAHAC6C2Fl2am81Naa7t0N9w1KsElc4t8VaKfkXFDy6JqxlUcjCFbyhPOUMRmZG4yMB6HPif8Zvz94fii8tSbNvCgAisXce4jIlZWV/EaEbmhv7/oiAHje4PMBLDXGfArQG7u6ug4DMJntePX14RlE/0qH8PnfXgXj3Q7CeZCAZ9dlUsLwYIB5C/PQf/J1AN2BuBpM1sonatxWUF7zNpsz/yXqEoiO/RhvSZkYgkT/pw7temB/2oZvmfN5gIxnWdWmdV9VLXs5CIYSVQC+NJngdMXjTQCuKNyw+VpVvIWAF5CNzU+imuNPfx8tpRLnq4rshUoDi3y7c3fDn1LHJOP3iXjpjscfBmovK6oIXq3AvwJ0GVsvd2S1T86LE9UnyPk7FO47Pc07/pqq4ccBl4CUlNcWO3aXkrEgGDsnRayqlm0Mvp94Iq3VEL378Xj82HHg42XrXvHFYZtbA+irSHEpsbeEiMMi8OT7q47t9E9h7zaOCt0U4gKoyB6B2yG+fvPQvoanUywilzYaA/Azz/T0lpbmP48o5zvG0G9LS4v3ATrg+3wOsy5Q1bcePNjxtaTGpmkLWDK8819/ysfwwNzFVhfOG8IbzjuRGXgVmUFeLJ+CQJUlrWVBYpxo3nd7dn97YJxGyBgogxavqylx1r4SEih4vIVAwqLWsAZBW9QhchKg7FRTqqiytkzEXQrBJoKcp4RlBJqv4f39BD0Cpb8oyR5L9rGOXWv3jtw/mmI4w2jBqbzkV776HBMEl4JlExRnK/SMkBcVKPWD8CwITxOoBZDHu3c1PDnGNJ/otD4CoAXra5YT07UQUZg5WkdCCmZKCD9wpCU+2UHaNPZEjfzVtYUm5jZCZQNAa5RQEsa+dT4UOQAxQRMKJIjoqBJ1QfAXhjQT9LHOltiekQyrycdj3OYGACtXFl8RBFJljMlRladU+YH29vbxgOT05lh5Vs/lzdLogkfdzFDQqio743vTL+S/F17+N2iK96/jVatemrO4/JolJatrzyhY//r5qLzOm+XxmOzzZuxOOHNzd26HEdPqOlhbazKqqxzblX+m3I09mDodTVT9MpUWTFa6pCseqK3lkfccPWZljhrOTZsXmZNxnA2a2byPvuP49598vGZnbsYi4uPeIatJs5SlGaiW9Ch8lrKUpSzNwm6SpSzNBXEa/y4Juk0Edk1mYk92b+p3jI3nTnVf0nSd6DCDVL4Eo4DSREkgOubKUpb+zykKzkC4T2djmEgQ5+qZs81rVgNn6e9W6woAlJWVrQbc81RxnqpaIuohwqMHD3b8KtJMyc8SAC0tLV3BrBeFeVGnKkIiKDP1Dgz4ew4dOtSH8eGhqHnByiWAu0IV6wEsUdUTADfl5OT8bP/+/cNIE5IpKyv+BxFaRCQSBPo/XV1dAymyoqtWrVo0NDT0D8YAvi89nZ2dvwOA4uLiy62lJSJONWztEP0kYUbbgQOdu1J5ywpwlv5PCG9JSUkxkX4KwGZmzh09L30kOeJRVX5zW1vbvhQzOygpWfERz/M+LpIe3A7vxQHn9KaOjo6fRPclBUNLS4vfSUTvJkIJpZZAqkJEWwG5vq2t6zcp92lhYWG+tdxurY0FQXDM911JT09Pf4rZHBQXF2+2ln/ITAgC9/W2to5/Xbly5RLngoPG8MJ0FrSIKhE96py+oaOj48+YpXOvOLvGsjSXwnvWWSvOJ9JHmPl1zJzrnAuCwO1zLnjUOXcs1KZ8EZE8VFpaugKAVlZGQUTCBhHnRCQhIiedc8dSrkT0nJXM+H5ZWVlRJBAGAEpKir/JzJ8DUKIKOBfsdy74g3PuSFitS6uJzINlZUUbAUhlZaUFAGPMGiKyIuKIsDMS3lOKDoiwUVWdc+JU6ZcA4Jw7jwjzRSRwzg2n8ioSqmFmupgIX59NucsKcJbmyudFfn7+AudoOzOtDLWefFeVKhct6tjY1tZ5sQjWq+r3VRXMvELV3QpAm5rgKisrPQDrIoE8SmQqnNNzfd+d7/vufGO0XER/HpZv0kLnXLIlU1BaWlRnDL9RRJyqtIu4GlVe39bWeQlg1qnqd6PPzhfh21MtUSK9kJmYCEYVT4yRE4kEeBMRGQ1pLwAwazkRMTMZAJ91Ts9lTqz2fXe+CK5QlXbnRIhwaWlp6XOi7zpt+bPZtZalOdK+Ljc39j5mfm4kvF9pb++8HgA6OsLPdHZ2tgGV/1xW1r1OBAVEKC0qKprX1dU10NXVtYoZZdH3/fHgwYPPjAGneouLC79FZF+sCmHWfABYuXLlc0WCD4mIAzAgQq/o6OjcnZTPtra2TgCvLy1dsZ6I1xDheStXFl7Q1NT0ZCScF4fmOQDIYyM2cFSzW1RUNA/A6kghdyxenHi6owMQ0U3GMFSVAH64q6v9cMpmtrO0tPhhZn6diIiqzputgc4KcJbmQvu6pUuXLlbV61RVVKXL990tqf7tKFjV5BOtfL5zjtvbO48k1ySRrGO2OVH7mt+MeUZ0GLh5o4YdNViVnwGAIAhuspY8VUDEfaKjo2s3gBwAiUgQYwASqvgRh/27KQjMcwE8uXLlylwRvzy8V08SebvHCLAy8yoAK6Jf72ttDQE0IlRE/nWfMYnmVAd42bJlCwFcqqHTfoSZ21O+NyvAWfr7074LFuRVEXFB2GWXfhD5khbJY2pCLaoA+MCBA8fG/A5E9sIIxlVmTpSUlFxE5GIA8lSpFKDXMtOLwu+XA4sWJf4HgMeMF4f4lh5m9r4a8ZNIEZZo4+AjSSEyBvMBQETOAUaOXt3f1tbWlXKPBSDMqKCwnREAagKA0tLSIlV3XqS524xhKSwszM/NxTwRXiWCDwE4i4hIVX568ODBo9G7uqwAZ+nv0v9VxcXMpKFJKb/G6IHlVFJSvIMZZ4famTwiCBFbQD5+8GDHtyO5qlQNBZiIthqDrRodKc0cVu+pAqp6gFlf29p6qG/FihXnqepZAJOqPNrWdvDoWAAqKbSqUhrhXQTgSKT1NwDkhd+tT0T3pW46AJDcWKAqT0T3XUDES0RUAH2O79u9ngd2TucRcZ6JHiMi3cbIRzGLYaSsAGdptkkjISsGEJ5nBJNsQ6vFxcXrreWrkrhRMkREBAQBOgEgjLMOrI5M0oQqnqaw6fuq0FzWgAi/FKEfiMiOzs7OZ0MzllYwU074fN6P0QSS1HCNRJ99QSSEg4B5KuRFNxkT8mUMPZrObFdFZXSAxyBg9kb3bYj8X4nCZLkpOwVE9CSAXzunt7S1dR9I2cyyApylv1s5TkF2g9QWNoMi8gERjfxYeisRrRKRo865PQCQSPSvIuJCIgIRftHW1nH16tWr7cmTRy8GqIGIl4rIovb2jq8DwOrViLW2ImGM2rEbA07NdfAA+CUlJVXMWh7J1+Pt7W3PRH7shkirK5FpStmQOATI8gtEsDb62j+ec077X9vbASKqTLoPqvpBEfyRSDxV9lX1qHPuL93d3QdSXIxZ6+6aFeAszYkJLUJtxkCJiJwzFwB4HEBulMTwyeSHS0uL30pELKJ/6u7uPhzdW84cZl6o4g/JBd/W1vXrkpIV/06ELxpjLikuLv5kR0fH+/PyKhVognN0gFkTIVBFL4iEL4gEVxE2xjeAfgaAEoGJ8EUAWlBQMF+VyiLzuSsnJ7Y38lOTwNuwc97LjaGFkQX888ZGBJWVlV5PT9f6yMA4lpMz73NRhlc6bACY5dbM2ThwlubEhFbF/6gqhWYl3h8lWgwlP7Rs2bKFJSUr3gzg7Mg8bRn1CynFz6QmANTa2qoAjO+7b6pKe/S9N5SVlRU1NTUFAExHR8fTqtgLQJlpY1lZSV2K4AZlZWVFpaUl25hpExGzc/LLtrbOHwIwPT09Q0R6EoAQ0aKBgYGNEV8+gOGVK4suIKKPiqgTERXBtwHg0KFDpUQ4O3xnemr//v3JDcNGG4BJ0bqz3lc9q4GzNNvkAHBHR8fDJSUrfmWMuUJE1qoGj5WWFv9MFceIsALQTQCtivxVOBc0pewB6wANRHRIRPZitCqIe3p6+ktLi78B4CNEtEAk+FcAn1i1apXdv3//MJHWE/EOEREi2lpSUnwloH8AaKmIeykzFYbItf6RyLwBURZWU1OTD9D3mfk/nHN5zPRgaWnxA6roAVDsnF7JTEuZCc7JFzs6OnaHLkDifMDGAAqIdFfEJ40BvubW3MlSlmaZGGExQpGq7DCGN0X+7qmqOgR4DqvKt5ntxw4ePHg0TKeUdmsN+X7wdHt753kYLcNjAFpWVnaWqjxjDMM51+ecnhUBWRZAEOVAf4aITPjI0Y62IgpAH1DlG6KkjqR25FWrVnmJxOC9RFw7lt/RvG35ynOe0/m2vr5Kampq8ktKim/zPHuLqiIIgje3t3d+A+OR66wAZ+n/pC+sq1atykkkBv9ZVV8CcDGgOYAeBegZIjQODfk/7+3t7UnedNZZhSuDwHyAmQjQpoMHO746BvghAFpSUvIeZqxSBRMFtx882N2a6meWlRVVqvKbAaxVxUIiOk6krarS0NbW9fM0gNJIaKesrLhWFTUAzlJFLhEdA/RJVdrW3t7eGH3eAHBlZcVvBahSRMVa98m//rX7wGwDVVnK0v8qoJXB76Z7GsJUn+UpPk/T4I3+nnGjrAbO0t9ijRmc2t2CU4RobKO21G4XE3XEGCv06RrWJdHj5N/S8YFJvhspn5vs3tQuI7PRMDFLWfo/p5X/np+ZVXJZylKWspSlLGUpS1nKUpaylKUs/R3Q/we+B6whN2p8QAAAAABJRU5ErkJggg==" alt="ACCES GROUP" width="100" height="30"></span>
+    <div class="ttl">
+      <h1>Agente Seguimiento Gener. ICP Leads AccesGroup</h1>
+      <div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <p class="sub"><span>Generación, calificación ICP y seguimiento de leads B2B</span><span class="src" id="srcChip"><i></i><span></span></span></p>
+    </div>
+    <div class="hdr-act">
+      <button class="btn btn-hdr-pri" id="btnImport" type="button">Importar CSV de Zoho</button>
+      <input id="fileIn" type="file" accept=".csv,.tsv,.txt,text/csv" hidden>
+      <button class="btn btn-hdr" id="btnTpl" type="button">Copiar plantilla CSV</button>
+      <button class="btn btn-hdr" id="btnDemo" type="button" hidden>Volver a datos de ejemplo</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap main">
+  <div class="notice" id="notice">
+    <p><b>Estás viendo datos de ejemplo.</b> Importa el CSV de Leads exportado de Zoho CRM, o arrástralo a esta página, para ver tu cartera real. Las columnas que falten se calculan o quedan vacías.</p>
+  </div>
+
+  <section class="filters" aria-label="Filtros">
+    <div class="fld"><span>Periodo de entrada</span>
+      <div class="seg" id="fPeriodo" role="group" aria-label="Periodo de entrada">
+        <button type="button" data-p="7" aria-pressed="false">7 d</button>
+        <button type="button" data-p="30" aria-pressed="false">30 d</button>
+        <button type="button" data-p="90" aria-pressed="false">90 d</button>
+        <button type="button" data-p="all" aria-pressed="true">Todo</button>
+      </div>
+    </div>
+    <label class="fld"><span>Sector</span><select id="fSector"></select></label>
+    <label class="fld"><span>Micro-ICP</span><select id="fMicro"></select></label>
+    <label class="fld"><span>Responsable</span><select id="fResp"></select></label>
+    <label class="fld"><span>Fuente</span><select id="fFuente"></select></label>
+    <label class="fld fld-q"><span>Buscar</span><input id="fQ" type="search" placeholder="Empresa, ID, ciudad, cargo o siguiente paso" autocomplete="off"></label>
+    <button class="btn btn-ghost" id="fClear" type="button">Limpiar filtros</button>
+  </section>
+
+  <section class="kpis" id="kpis" aria-label="Indicadores clave"></section>
+
+  <section class="grid">
+    <article class="panel p-a" id="pFunnel">
+      <header class="ph"><h2>Embudo de conversión</h2><p>Leads que alcanzaron cada fase y conversión contra la fase anterior</p></header>
+      <div id="funnel"></div>
+    </article>
+    <article class="panel p-b" id="pBands">
+      <header class="ph"><h2>Distribución del Score ICP</h2><p>Leads activos por umbral del Score Total (0–100)</p></header>
+      <div id="bands"></div>
+    </article>
+    <article class="panel p-c" id="pAgenda">
+      <header class="ph"><h2>Agenda del agente</h2><p id="agendaSub"></p></header>
+      <div id="agenda"></div>
+    </article>
+    <article class="panel p-d" id="pAlerts">
+      <header class="ph"><h2>Alertas del agente</h2><p>Reglas de la metodología ACCES. Haz clic en una alerta para ver sus leads.</p></header>
+      <div id="alerts"></div>
+    </article>
+    <article class="panel p-e" id="pPipe">
+      <header class="ph"><h2>Pipeline Zoho por etapa</h2><p>Importe de tratos abiertos y número de tratos por etapa oficial</p></header>
+      <div id="pipe"></div>
+      <p class="foot" id="pipeFoot"></p>
+    </article>
+    <article class="panel p-f" id="pSector">
+      <header class="ph"><h2>Leads por sector</h2><p>Sectores MEM_AIS_MX · score promedio. Clic para filtrar.</p></header>
+      <div id="sector"></div>
+    </article>
+    <article class="panel p-g" id="pFuente">
+      <header class="ph"><h2>Leads por fuente</h2><p>Origen del lead. Clic para filtrar.</p></header>
+      <div id="fuente"></div>
+    </article>
+    <article class="panel" id="pTable">
+      <div class="tbl-hd">
+        <header class="ph"><h2>Cartera de leads</h2><p id="tblCount"></p></header>
+        <div class="tbl-tools">
+          <span id="alertChip"></span>
+          <button class="btn" id="btnCopyView" type="button">Copiar vista (CSV)</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section class="method" aria-labelledby="mTitle">
+    <h2 id="mTitle">Cómo califica y prioriza el agente</h2>
+    <p>Reglas tomadas del Agente Maestro de Seguimiento Comercial B2B y del Calificador de Leads ICP de ACCES GROUP.</p>
+    <dl>
+      <div><dt>Score Total (0–100)</dt><dd>ICP Fit (0–30) + Intención (0–30) + Viabilidad (0–30) + Engagement (0–10). El score prioriza; no sustituye el juicio comercial.</dd></div>
+      <div><dt>Umbrales</dt><dd>0–29 fuera de perfil · 30–49 nutrir e investigar · 50–64 MQL · 65–74 SAL · 75–100 SQL o trato potencial.</dd></div>
+      <div><dt>Candado de decisor</dt><dd>Ninguna cuenta pasa a SQL ni a pipeline sin Economic Buyer mapeado, aunque el total sea alto. Las etapas se mueven solo con evidencia.</dd></div>
+      <div><dt>Cadencia sin fecha acordada</dt><dd>D+1 confirmar recepción · D+3 aclaración puntual · D+7 aportar valor · D+12 validar proceso y actores · D+20 cierre de ciclo temporal. La fecha acordada con el prospecto manda.</dd></div>
+      <div><dt>Prioridad diaria</dt><dd>Compromiso vencido → decisión próxima → negociación → reunión próxima → propuesta activa → cuenta estratégica → lead nuevo → reactivación → nutrición.</dd></div>
+      <div><dt>Aliado sin presentación directa</dt><dd>Un lead de aliado tecnológico sin presentación directa tiene pre-score máximo de 40. Pide la presentación antes de invertir esfuerzo.</dd></div>
+    </dl>
+  </section>
+
+  <footer class="foot-pg">
+    <span>ACCES GROUP · Empresa certificada ISO/IEC 27001:2022 e ISO/IEC 20000-1:2018</span>
+    <span id="corte"></span>
+  </footer>
+</main>
+
+<div class="ovl" id="ovl" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="drTitle"></aside>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mdTitle">
+  <div class="modal-box">
+    <h3 id="mdTitle"></h3>
+    <p id="mdDesc"></p>
+    <textarea id="mdText" readonly spellcheck="false"></textarea>
+    <div class="modal-act"><button class="btn" id="mdClose" type="button">Cerrar</button></div>
+  </div>
+</div>
+<div class="drop" id="drop" hidden>Suelta el CSV de Zoho para importarlo</div>
+<div class="tip" id="tip" hidden role="tooltip"></div>
+<div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+<noscript><p style="padding:16px">Este dashboard necesita JavaScript activado.</p></noscript>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- utilidades ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DAY=864e5;
+const TODAY=(()=>{const d=new Date();d.setHours(0,0,0,0);return d;})();
+const addDays=n=>new Date(TODAY.getTime()+n*DAY);
+const daysBetween=(a,b)=>Math.round((b-a)/DAY);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d?`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`:'';
+const nf=new Intl.NumberFormat('es-MX');
+const money=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',notation:'compact',maximumFractionDigits:1});
+const moneyFull=new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
+const fdate=d=>d?d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}):'—';
+const fdateL=d=>d?d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'}):'—';
+const pct=(a,b)=>b?Math.round(a/b*100)+'%':'—';
+const sum=(arr,f)=>arr.reduce((a,x)=>a+(f(x)||0),0);
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- catálogos de la metodología ---------- */
+const SECTORES={
+  FIN:['Financiero','Sanciones regulatorias, fraude transaccional y reporte de incidentes con plazo'],
+  SALUD:['Salud','Robo de expedientes, paro de hospital por ransomware, multas por datos sensibles'],
+  MFG:['Manufactura','Paro de línea, ransomware en planta, cliente ancla exigiendo evidencia de seguridad'],
+  ENER:['Energía','Paro de despacho o suministro, controles volumétricos SAT, sabotaje OT'],
+  AUTO:['Automotriz','Pérdida de contrato por TISAX, paro de línea JIT, presión de la armadora'],
+  AERO:['Aeroespacial','Exclusión de cadena de suministro de defensa, auditoría de cliente extranjero'],
+  QUIM:['Químico','Incidente OT con riesgo físico, paro de proceso continuo'],
+  RETAIL:['Retail y Consumo','Fraude en pagos, caída de e-commerce en temporada alta, robo de datos de clientes'],
+  LOGTRANS:['Logística y Transporte','Robo de mercancía vía sistemas, paro de rastreo, exclusión de cadenas certificadas'],
+  FARMDM:['Farma y Disp. Médicos','Hallazgo de integridad de datos, robo de propiedad intelectual, retiro de lote'],
+  ALIBEB:['Alimentos y Bebidas','Paro de planta perecedera, ransomware en cadena de frío, auditoría de cliente ancla'],
+  CONST:['Construcción','Fraude BEC en pagos a proveedores, pérdida de licitación por requisitos'],
+  MIN:['Minería','Paro de mina o planta, exigencias de corporativo global, sabotaje'],
+  TURHOSP:['Turismo y Hospitalidad','Robo de datos de huéspedes y tarjetas, caída del sistema de reservas'],
+  OTRO:['Sin clasificar','Sector por revisar manualmente']
+};
+const HIGH=new Set(['FIN','MFG','SALUD','ENER','AUTO','LOGTRANS']);
+const secName=k=>(SECTORES[k]||SECTORES.OTRO)[0];
+const secCode=k=>k&&k!=='OTRO'?'MEM_AIS_MX_'+k:'';
+const FASES=['Lead','MQL','SAL','SQL','Trato','Ganado','Perdido'];
+const FUNNEL=[['Lead','Registro recibido'],['MQL','Priorizado por Marketing'],['SAL','Aceptado por Comercial'],['SQL','Necesidad y viabilidad'],['Trato','Oportunidad en Zoho'],['Ganado','Cierre con evidencia']];
+const ETAPAS=[
+  {n:'Análisis de Requerimiento',p:[10,25]},{n:'Desarrollo de Solución Integral',p:[25,45]},
+  {n:'Generación de Propuesta',p:[45,60]},{n:'Revisión de Propuesta',p:[55,70]},
+  {n:'Presentación de Propuesta',p:[65,80]},{n:'Negociación',p:[80,95]},
+  {n:'Cierre de Ganado',p:[100,100]},{n:'Cierre de Perdido',p:[0,0]}];
+const BANDS=[
+  {k:'Fuera de perfil',min:0,max:29,a:'Registro insuficiente o fuera de perfil'},
+  {k:'Nutrir',min:30,max:49,a:'Nutrir e investigar'},
+  {k:'MQL',min:50,max:64,a:'Priorizar desde Marketing'},
+  {k:'SAL',min:65,max:74,a:'Aceptar en Comercial'},
+  {k:'SQL',min:75,max:100,a:'Descubrimiento o trato potencial'}];
+const bandOf=t=>{const i=BANDS.findIndex(b=>t>=b.min&&t<=b.max);return Object.assign({i:Math.max(0,i)},BANDS[Math.max(0,i)]);};
+const TEMPS=['Frío','Tibio','Caliente','Estratégico'];
+const CAD=['D+1','D+3','D+7','D+12','D+20'];
+const CAD_D=['Confirmar recepción','Aclaración puntual','Aportar valor','Validar proceso y actores','Cierre de ciclo temporal'];
+const BANT_N={B:'Budget · presupuesto',A:'Authority · autoridad',N:'Need · necesidad',T:'Timeline · tiempo'};
+const REQ={MQL:50,SAL:65,SQL:75};
+
+/* ---------- iconos de estado (colores de estado fijos en ambos temas) ---------- */
+const ICONS={
+  crit:'<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" style="fill:#D03B3B"/><rect x="7.1" y="3.6" width="1.8" height="5.4" rx=".9" fill="#fff"/><circle cx="8" cy="11.7" r="1.05" fill="#fff"/></svg>',
+  serious:'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .8 15.2 8 8 15.2.8 8z" style="fill:#EC835A"/><rect x="7.15" y="4" width="1.7" height="5" rx=".85" fill="#fff"/><circle cx="8" cy="11.4" r="1" fill="#fff"/></svg>',
+  warn:'<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.2 15.4 14.4H.6z" style="fill:#FAB219"/><rect x="7.2" y="5.4" width="1.6" height="4.6" rx=".8" fill="#1d1d1b"/><circle cx="8" cy="12.1" r=".95" fill="#1d1d1b"/></svg>',
+  info:'<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" style="fill:var(--info)"/><path d="M8 4.6V8l2.3 1.6" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  ok:'<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" style="fill:#0CA30C"/><path d="M4.8 8.2 7 10.3l4.2-4.4" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  half:'<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" style="fill:none;stroke:var(--info)" stroke-width="1.6"/><path d="M8 1.8a6.2 6.2 0 0 1 0 12.4z" style="fill:var(--info)"/></svg>',
+  dash:'<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" style="fill:none;stroke:var(--muted)" stroke-width="1.6" stroke-dasharray="2.4 2"/></svg>',
+  none:'<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" style="fill:none;stroke:var(--muted)" stroke-width="1.6"/></svg>'
+};
+const pill=(sev,label)=>`<span class="pill pill-${sev}">${ICONS[sev]||ICONS.none}<span>${esc(label)}</span></span>`;
+const bantPill=v=>{
+  if(v==='Confirmado') return pill('ok',v);
+  if(v==='Parcial') return pill('half',v);
+  if(v==='Inferido') return pill('dash',v);
+  return pill('none',v||'Sin dato');
+};
+
+/* ---------- reglas del agente ---------- */
+const RULES=[
+  {id:'vencido',sev:'crit',t:'Compromisos vencidos',d:'La fecha del siguiente paso ya pasó. Retomar con valor nuevo, nunca con "solo dando seguimiento".',test:l=>l.seg.k==='vencido'},
+  {id:'sinpaso',sev:'crit',t:'Sin siguiente paso',d:'Ninguna interacción se cierra sin siguiente paso, responsable, fecha y medio.',test:l=>l.seg.k==='sinpaso'},
+  {id:'candado',sev:'serious',t:'Candado de decisor',d:'SQL o trato sin Economic Buyer mapeado. No avanza en pipeline hasta mapearlo.',test:l=>!l.closed&&(l.fase==='SQL'||l.fase==='Trato')&&!l.eb},
+  {id:'silencio',sev:'warn',t:'Silencio prolongado',d:'Más de 14 días sin interacción. El silencio no es rechazo: reactivar con un disparador real.',test:l=>!l.closed&&l.diasSin!=null&&l.diasSin>14},
+  {id:'fase',sev:'warn',t:'Fase por encima del score',d:'La fase registrada supera lo que respalda el Score Total. Mover etapas solo con evidencia.',test:l=>!l.closed&&REQ[l.fase]!=null&&l.total<REQ[l.fase]},
+  {id:'aliado',sev:'warn',t:'Aliado sin presentación directa',d:'Lead de aliado tecnológico sin presentación directa: pre-score máximo 40.',test:l=>!l.closed&&l.aliado&&l.total>40},
+  {id:'sla',sev:'warn',t:'Lead nuevo sin primer contacto',d:'Entró hace más de 2 días y no tiene interacción registrada.',test:l=>l.fase==='Lead'&&!l.ult&&l.diasEntrada!=null&&l.diasEntrada>2}
+];
+
+function segOf(l){
+  if(l.closed) return {k:'cerrado',label:l.fase==='Ganado'?'Ganado':'Perdido',sev:l.fase==='Ganado'?'ok':'none',d:null};
+  if(!l.fsig) return {k:'sinpaso',label:'Sin siguiente paso',sev:'crit',d:null};
+  const d=daysBetween(TODAY,l.fsig);
+  if(d<0) return {k:'vencido',label:`Vencido hace ${-d} d`,sev:'crit',d};
+  if(d===0) return {k:'hoy',label:'Hoy',sev:'warn',d};
+  if(d<=3) return {k:'proximo',label:`En ${d} d`,sev:'info',d};
+  return {k:'programado',label:`En ${d} d`,sev:'ok',d};
+}
+function prioOf(l){
+  if(l.closed) return {r:99,m:l.fase==='Ganado'?'Handoff a PMO':'Cerrado'};
+  const s=l.seg, soon=s.d!=null&&s.d<=3, st=l.etapa;
+  if(s.k==='vencido') return {r:1,m:'Compromiso vencido'};
+  if(s.k==='sinpaso') return {r:1.5,m:'Sin siguiente paso'};
+  if((st===4||st===5)&&soon) return {r:2,m:'Decisión próxima'};
+  if(st===5) return {r:4,m:'En negociación'};
+  if(l.medio==='Videollamada'&&soon) return {r:5,m:'Reunión próxima'};
+  if(st===2||st===3||st===4) return {r:6,m:'Propuesta activa'};
+  if(l.temp==='Estratégico') return {r:7,m:'Cuenta estratégica'};
+  if(l.fase==='SQL'||l.fase==='Trato') return {r:7.5,m:'Desarrollo de oportunidad'};
+  if(l.fase==='Lead'&&l.diasEntrada!=null&&l.diasEntrada<=7) return {r:8,m:'Lead nuevo'};
+  if(l.diasSin!=null&&l.diasSin>14) return {r:9,m:'Reactivación'};
+  if(l.band.i<=1) return {r:10,m:'Nutrición'};
+  return {r:8.5,m:'Seguimiento'};
+}
+function nbaOf(l){
+  if(l.fase==='Ganado') return 'Preparar el handoff a PMO y CSM, programar kickoff y registrar por qué compró.';
+  if(l.fase==='Perdido') return 'Documentar el postmortem y dejar fecha de reactivación ligada a un disparador real.';
+  if(l.seg.k==='sinpaso') return 'Definir el siguiente paso con responsable, fecha y medio antes de cualquier otro toque.';
+  if(l.seg.k==='vencido') return `Retomar el compromiso vencido${l.sigPaso?` «${l.sigPaso}»`:''} aportando valor nuevo: un dato, un caso o una pregunta concreta.`;
+  if((l.fase==='SQL'||l.fase==='Trato')&&!l.eb) return 'Mapear al Economic Buyer y al proceso de decisión antes de avanzar etapa (candado de decisor).';
+  if(l.aliado&&l.total>40) return 'Pedir al aliado una presentación directa con el decisor antes de invertir más esfuerzo.';
+  if(l.diasSin!=null&&l.diasSin>14) return 'Reactivar con un disparador real del sector; si no lo hay, enviar cierre de ciclo temporal sin presión.';
+  const miss=['B','A','N','T'].filter(k=>!l.bant[k]||l.bant[k]==='No identificado'||l.bant[k]==='Inferido');
+  if(miss.length&&l.fi>=2&&l.fi<=4) return `${l.sigPaso||'Siguiente conversación'}: validar ${miss.map(k=>BANT_N[k].split(' · ')[1]).join(', ')} sin inventar respuestas.`;
+  return l.sigPaso||'Mantener la cadencia con un toque que aporte valor.';
+}
+function microOf(l){
+  if(l.fit!=null){ if(HIGH.has(l.sector)&&l.fit>=20) return 'ICP1'; if(l.fit>=14) return 'ICP2'; return 'ICP3'; }
+  if(HIGH.has(l.sector)&&l.total>=60) return 'ICP1';
+  return l.total>=45?'ICP2':'ICP3';
+}
+function prep(l){
+  const comps=[l.fit,l.intent,l.viab,l.eng];
+  if(l.total==null||isNaN(l.total)) l.total=comps.every(v=>v==null)?0:sum(comps,v=>v);
+  l.total=Math.max(0,Math.min(100,Math.round(l.total)));
+  l.band=bandOf(l.total);
+  if(!l.micro) l.micro=microOf(l);
+  if(!l.temp) l.temp=l.total<40?'Frío':l.total<65?'Tibio':'Caliente';
+  l.closed=l.fase==='Ganado'||l.fase==='Perdido';
+  l.fi=FASES.indexOf(l.fase);
+  l.maxIdx=l.fase==='Ganado'?5:l.fase==='Perdido'?(l.etapa!=null?4:(l.faseMax!=null?l.faseMax:0)):l.fi;
+  if(l.etapa!=null&&l.prob==null){const p=ETAPAS[l.etapa].p;l.prob=Math.round((p[0]+p[1])/2);}
+  l.diasSin=l.ult?daysBetween(l.ult,TODAY):null;
+  l.diasEntrada=l.entrada?daysBetween(l.entrada,TODAY):null;
+  l.seg=segOf(l);
+  l.pr=prioOf(l);
+  l.flags=RULES.filter(r=>r.test(l)).map(r=>r.id);
+  l.nba=nbaOf(l);
+  return l;
+}
+
+/* ---------- datos de ejemplo (ficticios, relativos a hoy) ---------- */
+function demo(){
+  let s=0x2026A10C;
+  const r=()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+  const ri=(a,b)=>a+Math.floor(r()*(b-a+1));
+  const pick=a=>a[Math.floor(r()*a.length)];
+  const wpick=list=>{const x=r();let acc=0;for(const it of list){acc+=it[1];if(x<acc)return it;}return list[list.length-1];};
+  const EMP=[
+    ['Financiera Altiplano SOFIPO','FIN','Monterrey'],['Caja Popular Valle del Norte','FIN','Chihuahua'],
+    ['Pagos Ágiles IFPE','FIN','Ciudad de México'],['Arrendadora Cumbres SOFOM','FIN','Guadalajara'],
+    ['Aseguradora Puerta Norte','FIN','Ciudad de México'],['Cooperativa de Ahorro Sierra','FIN','Durango'],
+    ['Hospital Regional Cumbres','SALUD','Monterrey'],['Hospital Santa Lucía del Norte','SALUD','Chihuahua'],
+    ['Laboratorios Clínicos del Sur','SALUD','Puebla'],['Red Médica del Bajío','SALUD','León'],
+    ['Manufacturas Industriales del Bajío','MFG','Querétaro'],['Electrónica Fronteriza','MFG','Ciudad Juárez'],
+    ['Plásticos Técnicos de Apodaca','MFG','Apodaca'],['Ensambles de Precisión Norte','MFG','Saltillo'],
+    ['Maquiladora Textil Laguna','MFG','Torreón'],['Gasolineras Ruta 45','ENER','Chihuahua'],
+    ['Energía Solar Sonorense','ENER','Hermosillo'],['Gas LP del Pacífico','ENER','Culiacán'],
+    ['Autopartes Tier 2 Saltillo','AUTO','Saltillo'],['Forjas Automotrices Ramos','AUTO','Ramos Arizpe'],
+    ['Componentes Aeroespaciales del Norte','AERO','Chihuahua'],['MRO Aéreo del Centro','AERO','Querétaro'],
+    ['Químicos Especializados Tula','QUIM','Tula'],['Recubrimientos Industriales Monclova','QUIM','Monclova'],
+    ['Tiendas de Conveniencia La Esquina','RETAIL','Monterrey'],['Moda Express Online','RETAIL','Guadalajara'],
+    ['Departamental Grupo Sierra','RETAIL','Ciudad de México'],['Transportes Carga Segura','LOGTRANS','Nuevo Laredo'],
+    ['Logística Integral 3PL Norte','LOGTRANS','Monterrey'],['Transportista Frío del Norte','LOGTRANS','Chihuahua'],
+    ['Última Milla Express','LOGTRANS','Ciudad de México'],['Farmacéutica Andina México','FARMDM','Ciudad de México'],
+    ['Dispositivos Médicos Baja','FARMDM','Tijuana'],['Alimentos Procesados La Vega','ALIBEB','Zapopan'],
+    ['Bebidas del Golfo','ALIBEB','Veracruz'],['Empacadora Agrícola del Valle','ALIBEB','Culiacán'],
+    ['Constructora Horizonte Norte','CONST','San Pedro Garza García'],['Desarrollos Inmobiliarios Cumbre','CONST','Zapopan'],
+    ['Minera Sierra Alta','MIN','Chihuahua'],['Metalúrgica del Desierto','MIN','Torreón'],
+    ['Hoteles Playa Dorada','TURHOSP','Cancún'],['Resorts Riviera Azul','TURHOSP','Puerto Vallarta'],
+    ['Restauranteras Grupo Fogón','TURHOSP','Monterrey']];
+  const EQ={'Monterrey':'Equipo Nuevo León','Apodaca':'Equipo Nuevo León','Saltillo':'Equipo Nuevo León','Ramos Arizpe':'Equipo Nuevo León','Monclova':'Equipo Nuevo León','Nuevo Laredo':'Equipo Nuevo León','San Pedro Garza García':'Equipo Nuevo León',
+    'Chihuahua':'Equipo Chihuahua','Ciudad Juárez':'Equipo Chihuahua','Durango':'Equipo Chihuahua','Torreón':'Equipo Chihuahua','Hermosillo':'Equipo Chihuahua',
+    'Ciudad de México':'Equipo CDMX','Puebla':'Equipo CDMX','Querétaro':'Equipo CDMX','Tula':'Equipo CDMX','Veracruz':'Equipo CDMX','León':'Equipo CDMX','Cancún':'Equipo CDMX',
+    'Guadalajara':'Equipo Jalisco','Zapopan':'Equipo Jalisco','Culiacán':'Equipo Jalisco','Tijuana':'Equipo Jalisco','Puerto Vallarta':'Equipo Jalisco'};
+  const FUENTES=[['Marketing',.36,['Webinar','Formulario web','Evento externo','LinkedIn','Campaña de email']],['Comercial',.26,['Prospección outbound','Referido','Reactivación']],
+    ['Dirección',.12,['Cuenta asignada por Dirección','Introducción directa']],['Partner',.14,['Lead de fabricante','Mayorista','Co-selling']],['Cliente actual',.12,['Cross-sell','Renovación','Hallazgo de auditoría']]];
+  const CARGOS=['CISO','Director de TI','Gerente de Infraestructura','Director de Finanzas','Director de Operaciones','Oficial de Cumplimiento','Gerente de Riesgos','Director General'];
+  const GANCHOS={FIN:['Reporte de incidentes con plazo ante CNBV','Fraude transaccional en canales digitales','Revisión de controles PCI DSS'],
+    SALUD:['Ransomware en hospitales del sector','Protección de expedientes clínicos (NOM-024)','Datos personales sensibles (LFPDPPP)'],
+    MFG:['Cliente OEM exige evidencia de seguridad','Riesgo de paro de línea por ransomware','Segmentación de red OT en planta'],
+    ENER:['Controles volumétricos SAT','Continuidad de despacho y suministro','Seguridad OT en estaciones'],
+    AUTO:['Requisito TISAX de la armadora','Paro de línea JIT por incidente'],AERO:['Auditoría de cliente extranjero (CMMC)','Requisitos ITAR/EAR en la cadena de suministro'],
+    QUIM:['Seguridad de procesos OT','Continuidad de proceso continuo'],RETAIL:['Fraude en pagos de e-commerce','Disponibilidad del canal digital en temporada alta','PCI DSS en punto de venta'],
+    LOGTRANS:['Certificación C-TPAT / OEA','Robo de mercancía vía sistemas de rastreo'],FARMDM:['Integridad de datos GxP en auditoría','Protección de propiedad intelectual'],
+    ALIBEB:['Auditoría de cliente ancla retail','Continuidad en cadena de frío'],CONST:['Fraude BEC en pagos a proveedores','Requisitos de seguridad en licitaciones'],
+    MIN:['Estándares de seguridad de casa matriz','Continuidad operativa en planta'],TURHOSP:['Datos de huéspedes y tarjetas (PCI DSS)','Disponibilidad del sistema de reservas']};
+  const PASOS={Lead:['Primer contacto por LinkedIn con gancho sectorial','Correo 1 de la cadencia 3×3×30','Llamada de 20 min para validar contexto'],
+    MQL:['Compartir caso sectorial y proponer llamada breve','Validar interés y rol del contacto'],
+    SAL:['Agendar conversación inicial de microcalificación','Confirmar actores involucrados'],
+    SQL:['Sesión de descubrimiento comercial','Mapear comité de compra','Validar presupuesto y timeline (BANT)']};
+  const PASOS_ET=['Sesión técnica de levantamiento','Revisión interna con preventa','Entregar propuesta técnica y económica','Resolver dudas de alcance con especialistas','Presentar propuesta al comité','Revisar condiciones con Compras y sponsor'];
+  const MEDIOS={Lead:['LinkedIn','Correo','Llamada'],MQL:['Correo','LinkedIn','Llamada'],SAL:['Llamada','Correo','WhatsApp'],SQL:['Videollamada','Correo','Llamada'],Trato:['Videollamada','Correo','WhatsApp'],Ganado:['Videollamada'],Perdido:['Correo']};
+  const FASE_W=[['Lead',.22],['MQL',.17],['SAL',.14],['SQL',.14],['Trato',.21],['Ganado',.06],['Perdido',.06]];
+  const RANGE={Lead:[[2,11],[3,13],[0,3]],MQL:[[12,19],[11,18],[3,6]],SAL:[[17,23],[16,22],[5,8]],SQL:[[21,28],[20,27],[7,9]],Trato:[[20,29],[19,28],[7,10]],Ganado:[[24,30],[23,30],[8,10]],Perdido:[[10,22],[9,20],[2,7]]};
+  return EMP.map(([empresa,sector,ciudad],i)=>{
+    const high=HIGH.has(sector);
+    const fase=wpick(FASE_W)[0];
+    const [ir,vr,er]=RANGE[fase];
+    const fit=ri(high?18:10,high?29:22), intent=ri(ir[0],ir[1]), viab=ri(vr[0],vr[1]), eng=ri(er[0],er[1]);
+    const F=wpick(FUENTES), fuente=F[0], canal=pick(F[2]);
+    const aliado=fuente==='Partner'&&r()<.55;
+    const entrada=addDays(-(fase==='Lead'?ri(0,18):ri(20,150)));
+    const contacted=!(fase==='Lead'&&r()<.45);
+    const ult=contacted?addDays(-Math.min(ri(0,fase==='Perdido'?40:24),daysBetween(entrada,TODAY))):null;
+    const closed=fase==='Ganado'||fase==='Perdido';
+    let fsig=null;
+    if(!closed){const x=r();fsig=x<.07?null:x<.3?addDays(ri(-8,-1)):addDays(ri(0,14));}
+    else if(fase==='Ganado') fsig=addDays(ri(1,10));
+    let etapa=null, faseMax=null;
+    if(fase==='Trato') etapa=wpick([[0,.24],[1,.2],[2,.18],[3,.14],[4,.12],[5,.12]])[0];
+    if(fase==='Ganado') etapa=6;
+    if(fase==='Perdido'){faseMax=ri(1,4);if(faseMax===4) etapa=7;}
+    const eb=fase==='Ganado'||(fase==='SQL'||fase==='Trato'?r()<.68:r()<.18);
+    const importe=etapa!=null?ri(18,340)*10000:null;
+    let prob=null;
+    if(etapa!=null){const [lo,hi]=ETAPAS[etapa].p;prob=Math.max(lo,Math.min(hi,Math.round((lo+hi)/2+(eb?5:-10))));}
+    const toque=fase==='Lead'?(contacted?ri(1,2):0):fase==='MQL'?ri(1,3):fase==='SAL'?ri(2,4):ri(3,5);
+    const lvl=FASES.indexOf(fase);
+    const respondio=fase==='Perdido'?r()<.5:lvl>=2?true:fase==='MQL'?r()<.5:contacted&&r()<.15;
+    const medio=pick(MEDIOS[fase]);
+    const sigPaso=fase==='Trato'?PASOS_ET[etapa]:fase==='Ganado'?'Kickoff con PMO y handoff a CSM':fase==='Perdido'?'Reactivar con disparador del sector':pick(PASOS[fase]);
+    const temp=fuente==='Dirección'&&r()<.6?'Estratégico':'';
+    const bp=strong=>strong?(r()<.7?'Confirmado':'Parcial'):pick(['Parcial','Inferido','No identificado']);
+    const bant={B:bp(lvl>=4&&r()<.7),A:eb?'Confirmado':(lvl>=3?'Parcial':'No identificado'),N:bp(lvl>=2),T:bp(lvl>=3)};
+    return {id:'L-'+(1001+i),empresa,sector,ciudad,fuente,canal,resp:EQ[ciudad],cargo:pick(CARGOS),contacto:'',fase,faseMax,temp,
+      fit,intent,viab,eng,total:null,micro:'',eb,aliado,entrada,ult,sigPaso,fsig,medio,toque,respondio,etapa,importe,prob,
+      gancho:pick(GANCHOS[sector]),bant};
+  });
+}
+
+/* ---------- importación CSV ---------- */
+const COLS={
+  id:['idlead','id','leadid','recordid','idoportunidad'],
+  empresa:['empresa','company','cuenta','accountname','companyname','nombreempresa','razonsocial'],
+  sector:['sector','industria','industry','giro'],
+  ciudad:['ciudad','city','ubicacion'],
+  fuente:['fuentelead','fuente','leadsource','origen'],
+  canal:['canalfuente','campana','campaign','evento'],
+  resp:['responsable','owner','leadowner','ejecutivo','propietario'],
+  cargo:['cargocontacto','cargo','title','puesto','designation'],
+  contacto:['contacto','contactname','fullname','nombrecontacto'],
+  fase:['faselead','fase','leadstatus','estatuslead','estatus'],
+  temp:['temperatura','temperature','rating'],
+  micro:['microicp','icp','bloqueicp'],
+  fit:['scoreicpfit','icpfit'],
+  intent:['scoreintencion','intencion','intent','scoreintent'],
+  viab:['scoreviabilidad','viabilidad'],
+  eng:['scoreengagement','engagement'],
+  total:['scoretotal','total','score','scoreicp','prescore','leadscore'],
+  eb:['economicbuyer','eb','decisor','accesodecisor'],
+  aliado:['aliadosinpresentacion','aliado'],
+  entrada:['fechaentrada','createdtime','fechacreacion','created'],
+  ult:['fechaultimainteraccion','ultimainteraccion','lastactivitytime','ultimocontacto'],
+  sig:['siguientepaso','nextstep','proximopaso'],
+  fsig:['fechasiguientepaso','fechaproximopaso','nextstepdate'],
+  medio:['mediorecomendado','medio','canalrecomendado'],
+  toque:['toquecadencia','toque','pasocadencia'],
+  respondio:['respondio','respuesta','replied'],
+  etapa:['etapacrm','etapa','stage'],
+  importe:['importe','amount','monto','valor'],
+  prob:['probabilidadcierre','probabilidad','probability'],
+  b:['bantbudget','budget','presupuesto'],a:['bantauthority','authority','autoridad'],n:['bantneed','need','necesidad'],t:['banttimeline','timeline'],
+  gancho:['gancho','triggereventprobable','triggerevent','trigger','descripcion','description']
+};
+const TPL=['ID_Lead','Empresa','Sector','Ciudad','Fuente_Lead','Canal_Fuente','Responsable','Cargo_Contacto','Fase_Lead','Temperatura','Micro_ICP',
+  'Score_ICP_Fit','Score_Intencion','Score_Viabilidad','Score_Engagement','Score_Total','Economic_Buyer','Aliado_Sin_Presentacion',
+  'Fecha_Entrada','Fecha_Ultima_Interaccion','Siguiente_Paso','Fecha_Siguiente_Paso','Medio_Recomendado','Toque_Cadencia','Respondio',
+  'Etapa_CRM','Importe','Probabilidad_Cierre','BANT_Budget','BANT_Authority','BANT_Need','BANT_Timeline','Gancho'];
+
+function parseCSV(text){
+  text=text.replace(/^﻿/,'');
+  const first=text.split(/\r?\n/,1)[0];
+  const delim=[',',';','\t'].map(d=>[d,first.split(d).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"') q=true;
+    else if(c===delim){row.push(f);f='';}
+    else if(c==='\n'){row.push(f);rows.push(row);row=[];f='';}
+    else if(c!=='\r') f+=c;
+  }
+  if(f!==''||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.some(x=>x.trim()!==''));
+}
+const yes=v=>!!v&&!/^(no|n|false|falso|0|pendiente|noidentificado|nomapeado|ninguno|na)$/.test(norm(v));
+function dateOf(v){
+  if(!v) return null;
+  let m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return new Date(+m[1],+m[2]-1,+m[3]);
+  m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);
+  if(m){let y=+m[3];if(y<100)y+=2000;return new Date(y,+m[2]-1,+m[1]);}
+  const d=new Date(v); if(isNaN(d)) return null; d.setHours(0,0,0,0); return d;
+}
+function sectorOf(v){
+  const m=String(v).toUpperCase().match(/MEM_AIS_MX_([A-Z]+)/);
+  if(m&&SECTORES[m[1]]) return m[1];
+  const n=norm(v);
+  if(SECTORES[n.toUpperCase()]) return n.toUpperCase();
+  const T=[[/farma|dispositivo/,'FARMDM'],[/financ|banc|sofipo|sofom|asegur|fintech|pago|credito|afore|bolsa|caja|cooperativ/,'FIN'],
+    [/salud|hospital|clinic|laboratorioclin|medic/,'SALUD'],[/automotri|autopart|armadora|^auto/,'AUTO'],[/aero/,'AERO'],
+    [/energ|gasolin|petrol|solar|electric|^gas|hidrocarb/,'ENER'],[/quimic|pintur|petroquim|agroquim/,'QUIM'],
+    [/manufact|maquil|industri|electron|plastic|planta/,'MFG'],[/retail|comerci|tienda|consumo|ecommerce|departamental/,'RETAIL'],
+    [/logist|transport|carga|3pl|aduan|mensajer/,'LOGTRANS'],[/aliment|bebid|agro|empac/,'ALIBEB'],[/constru|inmobil|infraestruct/,'CONST'],
+    [/miner|metal/,'MIN'],[/turis|hotel|restaur|hospitalidad|resort|aerolin/,'TURHOSP']];
+  for(const [re,k] of T) if(re.test(n)) return k;
+  return 'OTRO';
+}
+function faseOf(v){
+  const n=norm(v);
+  if(/ganad|won|cerradoganado/.test(n)) return 'Ganado';
+  if(/perdid|lost|descart/.test(n)) return 'Perdido';
+  if(/trato|oportunidad|deal/.test(n)) return 'Trato';
+  if(/sql/.test(n)) return 'SQL';
+  if(/sal/.test(n)) return 'SAL';
+  if(/mql/.test(n)) return 'MQL';
+  return 'Lead';
+}
+function fuenteOf(v){
+  const n=norm(v); if(!n) return 'Sin fuente';
+  if(/direcc|ceo|coo|directiv/.test(n)) return 'Dirección';
+  if(/partner|fabricante|mayorista|alianza|aliado|integrador|coselling/.test(n)) return 'Partner';
+  if(/clienteactual|renovac|upsell|crosssell|cliente/.test(n)) return 'Cliente actual';
+  if(/market|webinar|formul|landing|evento|campan|linkedin|newsletter|publicidad|contenido|web|ads/.test(n)) return 'Marketing';
+  if(/comercial|outbound|referid|prospecc|reactiv|coldcall|llamadaenfrio/.test(n)) return 'Comercial';
+  return String(v).trim();
+}
+function tempOf(v){const n=norm(v);if(!n)return '';if(/estrat/.test(n))return 'Estratégico';if(/calient|hot/.test(n))return 'Caliente';if(/tib|warm/.test(n))return 'Tibio';if(/fri|cold/.test(n))return 'Frío';return '';}
+function medioOf(v){const n=norm(v);if(!n)return '';if(/whats/.test(n))return 'WhatsApp';if(/correo|mail/.test(n))return 'Correo';if(/linked/.test(n))return 'LinkedIn';if(/video|reunion|meet|zoom|teams/.test(n))return 'Videollamada';if(/llam|tel|call/.test(n))return 'Llamada';return String(v).trim();}
+function etapaIdx(v){const n=norm(v);if(!n)return null;const T=[/anali/,/desarroll/,/generac/,/revisi/,/presentac/,/negoc/,/ganad|won/,/perdid|lost/];const i=T.findIndex(re=>re.test(n));return i<0?null:i;}
+function bantOf(v){const n=norm(v);if(!n)return null;if(/confirm/.test(n))return 'Confirmado';if(/parcial/.test(n))return 'Parcial';if(/infer/.test(n))return 'Inferido';if(/noaplica|^na$/.test(n))return 'No aplica';if(/noident|descon|^no$/.test(n))return 'No identificado';return 'Parcial';}
+function microNorm(v){const n=norm(v);if(/anti/.test(n))return 'ANTI';const m=n.match(/icp([123])/);return m?'ICP'+m[1]:'';}
+
+function fromRow(r,idx,n){
+  const g=k=>idx[k]!=null?String(r[idx[k]]??'').trim():'';
+  const num=k=>{const v=g(k);if(!v)return null;const x=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(x)?null:x;};
+  const etapa=etapaIdx(g('etapa'));
+  let fase=faseOf(g('fase'));
+  if(etapa===6) fase='Ganado'; else if(etapa===7) fase='Perdido'; else if(etapa!=null&&FASES.indexOf(fase)<4) fase='Trato';
+  return {id:g('id')||`L-${pad(n+1).padStart(4,'0')}`,empresa:g('empresa'),sector:sectorOf(g('sector')),ciudad:g('ciudad'),
+    fuente:fuenteOf(g('fuente')),canal:g('canal'),resp:g('resp')||'Sin asignar',cargo:g('cargo'),contacto:g('contacto'),
+    fase,faseMax:null,temp:tempOf(g('temp')),micro:microNorm(g('micro')),
+    fit:num('fit'),intent:num('intent'),viab:num('viab'),eng:num('eng'),total:num('total'),
+    eb:yes(g('eb')),aliado:yes(g('aliado')),entrada:dateOf(g('entrada')),ult:dateOf(g('ult')),
+    sigPaso:g('sig'),fsig:dateOf(g('fsig')),medio:medioOf(g('medio')),toque:Math.max(0,Math.min(5,Math.round(num('toque')||0))),
+    respondio:yes(g('respondio')),etapa,importe:num('importe'),prob:num('prob'),gancho:g('gancho'),
+    bant:{B:bantOf(g('b')),A:bantOf(g('a')),N:bantOf(g('n')),T:bantOf(g('t'))}};
+}
+function importText(text,name){
+  const rows=parseCSV(text);
+  if(rows.length<2) throw new Error('El archivo no tiene filas de datos debajo del encabezado.');
+  const hdr=rows[0].map(norm), idx={};
+  for(const [k,al] of Object.entries(COLS)){const i=hdr.findIndex(h=>al.includes(h));if(i>=0)idx[k]=i;}
+  if(idx.empresa==null) throw new Error('No encontré la columna "Empresa". Usa la plantilla o renombra la columna de la cuenta a "Empresa".');
+  const seen=new Map();
+  const leads=rows.slice(1).map((r,n)=>fromRow(r,idx,n)).filter(l=>l.empresa).map(l=>{
+    const c=seen.get(l.id)||0; seen.set(l.id,c+1); if(c) l.id=`${l.id}-${c+1}`; return l;});
+  if(!leads.length) throw new Error('Ninguna fila tiene nombre de empresa.');
+  load(leads,{kind:'csv',name});
+  return leads.length;
+}
+
+/* ---------- estado y filtros ---------- */
+let LEADS=[], SOURCE={kind:'demo',name:'Datos de ejemplo'};
+const state={periodo:'all',sector:'',micro:'',resp:'',fuente:'',q:'',alert:'',sort:{k:'prio',d:1}};
+function filtered(){
+  const q=norm(state.q);
+  return LEADS.filter(l=>{
+    if(state.periodo!=='all'&&(l.diasEntrada==null||l.diasEntrada>+state.periodo)) return false;
+    if(state.sector&&l.sector!==state.sector) return false;
+    if(state.micro&&l.micro!==state.micro) return false;
+    if(state.resp&&l.resp!==state.resp) return false;
+    if(state.fuente&&l.fuente!==state.fuente) return false;
+    if(q&&!norm([l.empresa,l.id,l.ciudad,l.cargo,l.sigPaso,l.contacto,secName(l.sector)].join(' ')).includes(q)) return false;
+    return true;
+  });
+}
+function fillSelect(sel,all,opts,cur){
+  sel.innerHTML=`<option value="">${esc(all)}</option>`+opts.map(([v,t])=>`<option value="${esc(v)}">${esc(t)}</option>`).join('');
+  sel.value=opts.some(o=>o[0]===cur)?cur:'';
+  return sel.value;
+}
+function populateFilters(){
+  const uniq=f=>[...new Set(LEADS.map(f).filter(Boolean))];
+  state.sector=fillSelect($('#fSector'),'Todos los sectores',uniq(l=>l.sector).sort((a,b)=>secName(a).localeCompare(secName(b),'es')).map(k=>[k,secName(k)]),state.sector);
+  state.micro=fillSelect($('#fMicro'),'Todos',['ICP1','ICP2','ICP3','ANTI'].filter(k=>LEADS.some(l=>l.micro===k)).map(k=>[k,k==='ANTI'?'Anti-ICP':k]),state.micro);
+  state.resp=fillSelect($('#fResp'),'Todos',uniq(l=>l.resp).sort((a,b)=>a.localeCompare(b,'es')).map(k=>[k,k]),state.resp);
+  state.fuente=fillSelect($('#fFuente'),'Todas',uniq(l=>l.fuente).sort((a,b)=>a.localeCompare(b,'es')).map(k=>[k,k]),state.fuente);
+}
+
+/* ---------- render ---------- */
+const empty=t=>`<p class="empty">${esc(t)}</p>`;
+function hbars(el,rows,o={}){
+  if(!rows.length||rows.every(r=>!r.v)){el.innerHTML=empty(o.emptyText||'Sin leads con los filtros actuales.');return;}
+  const m=Math.max(1,...rows.map(r=>r.v));
+  el.innerHTML=`<div class="hb">${rows.map(r=>{
+    const w=r.v>0?Math.max(1.5,r.v/m*100):0, btn=!!o.key, on=btn&&o.active===r.key;
+    const attrs=btn?`type="button" data-${o.key}="${esc(r.key)}" aria-pressed="${on}"`:'';
+    return `<${btn?'button':'div'} class="hb-row${on?' is-on':''}" ${attrs} data-tip="${esc(r.tip)}">
+      <span class="hb-lab">${esc(r.label)}</span>
+      <span class="hb-track"><span class="hb-bar" style="width:${w}%"></span></span>
+      <span class="hb-val">${esc(o.fmt?o.fmt(r.v):nf.format(r.v))}${r.extra?`<small>${esc(r.extra)}</small>`:''}</span>
+    </${btn?'button':'div'}>`;}).join('')}</div>`;
+}
+function tile(label,value,sub,sev,sevLabel,tip){
+  return `<div class="kpi"${tip?` data-tip="${esc(tip)}"`:''}><div class="kpi-top"><span class="kpi-l">${esc(label)}</span>${sev?pill(sev,sevLabel):''}</div><div class="kpi-v">${value}</div><div class="kpi-s">${esc(sub)}</div></div>`;
+}
+function renderKPIs(set){
+  const act=set.filter(l=>!l.closed);
+  const nuevos=set.filter(l=>l.diasEntrada!=null&&l.diasEntrada<=30).length;
+  const avg=act.length?sum(act,l=>l.total)/act.length:0;
+  const sqlFase=act.filter(l=>l.fase==='SQL'||l.fase==='Trato');
+  const sqlOk=sqlFase.filter(l=>l.eb).length, bloq=sqlFase.length-sqlOk;
+  const venc=act.filter(l=>l.seg.k==='vencido'||l.seg.k==='sinpaso').length;
+  const hoy=act.filter(l=>l.seg.k==='hoy').length;
+  const contact=set.filter(l=>l.toque>0||l.ult), resp=contact.filter(l=>l.respondio).length;
+  const tratos=act.filter(l=>l.etapa!=null&&l.etapa<6);
+  const pond=sum(tratos,l=>(l.importe||0)*(l.prob||0)/100), bruto=sum(tratos,l=>l.importe);
+  $('#kpis').innerHTML=[
+    tile('Leads en seguimiento',nf.format(act.length),`${nuevos} entraron en los últimos 30 días`,null,null,'Leads activos: sin Cierre de Ganado ni de Perdido.'),
+    tile('Score ICP promedio',`${act.length?Math.round(avg):'—'}<small>/100</small>`,act.length?`Clasificación media: ${bandOf(Math.round(avg)).k}`:'Sin leads activos',null,null,'Promedio del Score Total de los leads activos.'),
+    tile('SQL con decisor mapeado',nf.format(sqlOk),bloq?`${bloq} bloqueados por candado de decisor`:'Ningún SQL bloqueado',bloq?'serious':null,'Revisar','SQL y tratos con Economic Buyer mapeado. Sin decisor, no avanzan en pipeline.'),
+    tile('Seguimientos vencidos',nf.format(venc),`${hoy} programados para hoy`,venc?'crit':'ok',venc?'Atender hoy':'Al día','Leads activos con fecha de siguiente paso vencida o sin siguiente paso.'),
+    tile('Tasa de respuesta',contact.length?pct(resp,contact.length):'—',`${resp} de ${contact.length} contactados respondieron`,null,null,'Leads que respondieron sobre los que recibieron al menos un toque.'),
+    tile('Pipeline ponderado',esc(money.format(pond)),`${money.format(bruto)} bruto · ${tratos.length} tratos abiertos`,null,null,'Suma de importe × probabilidad de cierre de los tratos abiertos.')
+  ].join('');
+}
+function renderFunnel(set){
+  const c=FUNNEL.map((_,i)=>set.filter(l=>l.maxIdx>=i).length);
+  if(!c[0]){$('#funnel').innerHTML=empty('Sin leads con los filtros actuales.');return;}
+  $('#funnel').innerHTML=`<div class="fn-hd"><span>Fase</span><span></span><span>Leads</span><span>Conv.</span></div><div class="fn">${FUNNEL.map(([k,d],i)=>{
+    const conv=i?pct(c[i],c[i-1]):'—';
+    const tip=`${k} · ${d}\n${c[i]} leads (${pct(c[i],c[0])} del total)${i?`\nConversión desde ${FUNNEL[i-1][0]}: ${conv}`:''}`;
+    return `<div class="fn-row" data-tip="${esc(tip)}"><span class="fn-lab"><b>${esc(k)}</b><small>${esc(d)}</small></span><span><span class="fn-bar" style="width:${c[i]?Math.max(1.5,c[i]/c[0]*100):0}%"></span></span><span class="fn-v">${c[i]}</span><span class="fn-c">${i?'→ '+conv:''}</span></div>`;}).join('')}</div>`;
+}
+function renderBands(set){
+  const act=set.filter(l=>!l.closed), c=BANDS.map(()=>0);
+  act.forEach(l=>c[l.band.i]++);
+  if(!act.length){$('#bands').innerHTML=empty('Sin leads activos con los filtros actuales.');return;}
+  const m=Math.max(1,...c), H=124;
+  $('#bands').innerHTML=`<div class="cols">${BANDS.map((b,i)=>`<div class="col" data-tip="${esc(`${b.k} · ${b.min}–${b.max} pts\n${c[i]} leads (${pct(c[i],act.length)})\nAcción: ${b.a}`)}"><span class="col-v">${c[i]}</span><span class="col-bar" style="height:${c[i]?Math.max(3,Math.round(c[i]/m*H)):0}px;background:var(--seq-${i+1})"></span></div>`).join('')}</div>
+    <div class="cols-x">${BANDS.map(b=>`<div><b>${esc(b.k)}</b><small>${b.min}–${b.max}</small></div>`).join('')}</div>`;
+}
+const byPrio=(a,b)=>a.pr.r-b.pr.r||(a.fsig?a.fsig.getTime():Infinity)-(b.fsig?b.fsig.getTime():Infinity)||b.total-a.total;
+function renderAgenda(set){
+  const items=set.filter(l=>!l.closed&&(l.seg.k==='vencido'||l.seg.k==='sinpaso'||(l.seg.d!=null&&l.seg.d<=7))).sort(byPrio);
+  $('#agendaSub').textContent=`${items.length} acciones vencidas o en los próximos 7 días, en el orden de prioridad diaria del agente`;
+  if(!items.length){$('#agenda').innerHTML=empty('Sin acciones pendientes en los próximos 7 días.');return;}
+  const top=items.slice(0,8);
+  $('#agenda').innerHTML=`<div class="ag-list">${top.map(l=>`<button class="ag" type="button" data-id="${esc(l.id)}">
+      <span class="ag-st">${pill(l.seg.sev,l.seg.label)}</span>
+      <span class="ag-main"><b>${esc(l.empresa)}</b><span>${esc(l.sigPaso||'Definir siguiente paso')}</span><small>${esc([l.pr.m,l.medio,`Toque ${l.toque} de 5`].filter(Boolean).join(' · '))}</small></span>
+      <span class="ag-side"><b>${esc(fdate(l.fsig))}</b><small>${esc(l.resp)}</small></span></button>`).join('')}</div>
+    ${items.length>top.length?`<button class="btn more" id="agMore" type="button">Ver las ${items.length} en la tabla</button>`:''}`;
+}
+function renderAlerts(set){
+  $('#alerts').innerHTML=`<div class="al-list">${RULES.map(r=>{
+    const n=set.filter(l=>l.flags.includes(r.id)).length, on=state.alert===r.id;
+    return `<button class="al" type="button" data-alert="${r.id}" aria-pressed="${on}" ${n||on?'':'disabled'}>${ICONS[r.sev]}<span><b>${esc(r.t)}</b><small>${esc(r.d)}</small></span><span class="al-n">${n}</span></button>`;}).join('')}</div>`;
+}
+function renderPipe(set){
+  const open=set.filter(l=>!l.closed&&l.etapa!=null&&l.etapa<6);
+  hbars($('#pipe'),ETAPAS.slice(0,6).map((e,i)=>{
+    const ls=open.filter(l=>l.etapa===i), v=sum(ls,l=>l.importe), p=sum(ls,l=>(l.importe||0)*(l.prob||0)/100);
+    return {key:String(i),label:e.n,v,extra:` · ${ls.length}`,tip:`${e.n}\n${ls.length} tratos · ${moneyFull.format(v)}\nPonderado: ${moneyFull.format(p)}\nProbabilidad base ${e.p[0]}–${e.p[1]}%`};
+  }),{fmt:v=>money.format(v),emptyText:'Sin tratos abiertos con los filtros actuales.'});
+  const won=set.filter(l=>l.fase==='Ganado'), lost=set.filter(l=>l.fase==='Perdido');
+  $('#pipeFoot').textContent=`Cierre de Ganado: ${won.length} (${money.format(sum(won,l=>l.importe))}) · Cierre de Perdido: ${lost.length}`;
+}
+function groupRows(set,keyf){
+  const g=new Map();
+  set.forEach(l=>{const k=keyf(l);const a=g.get(k)||[];a.push(l);g.set(k,a);});
+  return [...g.entries()].sort((a,b)=>b[1].length-a[1].length||String(a[0]).localeCompare(String(b[0]),'es'));
+}
+function renderSector(set){
+  hbars($('#sector'),groupRows(set,l=>l.sector).map(([k,ls])=>{
+    const avg=Math.round(sum(ls,l=>l.total)/ls.length);
+    return {key:k,label:secName(k),v:ls.length,extra:` · ${avg} pts`,tip:`${secName(k)}${secCode(k)?`\n${secCode(k)}`:''}\n${ls.length} leads · score promedio ${avg}\nDolor típico: ${(SECTORES[k]||SECTORES.OTRO)[1]}`};
+  }),{key:'sector',active:state.sector});
+}
+function renderFuente(set){
+  hbars($('#fuente'),groupRows(set,l=>l.fuente).map(([k,ls])=>{
+    const sql=ls.filter(l=>l.maxIdx>=3).length;
+    return {key:k,label:k,v:ls.length,tip:`${k}\n${ls.length} leads · ${sql} llegaron a SQL o más (${pct(sql,ls.length)})`};
+  }),{key:'fuente',active:state.fuente});
+}
+const tempHtml=t=>{const n=TEMPS.indexOf(t)+1;return `<span class="temp"><i aria-hidden="true">${[1,2,3,4].map(k=>`<span class="${k<=n?'on':''}"></span>`).join('')}</i>${esc(t||'—')}</span>`;};
+const ebHtml=l=>l.eb?pill('ok','Mapeado'):(!l.closed&&(l.fase==='SQL'||l.fase==='Trato'))?pill('serious','Sin EB'):'<span class="t-mut">Pendiente</span>';
+const COLDEF=[['prio','Seguimiento'],['empresa','Lead'],['sector','Sector'],['micro','ICP'],['total','Score'],['fase','Fase'],['temp','Temperatura'],['eb','Decisor'],['ult','Último contacto'],['sig','Siguiente paso'],['resp','Responsable']];
+const SORTS={
+  prio:byPrio,
+  empresa:(a,b)=>a.empresa.localeCompare(b.empresa,'es'),
+  sector:(a,b)=>secName(a.sector).localeCompare(secName(b.sector),'es'),
+  micro:(a,b)=>a.micro.localeCompare(b.micro),
+  total:(a,b)=>a.total-b.total,
+  fase:(a,b)=>a.fi-b.fi,
+  temp:(a,b)=>TEMPS.indexOf(a.temp)-TEMPS.indexOf(b.temp),
+  eb:(a,b)=>(a.eb?1:0)-(b.eb?1:0),
+  ult:(a,b)=>(a.diasSin??1e9)-(b.diasSin??1e9),
+  sig:(a,b)=>(a.fsig?a.fsig.getTime():Infinity)-(b.fsig?b.fsig.getTime():Infinity),
+  resp:(a,b)=>a.resp.localeCompare(b.resp,'es')
+};
+function renderTable(set){
+  const rows=set.filter(l=>!state.alert||l.flags.includes(state.alert));
+  const {k,d}=state.sort;
+  rows.sort((a,b)=>SORTS[k](a,b)*d||byPrio(a,b));
+  $('#thead').innerHTML=COLDEF.map(([key,t])=>`<th scope="col" aria-sort="${key===k?(d>0?'ascending':'descending'):'none'}"><button type="button" data-sort="${key}">${esc(t)}<span class="arr" aria-hidden="true">${key===k?(d>0?'▲':'▼'):''}</span></button></th>`).join('');
+  $('#tblCount').textContent=`Mostrando ${rows.length} de ${LEADS.length} leads · clic en una fila para abrir la ficha`;
+  const rule=RULES.find(r=>r.id===state.alert);
+  $('#alertChip').innerHTML=rule?`<span class="chip-f">Alerta: ${esc(rule.t)}<button type="button" id="alertClear" aria-label="Quitar filtro de alerta">×</button></span>`:'';
+  $('#tbody').innerHTML=rows.length?rows.map(l=>`<tr tabindex="0" data-id="${esc(l.id)}">
+    <td>${pill(l.seg.sev,l.seg.label)}<span class="t-sm">${esc(l.pr.m)}</span></td>
+    <td class="t-emp"><b>${esc(l.empresa)}</b><span class="t-sm"><span class="mono">${esc(l.id)}</span>${[l.cargo,l.ciudad].filter(Boolean).map(x=>' · '+esc(x)).join('')}</span></td>
+    <td>${esc(secName(l.sector))}<span class="t-sm mono">${esc(secCode(l.sector))}</span></td>
+    <td><span class="icp icp-${esc(l.micro)}">${esc(l.micro==='ANTI'?'Anti-ICP':l.micro)}</span></td>
+    <td><div class="sc"><b>${l.total}</b><span class="sc-track"><i style="width:${l.total}%;background:var(--seq-${l.band.i+1})"></i></span></div><span class="t-sm">${esc(l.band.k)}</span></td>
+    <td>${esc(l.fase)}${l.etapa!=null&&l.etapa<6?`<span class="t-sm">${esc(ETAPAS[l.etapa].n)}</span>`:''}</td>
+    <td>${tempHtml(l.temp)}</td>
+    <td>${ebHtml(l)}</td>
+    <td>${l.diasSin==null?'<span class="t-mut">Sin contacto</span>':(l.diasSin===0?'Hoy':`Hace ${l.diasSin} d`)}<span class="t-sm">${esc(l.ult?fdate(l.ult):'')}</span></td>
+    <td class="t-next">${esc(l.sigPaso||'—')}<span class="t-sm">${esc([l.fsig?fdate(l.fsig):'',l.medio].filter(Boolean).join(' · '))}</span></td>
+    <td>${esc(l.resp)}</td></tr>`).join(''):`<tr><td colspan="${COLDEF.length}">${empty('Ningún lead coincide con los filtros.')}</td></tr>`;
+}
+function renderSource(){
+  const real=SOURCE.kind==='csv';
+  const chip=$('#srcChip');
+  chip.classList.toggle('is-real',real);
+  chip.lastElementChild.textContent=real?`${SOURCE.name} · ${LEADS.length} leads`:`Datos de ejemplo · ${LEADS.length} leads`;
+  $('#notice').hidden=real;
+  $('#btnDemo').hidden=!real;
+  $('#corte').textContent=`Corte: ${fdateL(TODAY)}`;
+}
+function syncControls(){
+  document.querySelectorAll('#fPeriodo button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===state.periodo)));
+  $('#fSector').value=state.sector; $('#fMicro').value=state.micro; $('#fResp').value=state.resp; $('#fFuente').value=state.fuente;
+  if($('#fQ').value!==state.q) $('#fQ').value=state.q;
+}
+function render(){
+  const set=filtered();
+  syncControls();
+  renderKPIs(set); renderFunnel(set); renderBands(set); renderAgenda(set); renderAlerts(set);
+  renderPipe(set); renderSector(set); renderFuente(set); renderTable(set); renderSource();
+}
+function load(leads,source){
+  LEADS=leads.map(prep); SOURCE=source; state.alert='';
+  populateFilters(); render();
+}
+
+/* ---------- ficha lateral ---------- */
+const meter=(lab,v,max)=>`<div class="mt"><span>${esc(lab)}</span><span class="mt-track"><span style="width:${v==null?0:Math.min(100,v/max*100)}%"></span></span><b>${v==null?'—':v}<small>/${max}</small></b></div>`;
+const cadHtml=l=>`<ol class="cad">${CAD.map((d,i)=>`<li class="${i<l.toque?'done':i===l.toque?'cur':''}"><i></i><b>${d}</b><small>${esc(CAD_D[i])}</small></li>`).join('')}</ol>`;
+function drawerHtml(l){
+  const flags=RULES.filter(r=>l.flags.includes(r.id));
+  const et=l.etapa!=null?ETAPAS[l.etapa]:null;
+  const kv=(t,v,wide)=>`<div${wide?' class="kv-wide"':''}><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`;
+  return `<div class="dr-hd"><div><p class="eyebrow">${esc([l.id,secCode(l.sector)].filter(Boolean).join(' · '))}</p><h3 id="drTitle">${esc(l.empresa)}</h3><p class="dr-meta">${esc([l.contacto,l.cargo,l.ciudad,secName(l.sector)].filter(Boolean).join(' · '))}</p></div><button class="x" type="button" aria-label="Cerrar ficha">×</button></div>
+  <section class="dr-sec"><div class="dr-score-top"><div class="big">${l.total}<small>/100</small></div><div class="dr-tags"><span class="tag">${esc(l.band.k)}</span><span class="icp icp-${esc(l.micro)}">${esc(l.micro==='ANTI'?'Anti-ICP':l.micro)}</span>${tempHtml(l.temp)}</div></div>
+    ${meter('ICP Fit',l.fit,30)}${meter('Intención',l.intent,30)}${meter('Viabilidad',l.viab,30)}${meter('Engagement',l.eng,10)}</section>
+  <section class="dr-sec"><h4>Siguiente mejor acción</h4><p class="nba">${esc(l.nba)}</p>
+    <div class="dr-row">${pill(l.seg.sev,l.seg.label)}<span>${esc([l.fsig?fdateL(l.fsig):'',l.medio,l.resp].filter(Boolean).join(' · '))}</span></div>
+    <p class="dr-note">Paso registrado: ${esc(l.sigPaso||'—')} · Prioridad: ${esc(l.pr.m)}</p></section>
+  <section class="dr-sec"><h4>Cadencia de seguimiento · toque ${l.toque} de 5</h4>${cadHtml(l)}<p class="dr-note">Cada toque aporta valor, evidencia o una decisión. Nunca "solo dando seguimiento".</p></section>
+  <section class="dr-sec"><h4>BANT</h4><div class="bant">${['B','A','N','T'].map(k=>`<div><span>${esc(BANT_N[k])}</span>${bantPill(l.bant[k])}</div>`).join('')}</div></section>
+  ${et?`<section class="dr-sec"><h4>Oportunidad en Zoho</h4><dl class="kv">${kv('Etapa',et.n)}${kv('Probabilidad de cierre',l.prob!=null?l.prob+'%':'—')}${kv('Importe',l.importe!=null?moneyFull.format(l.importe):'—')}${kv('Ponderado',l.importe!=null&&l.prob!=null?moneyFull.format(l.importe*l.prob/100):'—')}</dl></section>`:''}
+  <section class="dr-sec"><h4>Alertas del agente</h4>${flags.length?`<ul class="dr-al">${flags.map(r=>`<li>${ICONS[r.sev]}<div><b>${esc(r.t)}</b><small>${esc(r.d)}</small></div></li>`).join('')}</ul>`:`<div>${pill('ok','Sin alertas')}</div>`}</section>
+  <section class="dr-sec"><h4>Contexto</h4><dl class="kv">${kv('Fuente',[l.fuente,l.canal].filter(Boolean).join(' · '))}${kv('Responsable',l.resp)}${kv('Entrada',fdateL(l.entrada))}${kv('Última interacción',l.ult?`${fdateL(l.ult)} (hace ${l.diasSin} d)`:'Sin contacto')}${kv('Economic Buyer',l.eb?'Mapeado':'No mapeado')}${kv('Respondió',l.respondio?'Sí':'No')}${kv('Gancho comercial',l.gancho||'—',true)}</dl></section>`;
+}
+let lastFocus=null;
+function openDrawer(id){
+  const l=LEADS.find(x=>x.id===id); if(!l) return;
+  lastFocus=document.activeElement;
+  const dr=$('#drawer'); dr.innerHTML=drawerHtml(l); dr.hidden=false; dr.scrollTop=0;
+  $('#ovl').hidden=false; document.body.style.overflow='hidden';
+  dr.querySelector('.x').focus();
+}
+function closeDrawer(){
+  if($('#drawer').hidden) return;
+  $('#drawer').hidden=true; $('#ovl').hidden=true; document.body.style.overflow='';
+  if(lastFocus&&lastFocus.isConnected) lastFocus.focus();
+}
+
+/* ---------- CSV de salida, portapapeles, avisos ---------- */
+const csvCell=v=>{const s=v==null?'':String(v);return /[",\n;]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};
+const leadRow=l=>[l.id,l.empresa,secCode(l.sector),l.ciudad,l.fuente,l.canal,l.resp,l.cargo,l.fase,l.temp,l.micro,l.fit,l.intent,l.viab,l.eng,l.total,
+  l.eb?'Sí':'No',l.aliado?'Sí':'No',iso(l.entrada),iso(l.ult),l.sigPaso,iso(l.fsig),l.medio,l.toque,l.respondio?'Sí':'No',
+  l.etapa!=null?ETAPAS[l.etapa].n:'',l.importe,l.prob,l.bant.B,l.bant.A,l.bant.N,l.bant.T,l.gancho];
+const toCSV=rows=>[TPL.join(','),...rows.map(r=>r.map(csvCell).join(','))].join('\n');
+function templateCSV(){
+  return toCSV([
+    ['L-0001','Hospital Ejemplo Norte','MEM_AIS_MX_SALUD','Monterrey','Marketing','Webinar','Equipo Nuevo León','CISO','SQL','Caliente','ICP1',24,21,20,8,73,'Sí','No',iso(addDays(-40)),iso(addDays(-4)),'Sesión de descubrimiento comercial',iso(addDays(3)),'Videollamada',3,'Sí','','','','Parcial','Confirmado','Confirmado','Parcial','Ransomware en hospitales del sector'],
+    ['L-0002','Manufacturera Ejemplo Bajío','MEM_AIS_MX_MFG','Querétaro','Comercial','Referido','Equipo CDMX','Director de TI','Trato','Caliente','ICP1',26,24,22,8,80,'Sí','No',iso(addDays(-75)),iso(addDays(-2)),'Presentar propuesta al comité',iso(addDays(1)),'Videollamada',4,'Sí','Presentación de Propuesta',1250000,75,'Confirmado','Confirmado','Confirmado','Parcial','Cliente OEM exige evidencia de seguridad']
+  ]);
+}
+let toastT=0;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true;},4200);}
+function openModal(title,desc,text){
+  $('#mdTitle').textContent=title; $('#mdDesc').textContent=desc; $('#mdText').value=text;
+  $('#modal').hidden=false; const ta=$('#mdText'); ta.focus(); ta.select();
+}
+function copyText(text,okMsg,title){
+  try{
+    navigator.clipboard.writeText(text).then(()=>toast(okMsg),()=>openModal(title,'Tu navegador no permitió copiar. Selecciona el texto y cópialo; guárdalo como archivo .csv.',text));
+  }catch(e){openModal(title,'Selecciona el texto y cópialo; guárdalo como archivo .csv.',text);}
+}
+
+/* ---------- archivos ---------- */
+const STORE='acces-icp-dashboard:csv';
+function readFile(file){
+  const go=enc=>{const fr=new FileReader();fr.onload=()=>{
+    const text=String(fr.result||'');
+    if(enc==='utf-8'&&(text.match(/\uFFFD/g)||[]).length>2){go('windows-1252');return;}
+    try{const n=importText(text,file.name);toast(`Importados ${n} leads de ${file.name}.`);try{localStorage.setItem(STORE,JSON.stringify({name:file.name,text}));}catch(e){}}
+    catch(err){toast(err.message);}
+  };fr.onerror=()=>toast('No pude leer el archivo. Intenta exportarlo de nuevo como CSV.');fr.readAsText(file,enc);};
+  go('utf-8');
+}
+
+/* ---------- eventos ---------- */
+$('#btnImport').addEventListener('click',()=>$('#fileIn').click());
+$('#fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(f)readFile(f);e.target.value='';});
+$('#btnTpl').addEventListener('click',()=>copyText(templateCSV(),'Plantilla CSV copiada. Pégala en una hoja y guárdala como .csv.','Plantilla CSV para Zoho'));
+$('#btnCopyView').addEventListener('click',()=>{
+  const set=filtered().filter(l=>!state.alert||l.flags.includes(state.alert)).sort(byPrio);
+  copyText(toCSV(set.map(leadRow)),`${set.length} leads copiados como CSV.`,'Vista actual en CSV');
+});
+$('#btnDemo').addEventListener('click',()=>{try{localStorage.removeItem(STORE);}catch(e){}load(demo(),{kind:'demo',name:'Datos de ejemplo'});toast('Mostrando datos de ejemplo.');});
+$('#fPeriodo').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b)return;state.periodo=b.dataset.p;render();});
+[['#fSector','sector'],['#fMicro','micro'],['#fResp','resp'],['#fFuente','fuente']].forEach(([s,k])=>$(s).addEventListener('change',e=>{state[k]=e.target.value;render();}));
+let qT=0;
+$('#fQ').addEventListener('input',e=>{clearTimeout(qT);qT=setTimeout(()=>{state.q=e.target.value;render();},120);});
+$('#fClear').addEventListener('click',()=>{Object.assign(state,{periodo:'all',sector:'',micro:'',resp:'',fuente:'',q:'',alert:''});render();});
+const toTable=()=>$('#pTable').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});
+$('#agenda').addEventListener('click',e=>{
+  if(e.target.closest('#agMore')){state.sort={k:'prio',d:1};state.alert='';render();toTable();return;}
+  const b=e.target.closest('[data-id]');if(b)openDrawer(b.dataset.id);
+});
+$('#alerts').addEventListener('click',e=>{const b=e.target.closest('[data-alert]');if(!b||b.disabled)return;state.alert=state.alert===b.dataset.alert?'':b.dataset.alert;render();if(state.alert)toTable();});
+$('#sector').addEventListener('click',e=>{const b=e.target.closest('[data-sector]');if(!b)return;state.sector=state.sector===b.dataset.sector?'':b.dataset.sector;render();});
+$('#fuente').addEventListener('click',e=>{const b=e.target.closest('[data-fuente]');if(!b)return;state.fuente=state.fuente===b.dataset.fuente?'':b.dataset.fuente;render();});
+$('#pTable').addEventListener('click',e=>{
+  if(e.target.closest('#alertClear')){state.alert='';render();return;}
+  const s=e.target.closest('[data-sort]');
+  if(s){const k=s.dataset.sort;state.sort=state.sort.k===k?{k,d:-state.sort.d}:{k,d:(k==='total'||k==='ult')?-1:1};render();return;}
+  const tr=e.target.closest('tr[data-id]');if(tr)openDrawer(tr.dataset.id);
+});
+$('#tbody').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const tr=e.target.closest('tr[data-id]');if(tr){e.preventDefault();openDrawer(tr.dataset.id);}}});
+$('#drawer').addEventListener('click',e=>{if(e.target.closest('.x'))closeDrawer();});
+$('#ovl').addEventListener('click',closeDrawer);
+$('#mdClose').addEventListener('click',()=>{$('#modal').hidden=true;});
+$('#modal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#modal').hidden=true;});
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('#modal').hidden){$('#modal').hidden=true;return;}closeDrawer();});
+
+/* arrastrar y soltar */
+let dragDepth=0;
+const hasFiles=e=>!!e.dataTransfer&&[...e.dataTransfer.types].includes('Files');
+window.addEventListener('dragenter',e=>{if(!hasFiles(e))return;dragDepth++;$('#drop').hidden=false;});
+window.addEventListener('dragleave',e=>{if(!hasFiles(e))return;dragDepth=Math.max(0,dragDepth-1);if(!dragDepth)$('#drop').hidden=true;});
+window.addEventListener('dragover',e=>{if(hasFiles(e))e.preventDefault();});
+window.addEventListener('drop',e=>{if(!hasFiles(e))return;e.preventDefault();dragDepth=0;$('#drop').hidden=true;const f=e.dataTransfer.files[0];if(f)readFile(f);});
+
+/* tooltip */
+const tip=$('#tip');
+function placeTip(x,y){const p=12,w=tip.offsetWidth,h=tip.offsetHeight;let L=x+p,T=y+p;if(L+w>innerWidth-8)L=x-w-p;if(T+h>innerHeight-8)T=y-h-p;tip.style.left=Math.max(8,L)+'px';tip.style.top=Math.max(8,T)+'px';}
+function showTip(t,x,y){tip.textContent=t.dataset.tip;tip.hidden=false;placeTip(x,y);}
+document.addEventListener('pointermove',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.hidden=true;return;}showTip(t,e.clientX,e.clientY);});
+document.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;const t=e.target.closest&&e.target.closest('[data-tip]');if(t)showTip(t,e.clientX,e.clientY);else tip.hidden=true;});
+document.addEventListener('focusin',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.hidden=true;return;}const r=t.getBoundingClientRect();showTip(t,r.left+Math.min(r.width,160),r.bottom);});
+document.documentElement.addEventListener('mouseleave',()=>{tip.hidden=true;});
+window.addEventListener('scroll',()=>{tip.hidden=true;},{passive:true});
+
+/* arranque */
+let restored=false;
+try{const saved=JSON.parse(localStorage.getItem(STORE)||'null');if(saved&&saved.text){importText(saved.text,saved.name||'CSV importado');restored=true;}}catch(e){}
+if(!restored) load(demo(),{kind:'demo',name:'Datos de ejemplo'});
+})();
+</script>
+</body>
+</html>
