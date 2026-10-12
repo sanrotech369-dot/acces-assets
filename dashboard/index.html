@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..800;1,62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: mesa de control de leads. Banda de marca, filtros, fila de KPIs, rejilla de análisis
-   (embudo, score, agenda, alertas, cadencia, sector, fuente, datos de contacto, rol en la compra),
-   tabla maestra de leads y ficha lateral con datos de la empresa y del contacto. */
+/* Layout: mesa de control de leads del agente. Banda de marca, filtros, fila de KPIs, rejilla de análisis
+   (embudo, score, agenda, alertas, estado en el agente, cadencia, sector, fuente, puesto, datos, correo),
+   tabla maestra paginada y ficha lateral con datos de la empresa, del contacto y del agente. */
 :root{
   --navy:#183051; --cyan:#0097CD;
   --bg:#EDF1F5; --panel:#FFFFFF; --panel-2:#F4F7FA; --ink:#0F1D31; --ink-2:#3E4E63; --muted:#627287;
@@ -94,6 +94,8 @@ small{font-size:inherit}
 .notice{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;background:var(--info-bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;color:var(--ink-2)}
 .notice p{margin:0;flex:1 1 320px}
 .notice b{color:var(--ink)}
+.notice ol{margin:4px 0 0;padding-left:20px}
+.notice code{font-family:var(--font-mono);font-size:12px}
 
 /* Filtros */
 .filters{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end}
@@ -128,8 +130,8 @@ small{font-size:inherit}
 /* Rejilla de paneles */
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}
 .panel{grid-column:span 12;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0;display:flex;flex-direction:column;gap:12px}
-@media (min-width:760px) and (max-width:1099.98px){.p-a,.p-b,.p-f,.p-g,.p-h,.p-i{grid-column:span 6}}
-@media (min-width:1100px){.p-a,.p-c,.p-h{grid-column:span 7}.p-b,.p-d,.p-e,.p-i{grid-column:span 5}.p-f{grid-column:span 4}.p-g{grid-column:span 3}}
+@media (min-width:760px) and (max-width:1099.98px){.p-a,.p-b,.p-k,.p-e,.p-f,.p-g,.p-h,.p-j{grid-column:span 6}}
+@media (min-width:1100px){.p-a,.p-c,.p-e,.p-h{grid-column:span 7}.p-b,.p-d,.p-k,.p-i,.p-j{grid-column:span 5}.p-f{grid-column:span 4}.p-g{grid-column:span 3}}
 .ph{display:flex;flex-direction:column;gap:2px}
 .ph h2{margin:0;font-family:var(--font-display);font-size:15.5px;font-weight:700;font-stretch:104%;letter-spacing:.005em}
 .ph p{margin:0;color:var(--muted);font-size:12.5px}
@@ -150,16 +152,16 @@ button.hb-row{appearance:none;border:0;background:none;text-align:left;width:100
 
 /* Embudo */
 .fn{display:flex;flex-direction:column;gap:2px}
-.fn-row{display:grid;grid-template-columns:minmax(96px,170px) minmax(0,1fr) 40px 64px;align-items:center;gap:10px;padding:5px 6px;border-radius:6px}
+.fn-row{display:grid;grid-template-columns:minmax(96px,170px) minmax(0,1fr) 52px 64px;align-items:center;gap:10px;padding:5px 6px;border-radius:6px}
 .fn-row:hover{background:var(--panel-2)}
 .fn-lab b{display:block;font-size:13px}
 .fn-lab small{display:block;font-size:11.5px;color:var(--muted);line-height:1.3}
 .fn-bar{display:block;height:18px;background:var(--bar);border-radius:0 4px 4px 0}
 .fn-v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
 .fn-c{text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.fn-hd{display:grid;grid-template-columns:minmax(96px,170px) minmax(0,1fr) 40px 64px;gap:10px;padding:0 6px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.fn-hd{display:grid;grid-template-columns:minmax(96px,170px) minmax(0,1fr) 52px 64px;gap:10px;padding:0 6px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .fn-hd span:nth-child(3),.fn-hd span:nth-child(4){text-align:right}
-@media (max-width:560px){.fn-row,.fn-hd{grid-template-columns:74px minmax(0,1fr) 30px 50px;gap:8px}.fn-lab small{display:none}}
+@media (max-width:560px){.fn-row,.fn-hd{grid-template-columns:74px minmax(0,1fr) 44px 50px;gap:8px}.fn-lab small{display:none}}
 
 /* Columnas del score */
 .cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:end;border-bottom:1px solid var(--line);padding-top:6px}
@@ -204,7 +206,7 @@ button.hb-row{appearance:none;border:0;background:none;text-align:left;width:100
 .chip-f button{border:0;background:none;cursor:pointer;width:24px;height:24px;border-radius:50%;color:var(--muted);font-size:16px;line-height:1}
 .chip-f button:hover{background:var(--grid);color:var(--ink)}
 .tbl-wrap{overflow:auto;max-height:72vh;border:1px solid var(--line);border-radius:10px}
-table{border-collapse:collapse;width:100%;min-width:1420px;font-size:13px}
+table{border-collapse:collapse;width:100%;min-width:1540px;font-size:13px}
 th{position:sticky;top:0;z-index:1;background:var(--panel-2);text-align:left;font-weight:600;color:var(--ink-2);font-size:12px;padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
 th button{appearance:none;border:0;background:none;width:100%;text-align:left;cursor:pointer;padding:9px 10px;font-weight:600;color:inherit;display:flex;gap:4px;align-items:center}
 th button:hover{color:var(--ink)}
@@ -219,6 +221,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 .t-sm{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .t-mut{color:var(--muted)}
 .t-next{min-width:230px}
+.tbl-more{display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12.5px}
 .mono{font-family:var(--font-mono);font-size:11.5px}
 .sc{display:flex;align-items:center;gap:8px}
 .sc b{font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
@@ -227,6 +230,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 .icp{display:inline-block;font-family:var(--font-mono);font-size:11.5px;font-weight:500;padding:1px 7px;border-radius:5px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel);white-space:nowrap}
 .icp-ICP1{background:var(--bar-soft);border-color:var(--bar);color:var(--ink)}
 .icp-ANTI{text-decoration:line-through}
+.est{display:inline-block;font-family:var(--font-mono);font-size:11.5px;padding:1px 7px;border-radius:5px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);white-space:nowrap}
 .temp{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .temp i{display:inline-flex;gap:2px}
 .temp i span{width:5px;height:11px;border-radius:1px;background:var(--bar-soft)}
@@ -316,8 +320,8 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
       <p class="sub"><span>Leads generados, calificación ICP, seguimiento y datos de empresas y contactos</span><span class="src" id="srcChip"><i></i><span></span></span></p>
     </div>
     <div class="hdr-act">
-      <button class="btn btn-hdr-pri" id="btnImport" type="button">Importar CSV de leads</button>
-      <input id="fileIn" type="file" accept=".csv,.tsv,.txt,text/csv" hidden>
+      <button class="btn btn-hdr-pri" id="btnImport" type="button">Importar CSV o Excel</button>
+      <input id="fileIn" type="file" accept=".csv,.tsv,.txt,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
       <button class="btn btn-hdr" id="btnTpl" type="button">Copiar plantilla CSV</button>
       <button class="btn btn-hdr" id="btnDemo" type="button" hidden>Volver a datos de ejemplo</button>
     </div>
@@ -326,7 +330,12 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 
 <main class="wrap main">
   <div class="notice" id="notice">
-    <p><b>Estás viendo datos de ejemplo.</b> Importa tu base de leads en CSV, o arrástrala a esta página, para ver tus leads reales. Las columnas que falten se calculan o quedan vacías.</p>
+    <p><b>Estás viendo datos de ejemplo.</b> Para ver los leads de hoy del agente:</p>
+    <ol>
+      <li>Abre la hoja <b>ICP_CRM_ACCES</b> en la pestaña <code>Leads_SRC-001</code>.</li>
+      <li>Archivo → Descargar → <b>Valores separados por comas (.csv)</b>. También sirve <b>Microsoft Excel (.xlsx)</b> con todo el libro: el dashboard toma la pestaña <code>Leads_SRC-001</code>.</li>
+      <li>Pulsa <b>Importar CSV o Excel</b> o arrastra el archivo a esta página. Se procesa en tu navegador y no se sube a ningún lado.</li>
+    </ol>
   </div>
 
   <section class="filters" aria-label="Filtros">
@@ -342,7 +351,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <label class="fld"><span>Micro-ICP</span><select id="fMicro"></select></label>
     <label class="fld"><span>Responsable</span><select id="fResp"></select></label>
     <label class="fld"><span>Fuente</span><select id="fFuente"></select></label>
-    <label class="fld fld-q"><span>Buscar</span><input id="fQ" type="search" placeholder="Empresa, contacto, correo, cargo o ciudad" autocomplete="off"></label>
+    <label class="fld fld-q"><span>Buscar</span><input id="fQ" type="search" placeholder="Empresa, contacto, correo, cargo, ID o ciudad" autocomplete="off"></label>
     <button class="btn btn-ghost" id="fClear" type="button">Limpiar filtros</button>
   </section>
 
@@ -354,7 +363,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
       <div id="funnel"></div>
     </article>
     <article class="panel p-b" id="pBands">
-      <header class="ph"><h2>Distribución del Score ICP</h2><p>Leads activos por umbral del Score Total (0–100)</p></header>
+      <header class="ph"><h2 id="bandsTitle">Distribución del Score ICP</h2><p id="bandsSub">Leads activos por umbral del Score Total (0–100)</p></header>
       <div id="bands"></div>
     </article>
     <article class="panel p-c" id="pAgenda">
@@ -365,8 +374,12 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
       <header class="ph"><h2>Alertas del agente</h2><p>Reglas de la metodología ACCES. Haz clic en una alerta para ver sus leads.</p></header>
       <div id="alerts"></div>
     </article>
+    <article class="panel p-k" id="pEstado">
+      <header class="ph"><h2>Estado en el agente</h2><p>Dónde está cada lead activo dentro del flujo del agente. Clic para filtrar.</p></header>
+      <div id="estado"></div>
+    </article>
     <article class="panel p-e" id="pCad">
-      <header class="ph"><h2>Avance de la cadencia</h2><p>Leads activos según el último toque completado y su tasa de respuesta</p></header>
+      <header class="ph"><h2>Avance de la cadencia</h2><p>Leads activos según los toques enviados y su tasa de respuesta</p></header>
       <div id="cadencia"></div>
     </article>
     <article class="panel p-f" id="pSector">
@@ -377,13 +390,18 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
       <header class="ph"><h2>Leads por fuente</h2><p>Origen del lead. Clic para filtrar.</p></header>
       <div id="fuente"></div>
     </article>
+    <article class="panel p-i" id="pPuesto">
+      <header class="ph"><h2>Puesto del contacto</h2><p>Familia de puesto según el cargo registrado. ¿Hablamos con quien decide? Clic para filtrar.</p></header>
+      <div id="puesto"></div>
+    </article>
     <article class="panel p-h" id="pDatos">
       <header class="ph"><h2>Calidad de datos de empresas y contactos</h2><p>Porcentaje de leads activos que tienen cada dato registrado</p></header>
       <div id="datos"></div>
     </article>
-    <article class="panel p-i" id="pRol">
-      <header class="ph"><h2>Rol del contacto en la compra</h2><p>¿Hablamos con quien decide? Clic para filtrar.</p></header>
-      <div id="rol"></div>
+    <article class="panel p-j" id="pCorreo">
+      <header class="ph"><h2>Estado del correo</h2><p>Validación del correo del contacto en los leads activos</p></header>
+      <div id="correo"></div>
+      <p class="foot" id="correoFoot"></p>
     </article>
     <article class="panel" id="pTable">
       <div class="tbl-hd">
@@ -399,6 +417,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
           <tbody id="tbody"></tbody>
         </table>
       </div>
+      <div class="tbl-more" id="tblMore"></div>
     </article>
   </section>
 
@@ -406,11 +425,11 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <h2 id="mTitle">Cómo califica y prioriza el agente</h2>
     <p>Reglas tomadas del Agente Maestro de Seguimiento Comercial B2B y del Calificador de Leads ICP de ACCES GROUP.</p>
     <dl>
-      <div><dt>Score Total (0–100)</dt><dd>ICP Fit (0–30) + Intención (0–30) + Viabilidad (0–30) + Engagement (0–10). El score prioriza; no sustituye el juicio comercial.</dd></div>
-      <div><dt>Umbrales</dt><dd>0–29 fuera de perfil · 30–49 nutrir e investigar · 50–64 MQL · 65–74 SAL · 75–100 SQL.</dd></div>
-      <div><dt>Candado de decisor</dt><dd>Ningún lead se entrega como SQL sin Economic Buyer mapeado, aunque el total sea alto. Las fases se mueven solo con evidencia.</dd></div>
+      <div><dt>Pre-score y Score Total (0–100)</dt><dd>El Pre_Score del agente mide encaje desde la base y decide a quién abordar primero. El score completo, ICP Fit (0–30) + Intención (0–30) + Viabilidad (0–30) + Engagement (0–10), se llena tras el primer contacto.</dd></div>
+      <div><dt>Umbrales</dt><dd>0–29 fuera de perfil · 30–49 nutrir e investigar · 50–64 MQL · 65–74 SAL · 75–100 SQL. El score prioriza; no sustituye el juicio comercial.</dd></div>
+      <div><dt>Candado de decisor</dt><dd>Ningún lead se entrega como SQL sin Economic Buyer mapeado, aunque el total sea alto. Las fases se mueven solo con evidencia: una respuesta es MQL, una reunión agendada es SQL.</dd></div>
       <div><dt>Cadencia sin fecha acordada</dt><dd>D+1 confirmar recepción · D+3 aclaración puntual · D+7 aportar valor · D+12 validar proceso y actores · D+20 cierre de ciclo temporal. La fecha acordada con el prospecto manda.</dd></div>
-      <div><dt>Prioridad diaria</dt><dd>Compromiso vencido → sin siguiente paso → reunión próxima → SQL por entregar → cuenta estratégica → lead nuevo → calificación en curso → reactivación → nutrición.</dd></div>
+      <div><dt>Prioridad diaria</dt><dd>Compromiso vencido → sin siguiente paso → correo rebotado → reunión próxima → SQL por entregar → cuenta estratégica → lead nuevo → calificación en curso → reactivación → nutrición.</dd></div>
       <div><dt>Aliado sin presentación directa</dt><dd>Un lead de aliado tecnológico sin presentación directa tiene pre-score máximo de 40. Pide la presentación antes de invertir esfuerzo.</dd></div>
     </dl>
   </section>
@@ -431,7 +450,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <div class="modal-act"><button class="btn" id="mdClose" type="button">Cerrar</button></div>
   </div>
 </div>
-<div class="drop" id="drop" hidden>Suelta el CSV de leads para importarlo</div>
+<div class="drop" id="drop" hidden>Suelta el CSV o el Excel de leads para importarlo</div>
 <div class="tip" id="tip" hidden role="tooltip"></div>
 <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 <noscript><p style="padding:16px">Este dashboard necesita JavaScript activado.</p></noscript>
@@ -455,7 +474,8 @@ const fdateL=d=>d?d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year
 const pctN=(a,b)=>b?Math.round(a/b*100):0;
 const pct=(a,b)=>b?pctN(a,b)+'%':'—';
 const sum=(arr,f)=>arr.reduce((a,x)=>a+(f(x)||0),0);
-const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const deacc=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const norm=s=>deacc(s).toLowerCase().replace(/[^a-z0-9]/g,'');
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- catálogos de la metodología ---------- */
@@ -481,20 +501,67 @@ const sec=k=>SECTORES[k]||SECTORES.OTRO;
 const secName=k=>sec(k)[0];
 const secCode=k=>k&&k!=='OTRO'?'MEM_AIS_MX_'+k:'';
 const FASES=['Lead','MQL','SAL','SQL','Descartado'];
-const FUNNEL=[['Lead','Generado y registrado'],['MQL','Priorizado por Marketing'],['SAL','Aceptado por Comercial'],['SQL','Necesidad y viabilidad'],['SQL con decisor','Economic Buyer mapeado']];
+const FUNNEL=[['Lead','Generado y registrado'],['MQL','Respondió o mostró interés'],['SAL','Aceptado por Comercial'],['SQL','Reunión o necesidad viable'],['SQL con decisor','Economic Buyer mapeado']];
 const BANDS=[
   {k:'Fuera de perfil',min:0,max:29,a:'Registro insuficiente o fuera de perfil'},
   {k:'Nutrir',min:30,max:49,a:'Nutrir e investigar'},
   {k:'MQL',min:50,max:64,a:'Priorizar desde Marketing'},
   {k:'SAL',min:65,max:74,a:'Aceptar en Comercial'},
   {k:'SQL',min:75,max:100,a:'Descubrimiento comercial'}];
+const PRE_NAMES=['Fuera de perfil','Prioridad baja','Prioridad media','Prioridad alta','Prioridad máxima'];
+const bandName=l=>l.noScore?'Sin score':(l.scoreTipo==='pre'?PRE_NAMES[l.band.i]:l.band.k);
 const bandOf=t=>{const i=Math.max(0,BANDS.findIndex(b=>t>=b.min&&t<=b.max));return Object.assign({i},BANDS[i]);};
 const TEMPS=['Frío','Tibio','Caliente','Estratégico'];
-const ROLES=['Economic Buyer','Champion','Validador técnico','Usuario final','Influenciador','Sin identificar'];
 const CAD=['D+1','D+3','D+7','D+12','D+20'];
 const CAD_D=['Confirmar recepción','Aclaración puntual','Aportar valor','Validar proceso y actores','Cierre de ciclo temporal'];
 const BANT_N={B:'Budget · presupuesto',A:'Authority · autoridad',N:'Need · necesidad',T:'Timeline · tiempo'};
 const REQ={MQL:50,SAL:65,SQL:75};
+const MICRO_ORDER=['ICP1','ICP2','ICP3','OBS','NUEVO','ALIANZA','SIN_EVAL','ANTI'];
+const microLabel=m=>({ICP1:'ICP-1',ICP2:'ICP-2',ICP3:'ICP-3',ANTI:'Anti-ICP',OBS:'Observación',NUEVO:'Nuevo',ALIANZA:'Alianza',SIN_EVAL:'Sin evaluar'}[m]||m||'—');
+
+/* Estados del agente (columna Estado de Leads_SRC-001): etiqueta, fase que implica, siguiente paso típico */
+const ESTADOS={
+  sin_estado:['Sin estado','Lead','Calificar y calcular pre-score'],
+  sin_prescore:['Sin pre-score','Lead','Calcular pre-score'],
+  nuevo:['Nuevo','Lead','Calificar y calcular pre-score'],
+  en_investigacion:['En investigación','Lead','Terminar la investigación de la cuenta'],
+  en_revision:['En revisión','Lead','Revisión humana antes del primer correo'],
+  revisar_duplicado:['Revisar duplicado','Lead','Resolver el duplicado contra el registro maestro'],
+  pendiente:['Pendiente','Lead','Primer contacto'],
+  no_contactado:['No contactado','Lead','Primer contacto'],
+  borrador_creado:['Borrador creado','Lead','Revisar y enviar el borrador'],
+  contactado:['Contactado','Lead','Siguiente toque de la cadencia'],
+  llamar_manual:['Llamar manual','Lead','Llamada manual'],
+  en_espera:['En espera','Lead','Retomar en la fecha acordada'],
+  rebotado:['Rebotado','Lead','Buscar un correo alterno'],
+  nurture:['Nutrición','Lead','Nutrición con contenido del sector'],
+  respondio:['Respondió','MQL','Responder y proponer una llamada breve'],
+  agendado:['Agendado','SQL','Preparar la reunión de descubrimiento'],
+  descartado:['Descartado','Descartado',''],
+  descalificado_sin_contacto:['Descalificado sin contacto','Descartado',''],
+  suprimido:['Suprimido','Descartado','']
+};
+const EST_ALIAS={respondido:'respondio',respuesta:'respondio',interesado:'respondio',en_conversacion:'respondio',
+  reunion_agendada:'agendado',cita_agendada:'agendado',cita:'agendado',rebote:'rebotado',duplicado:'revisar_duplicado',
+  descalificado:'descartado',perdido:'descartado'};
+const EN_SEG=new Set(['contactado','borrador_creado','llamar_manual','en_espera','rebotado','respondio','agendado']);
+const estKey=v=>{const k=deacc(v).toLowerCase().trim().replace(/[\s-]+/g,'_');return EST_ALIAS[k]||k||'sin_estado';};
+const estLabel=k=>ESTADOS[k]?ESTADOS[k][0]:k.replace(/_/g,' ').replace(/^./,c=>c.toUpperCase());
+
+/* Familia de puesto a partir del cargo */
+const FAMILIAS=[
+  ['Dirección general',/director general|direccion general|\bceo\b|presidente|gerente general|socio|propietario|dueno|fundador/],
+  ['Finanzas',/financ|\bcfo\b|tesor|contralor|contab/],
+  ['Seguridad de la información',/\bciso\b|seguridad de la informacion|ciberseg|seguridad informatica|\bsoc\b/],
+  ['Tecnología',/\bti\b|\bcio\b|\bcto\b|tecnolog|sistemas|infraestructura|\bit\b|informatica/],
+  ['Riesgos',/riesgo|\bcro\b|continuidad/],
+  ['Cumplimiento',/cumplimiento|compliance|regulator|\bpld\b/],
+  ['Legal',/legal|juridic/],
+  ['Operaciones',/operacion|\bcoo\b|planta|manufactura|produccion|supply|cadena de suministro|logistica/],
+  ['Compras',/compras|procurement|adquisicion/],
+  ['Comercial y marketing',/venta|comercial|marketing|mercadotecnia|negocios/],
+  ['Recursos humanos',/recursos humanos|\brrhh\b|talento|capital humano/]];
+const familiaOf=c=>{const t=deacc(c).toLowerCase();if(!t.trim())return 'Sin cargo';for(const [f,re] of FAMILIAS) if(re.test(t)) return f;return 'Otro puesto';};
 
 /* ---------- iconos de estado (colores de estado fijos en ambos temas) ---------- */
 const ICONS={
@@ -514,22 +581,28 @@ const bantPill=v=>{
   if(v==='Inferido') return pill('dash',v);
   return pill('none',v||'Sin dato');
 };
+const correoValido=l=>!!l.correo&&l.correoEstado!=='rebote'&&l.correoEstado!=='faltante';
 
 /* ---------- reglas del agente ---------- */
 const RULES=[
   {id:'vencido',sev:'crit',t:'Compromisos vencidos',d:'La fecha del siguiente paso ya pasó. Retomar con valor nuevo, nunca con "solo dando seguimiento".',test:l=>l.seg.k==='vencido'},
-  {id:'sinpaso',sev:'crit',t:'Sin siguiente paso',d:'Ninguna interacción se cierra sin siguiente paso, responsable, fecha y medio.',test:l=>l.seg.k==='sinpaso'},
+  {id:'sinpaso',sev:'crit',t:'Sin siguiente paso',d:'Lead en seguimiento sin fecha de siguiente paso. Ninguna interacción se cierra sin responsable, fecha y medio.',test:l=>l.seg.k==='sinpaso'},
   {id:'candado',sev:'serious',t:'Candado de decisor',d:'SQL sin Economic Buyer mapeado. No se entrega como SQL hasta mapearlo.',test:l=>!l.closed&&l.fase==='SQL'&&!l.eb},
-  {id:'silencio',sev:'warn',t:'Silencio prolongado',d:'Más de 14 días sin interacción. El silencio no es rechazo: reactivar con un disparador real.',test:l=>!l.closed&&l.diasSin!=null&&l.diasSin>14},
-  {id:'fase',sev:'warn',t:'Fase por encima del score',d:'La fase registrada supera lo que respalda el Score Total. Mover fases solo con evidencia.',test:l=>!l.closed&&REQ[l.fase]!=null&&l.total<REQ[l.fase]},
-  {id:'datos',sev:'warn',t:'Contacto sin correo ni teléfono',d:'No hay forma directa de dar seguimiento. Enriquecer el contacto antes del siguiente toque.',test:l=>!l.closed&&!l.correo&&!l.telefono},
+  {id:'rebote',sev:'serious',t:'Correo rebotado',d:'El correo del contacto rebotó. Buscar un correo alterno antes de seguir la cadencia.',test:l=>!l.closed&&l.correoEstado==='rebote'},
+  {id:'silencio',sev:'warn',t:'Silencio prolongado',d:'En seguimiento y más de 14 días sin interacción. El silencio no es rechazo: reactivar con un disparador real.',test:l=>!l.closed&&l.enSeg&&l.diasSin!=null&&l.diasSin>14},
+  {id:'fase',sev:'warn',t:'Fase por encima del score',d:'La fase registrada supera lo que respalda el Score Total. Mover fases solo con evidencia.',test:l=>!l.closed&&l.scoreTipo==='completo'&&REQ[l.fase]!=null&&l.total<REQ[l.fase]},
+  {id:'datos',sev:'warn',t:'Contacto sin correo válido ni teléfono',d:'No hay forma directa de dar seguimiento. Enriquecer el contacto antes del siguiente toque.',test:l=>!l.closed&&!correoValido(l)&&!l.telefono},
+  {id:'dup',sev:'warn',t:'Duplicado por revisar',d:'El registro parece duplicado de otro lead. Resolverlo para no escribir dos veces a la misma persona.',test:l=>!l.closed&&l.dup},
   {id:'aliado',sev:'warn',t:'Aliado sin presentación directa',d:'Lead de aliado tecnológico sin presentación directa: pre-score máximo 40.',test:l=>!l.closed&&l.aliado&&l.total>40},
-  {id:'sla',sev:'warn',t:'Lead nuevo sin primer contacto',d:'Entró hace más de 2 días y no tiene interacción registrada.',test:l=>l.fase==='Lead'&&!l.ult&&l.diasEntrada!=null&&l.diasEntrada>2}
+  {id:'sla',sev:'warn',t:'Lead nuevo sin primer contacto',d:'Entró hace más de 2 días y no tiene interacción registrada.',test:l=>l.fase==='Lead'&&!l.enSeg&&!l.ult&&l.diasEntrada!=null&&l.diasEntrada>2}
 ];
 
 function segOf(l){
-  if(l.closed) return {k:'cerrado',label:'Descartado',sev:'none',d:null};
-  if(!l.fsig) return {k:'sinpaso',label:'Sin siguiente paso',sev:'crit',d:null};
+  if(l.closed) return {k:'cerrado',label:l.estadoL||'Descartado',sev:'none',d:null};
+  if(!l.fsig){
+    if(!l.enSeg) return {k:'cola',label:'En cola del agente',sev:'none',d:null};
+    return l.fsigCol===false?{k:'auto',label:'En cadencia del agente',sev:'none',d:null}:{k:'sinpaso',label:'Sin siguiente paso',sev:'crit',d:null};
+  }
   const d=daysBetween(TODAY,l.fsig);
   if(d<0) return {k:'vencido',label:`Vencido hace ${-d} d`,sev:'crit',d};
   if(d===0) return {k:'hoy',label:'Hoy',sev:'warn',d};
@@ -537,27 +610,34 @@ function segOf(l){
   return {k:'programado',label:`En ${d} d`,sev:'ok',d};
 }
 function prioOf(l){
-  if(l.closed) return {r:99,m:'Descartado'};
+  if(l.closed) return {r:99,m:l.estadoL||'Descartado'};
   const s=l.seg, soon=s.d!=null&&s.d<=3;
   if(s.k==='vencido') return {r:1,m:'Compromiso vencido'};
   if(s.k==='sinpaso') return {r:1.5,m:'Sin siguiente paso'};
-  if((l.medio==='Videollamada'||l.medio==='Llamada')&&soon) return {r:2,m:'Reunión próxima'};
+  if(l.correoEstado==='rebote') return {r:1.8,m:'Correo rebotado'};
+  if((l.medio==='Videollamada'||l.medio==='Llamada'||l.estado==='agendado')&&soon) return {r:2,m:'Reunión próxima'};
   if(l.fase==='SQL') return {r:3,m:'SQL por entregar'};
   if(l.temp==='Estratégico') return {r:4,m:'Cuenta estratégica'};
   if(l.fase==='Lead'&&l.diasEntrada!=null&&l.diasEntrada<=7) return {r:5,m:'Lead nuevo'};
   if(l.fase==='MQL'||l.fase==='SAL') return {r:6,m:'Calificación en curso'};
-  if(l.diasSin!=null&&l.diasSin>14) return {r:7,m:'Reactivación'};
+  if(l.enSeg&&l.diasSin!=null&&l.diasSin>14) return {r:7,m:'Reactivación'};
+  if(s.k==='auto') return {r:6.8,m:'En cadencia del agente'};
+  if(s.k==='cola') return {r:9,m:'En cola del agente'};
   if(l.band.i<=1) return {r:8,m:'Nutrición'};
   return {r:6.5,m:'Seguimiento'};
 }
 function nbaOf(l){
   if(l.closed) return 'Dejar en nutrición con contenido del sector y reactivar solo ante un disparador real.';
+  if(l.seg.k==='cola') return `En cola del agente. Siguiente paso: ${l.sigPaso||'calificar y calcular pre-score'}.`;
+  if(l.seg.k==='auto'&&!l.dup&&l.correoEstado!=='rebote') return `En la cadencia automática del agente. Siguiente paso: ${l.sigPaso||'siguiente toque'}.`;
   if(l.seg.k==='sinpaso') return 'Definir el siguiente paso con responsable, fecha y medio antes de cualquier otro toque.';
-  if(!l.correo&&!l.telefono) return 'Enriquecer el contacto (correo, teléfono o LinkedIn) antes del siguiente toque.';
+  if(l.dup) return 'Resolver el duplicado contra el registro maestro antes de cualquier toque.';
+  if(l.correoEstado==='rebote') return 'Buscar un correo alterno del contacto (el actual rebotó) y marcarlo para enriquecer.';
+  if(!correoValido(l)&&!l.telefono) return 'Enriquecer el contacto (correo, teléfono o LinkedIn) antes del siguiente toque.';
   if(l.seg.k==='vencido') return `Retomar el compromiso vencido${l.sigPaso?` «${l.sigPaso}»`:''} aportando valor nuevo: un dato, un caso o una pregunta concreta.`;
   if(l.fase==='SQL'&&!l.eb) return 'Mapear al Economic Buyer y el proceso de decisión antes de entregar el lead como SQL (candado de decisor).';
   if(l.aliado&&l.total>40) return 'Pedir al aliado una presentación directa con el decisor antes de invertir más esfuerzo.';
-  if(l.diasSin!=null&&l.diasSin>14) return 'Reactivar con un disparador real del sector; si no lo hay, enviar cierre de ciclo temporal sin presión.';
+  if(l.enSeg&&l.diasSin!=null&&l.diasSin>14) return 'Reactivar con un disparador real del sector; si no lo hay, enviar cierre de ciclo temporal sin presión.';
   const miss=['B','A','N','T'].filter(k=>!l.bant[k]||l.bant[k]==='No identificado'||l.bant[k]==='Inferido');
   if(miss.length&&l.fi>=1) return `${l.sigPaso||'Siguiente conversación'}: validar ${miss.map(k=>BANT_N[k].split(' · ')[1]).join(', ')} sin inventar respuestas.`;
   return l.sigPaso||'Mantener la cadencia con un toque que aporte valor.';
@@ -569,17 +649,25 @@ function microOf(l){
 }
 function prep(l){
   const comps=[l.fit,l.intent,l.viab,l.eng];
-  if(l.total==null||isNaN(l.total)) l.total=comps.every(v=>v==null)?0:sum(comps,v=>v);
+  if(!l.scoreTipo) l.scoreTipo='completo';
+  const noComps=comps.every(v=>v==null);
+  l.noScore=(l.total==null||isNaN(l.total))&&noComps;
+  if(l.total==null||isNaN(l.total)) l.total=noComps?0:sum(comps,v=>v);
   l.total=Math.max(0,Math.min(100,Math.round(l.total)));
   l.band=bandOf(l.total);
   if(!l.micro) l.micro=microOf(l);
-  if(!l.temp) l.temp=l.total<40?'Frío':l.total<65?'Tibio':'Caliente';
+  if(!l.estado) l.estado='sin_estado';
+  l.estadoL=estLabel(l.estado);
   if(!l.rol) l.rol='Sin identificar';
+  l.familia=familiaOf(l.cargo);
   l.closed=l.fase==='Descartado';
   l.fi=FASES.indexOf(l.fase);
+  if(!l.temp) l.temp=l.fase==='SQL'?'Caliente':(l.fase==='MQL'||l.fase==='SAL')?'Tibio':'Frío';
   l.maxIdx=l.closed?(l.faseMax!=null?l.faseMax:0):(l.fase==='SQL'&&l.eb?4:l.fi);
   l.diasSin=l.ult?daysBetween(l.ult,TODAY):null;
   l.diasEntrada=l.entrada?daysBetween(l.entrada,TODAY):null;
+  l.enSeg=!l.closed&&(EN_SEG.has(l.estado)||l.toque>0||!!l.ult||l.respondio);
+  if(!l.sigPaso&&ESTADOS[l.estado]) l.sigPaso=ESTADOS[l.estado][2];
   l.seg=segOf(l);
   l.pr=prioOf(l);
   l.flags=RULES.filter(r=>r.test(l)).map(r=>r.id);
@@ -625,7 +713,7 @@ function demo(){
   const FUENTES=[['Marketing',.36,['Webinar','Formulario web','Evento externo','LinkedIn','Campaña de email']],['Comercial',.26,['Prospección outbound','Referido','Reactivación']],
     ['Dirección',.12,['Cuenta asignada por Dirección','Introducción directa']],['Partner',.14,['Lead de fabricante','Mayorista','Co-selling']],['Cliente actual',.12,['Cross-sell','Renovación','Hallazgo de auditoría']]];
   const CARGOS=[['CISO','Seguridad de la información'],['Director de TI','Tecnología'],['Gerente de Infraestructura','Tecnología'],['Director de Finanzas','Finanzas'],
-    ['Director de Operaciones','Operaciones'],['Oficial de Cumplimiento','Cumplimiento'],['Gerente de Riesgos','Riesgos'],['Director General','Dirección General']];
+    ['Director de Operaciones','Operaciones'],['Oficial de Cumplimiento','Cumplimiento'],['Gerente de Riesgos','Riesgos'],['Director General','Dirección General'],['Gerente de Ventas','Comercial']];
   const NOMBRES=['Laura','Jorge','Mariana','Alejandro','Sofía','Héctor','Daniela','Fernando','Paola','Raúl','Gabriela','Óscar','Verónica','Andrés','Claudia','Iván','Lucía','Martín'];
   const APELLIDOS=['Méndez','Garza','Treviño','Salinas','Ortega','Villarreal','Cárdenas','Ruiz','Navarro','Montes','Delgado','Ibarra','Rosales','Fuentes','Lozano','Padilla','Escobedo','Arriaga'];
   const TAM=['11–50','51–200','201–500','501–1,000','1,001–5,000','Más de 5,000'];
@@ -663,75 +751,98 @@ function demo(){
     const toque=fase==='Lead'?(contacted?ri(1,2):0):fase==='MQL'?ri(1,3):fase==='SAL'?ri(2,4):ri(3,5);
     const lvl=FASES.indexOf(fase);
     const respondio=fase==='Descartado'?r()<.4:lvl>=2?true:fase==='MQL'?r()<.5:contacted&&r()<.15;
+    const estado=closed?pick(['descartado','descalificado_sin_contacto','suprimido'])
+      :fase==='SQL'?(r()<.5?'agendado':'respondio'):fase==='SAL'?'respondio':fase==='MQL'?(respondio?'respondio':'contactado')
+      :contacted?pick(['contactado','contactado','llamar_manual']):pick(['pendiente','sin_prescore','en_investigacion','en_revision','borrador_creado']);
     const [cargo,area]=pick(CARGOS);
     const nom=pick(NOMBRES), ape=pick(APELLIDOS);
     const [resp,lada]=CITY[ciudad];
     const dom=`${slug(empresa)}.example`;
     const tel=lada.length===2?`+52 ${lada} 0${ri(100,999)} ${ri(1000,9999)}`:`+52 ${lada} 0${ri(10,99)} ${ri(1000,9999)}`;
+    const correo=r()<.85?`${norm(nom)}.${norm(ape)}@${dom}`:'';
+    const xc=r(), correoEstado=correo?(xc<.07?'rebote':xc<.15?'generico':'ok'):'faltante';
     const rol=eb&&(cargo==='Director General'||cargo==='Director de Finanzas')?'Economic Buyer':r()<.15?'Sin identificar':
       (cargo==='CISO'||cargo==='Director de TI'||cargo==='Gerente de Infraestructura')?pick(['Validador técnico','Champion']):
       (cargo==='Oficial de Cumplimiento'||cargo==='Gerente de Riesgos')?pick(['Influenciador','Champion']):
-      cargo==='Director de Operaciones'?'Usuario final':pick(['Economic Buyer','Influenciador']);
+      cargo==='Director de Operaciones'?'Usuario final':cargo==='Gerente de Ventas'?'Sin identificar':pick(['Economic Buyer','Influenciador']);
     const bp=strong=>strong?(r()<.7?'Confirmado':'Parcial'):pick(['Parcial','Inferido','No identificado']);
-    return {id:'L-'+(1001+i),empresa,web:r()<.9?`www.${dom}`:'',sector,ciudad,empleados:r()<.88?TAM[Math.min(5,Math.max(0,ri(high?2:1,high?5:4)))]:'',
+    return {id:'L-'+(1001+i),sourceId:wpick([['SRC-001',.6],['SRC-002',.25],['SRC-003',.15]])[0],empresa,web:r()<.9?`www.${dom}`:'',sector,ciudad,region:'',
+      empleados:r()<.88?TAM[Math.min(5,Math.max(0,ri(high?2:1,high?5:4)))]:'',
       fuente,canal,resp,contacto:r()<.94?`${nom} ${ape}`:'',cargo,area,rol,
-      correo:r()<.85?`${norm(nom)}.${norm(ape)}@${dom}`:'',telefono:r()<.7?tel:'',linkedin:r()<.72?'Registrado':'',
+      correo,correoEstado,telefono:r()<.7?tel:'',linkedin:r()<.72?'Registrado':'',
       canalPref:pick(['Correo','WhatsApp','LinkedIn','Llamada']),consent:fuente==='Marketing'?r()<.92:r()<.6,
-      fase,faseMax:closed?ri(0,2):null,temp:fuente==='Dirección'&&r()<.6?'Estratégico':'',micro:closed&&r()<.5?'ANTI':'',
-      fit,intent,viab,eng,total:null,eb,aliado,entrada,ult,
-      sigPaso:pick(PASOS[fase]),fsig,medio:pick(MEDIOS[fase]),toque,respondio,gancho:pick(GANCHOS[sector]),
+      estado,fase,faseMax:closed?ri(0,2):null,temp:fuente==='Dirección'&&r()<.6?'Estratégico':'',micro:closed&&r()<.5?'ANTI':'',
+      fit,intent,viab,eng,total:null,scoreTipo:'completo',eb,aliado,entrada,ult,
+      sigPaso:pick(PASOS[fase]),fsig,medio:pick(MEDIOS[fase]),toque,respondio,gancho:pick(GANCHOS[sector]),trigger:'',
+      dup:r()<.05,enriquecer:correoEstado!=='ok',notas:'',asunto:'',
       bant:{B:bp(lvl===3&&r()<.6),A:eb?'Confirmado':(lvl>=2&&lvl<4?'Parcial':'No identificado'),N:bp(lvl>=1&&lvl<4),T:bp(lvl===3)}};
   });
 }
 
-/* ---------- importación CSV ---------- */
+/* ---------- importación CSV / Excel (columnas de Leads_SRC-001 y de la plantilla) ---------- */
 const COLS={
   id:['idlead','id','leadid'],
+  sourceId:['sourceid','idfuente'],
   empresa:['empresa','company','cuenta','companyname','nombreempresa','razonsocial'],
-  web:['sitioweb','web','website','dominio','domain','url','paginaweb'],
-  sector:['sector','industria','industry','giro'],
+  web:['dominio','sitioweb','web','website','domain','url','paginaweb'],
+  sector:['sector','industria','industry','giro','sectorcode','codigosector'],
   ciudad:['ciudad','city','ubicacion','sede'],
+  region:['estadoregion','region'],
   empleados:['empleados','tamano','tamanoempresa','employees','numempleados','numerodeempleados'],
   fuente:['fuentelead','fuente','origen','source'],
   canal:['canalfuente','campana','campaign','evento'],
+  canalAg:['canal'],
   resp:['responsable','owner','ejecutivo','propietario'],
   contacto:['contacto','nombrecontacto','contactname','fullname','nombre'],
-  cargo:['cargocontacto','cargo','title','puesto','jobtitle'],
+  cargo:['cargo','cargocontacto','title','puesto','jobtitle'],
   area:['area','departamento','department'],
   rol:['rolcompra','rolencompra','rol','buyingrole'],
-  correo:['correo','email','correoelectronico','mail'],
+  correo:['correo','email','correoelectronico','mail','correo1'],
+  correo2:['correo2','correo3','correosadicionales'],
+  correoEstado:['correoestado','estadocorreo','emailstatus'],
   telefono:['telefono','phone','tel','celular','movil'],
   linkedin:['linkedin','perfillinkedin','linkedinurl'],
   canalPref:['canalpreferido','preferredchannel'],
   consent:['consentimientocontacto','consentimiento','optin'],
+  estado:['estado','estadoagente','estadolead'],
   fase:['faselead','fase','estatuslead','estatus','status'],
   temp:['temperatura','temperature','rating'],
   micro:['microicp','icp','bloqueicp'],
+  prescore:['prescore'],
   fit:['scoreicpfit','icpfit'],
   intent:['scoreintencion','intencion','intent','scoreintent'],
   viab:['scoreviabilidad','viabilidad'],
   eng:['scoreengagement','engagement'],
-  total:['scoretotal','total','score','scoreicp','prescore','leadscore'],
-  eb:['economicbuyer','eb','decisor','accesodecisor'],
+  total:['scoretotal','total','score','scoreicp','leadscore'],
+  eb:['decisormapeado','economicbuyer','eb','decisor','accesodecisor'],
   aliado:['aliadosinpresentacion','aliado'],
-  entrada:['fechaentrada','fechacreacion','created'],
-  ult:['fechaultimainteraccion','ultimainteraccion','ultimocontacto'],
-  sig:['siguientepaso','nextstep','proximopaso'],
-  fsig:['fechasiguientepaso','fechaproximopaso','nextstepdate'],
+  anti:['antiicp'],
+  suprimido:['suprimido'],
+  correoDup:['correodup'],
+  dupMaestro:['dupmaestro'],
+  enriquecer:['enriquecer'],
+  entrada:['fechaentrada','fechacreacion','fechaalta','created'],
+  ult:['ultimocontacto','fechaultimainteraccion','ultimainteraccion','fechaultimotoque'],
+  sig:['siguientepaso','nextstep','proximopaso','proximaaccion'],
+  fsig:['fechasiguientepaso','fechaproximopaso','nextstepdate','fechaproximotoque'],
   medio:['mediorecomendado','medio','canalrecomendado'],
-  toque:['toquecadencia','toque','pasocadencia'],
-  respondio:['respondio','respuesta','replied'],
+  numToques:['numtoques','toques'],
+  toque:['toquecadencia','toque','cadenciapaso','pasocadencia'],
+  respondio:['respondio','respuesta','replied','fecharespuesta','ultimarespuesta','tiporespuesta','respuestahumana'],
   b:['bantbudget','budget','presupuesto'],a:['bantauthority','authority','autoridad'],n:['bantneed','need','necesidad'],t:['banttimeline','timeline'],
-  gancho:['gancho','triggereventprobable','triggerevent','trigger','descripcion','description']
+  trigger:['triggerregulatorio','trigger'],
+  gancho:['gancho','triggereventprobable','triggerevent','descripcion','description'],
+  notas:['notas','notes'],
+  asunto:['asunto','subject']
 };
-const TPL=['ID_Lead','Empresa','Sitio_Web','Sector','Ciudad','Empleados','Fuente_Lead','Canal_Fuente','Responsable',
-  'Contacto','Cargo_Contacto','Area','Rol_Compra','Correo','Telefono','LinkedIn','Canal_Preferido','Consentimiento_Contacto',
-  'Fase_Lead','Temperatura','Micro_ICP','Score_ICP_Fit','Score_Intencion','Score_Viabilidad','Score_Engagement','Score_Total',
-  'Economic_Buyer','Aliado_Sin_Presentacion','Fecha_Entrada','Fecha_Ultima_Interaccion','Siguiente_Paso','Fecha_Siguiente_Paso',
-  'Medio_Recomendado','Toque_Cadencia','Respondio','BANT_Budget','BANT_Authority','BANT_Need','BANT_Timeline','Gancho'];
+const TPL=['ID_Lead','Source_ID','Empresa','Dominio','Sector','Ciudad','Estado_Region','Empleados','Fuente_Lead','Canal_Fuente','Responsable',
+  'Contacto','Cargo','Area','Rol_Compra','Correo','Correo_Estado','Telefono','LinkedIn','Canal_Preferido','Consentimiento_Contacto',
+  'Estado','Fase_Lead','Temperatura','Micro_ICP','Pre_Score','Score_ICP_Fit','Score_Intencion','Score_Viabilidad','Score_Engagement','Score_Total',
+  'Decisor_Mapeado','Aliado_Sin_Presentacion','Enriquecer','Fecha_Entrada','Ultimo_Contacto','Siguiente_Paso','Fecha_Siguiente_Paso',
+  'Medio_Recomendado','Num_Toques','Respondio','BANT_Budget','BANT_Authority','BANT_Need','BANT_Timeline','Trigger_Regulatorio','Gancho','Notas'];
 
 function parseCSV(text){
-  text=text.replace(/^﻿/,'');
+  text=text.replace(/^\uFEFF/,'');
   const first=text.split(/\r?\n/,1)[0];
   const delim=[',',';','\t'].map(d=>[d,first.split(d).length]).sort((a,b)=>b[1]-a[1])[0][0];
   const rows=[];let row=[],f='',q=false;
@@ -761,10 +872,11 @@ function sectorOf(v){
   const n=norm(v);
   if(SECTORES[n.toUpperCase()]) return n.toUpperCase();
   const T=[[/farma|dispositivo/,'FARMDM'],[/financ|banc|sofipo|sofom|asegur|fintech|pago|credito|afore|bolsa|caja|cooperativ/,'FIN'],
-    [/salud|hospital|clinic|laboratorioclin|medic/,'SALUD'],[/automotri|autopart|armadora|^auto/,'AUTO'],[/aero/,'AERO'],
+    [/salud|hospital|clinic|laboratorioclin|medic/,'SALUD'],[/automotri|autopart|armadora|movilidad|^auto/,'AUTO'],[/aero/,'AERO'],
     [/energ|gasolin|petrol|solar|electric|^gas|hidrocarb/,'ENER'],[/quimic|pintur|petroquim|agroquim/,'QUIM'],
+    [/aliment|bebid|confit|dulce|agro|empac/,'ALIBEB'],
     [/manufact|maquil|industri|electron|plastic|planta/,'MFG'],[/retail|comerci|tienda|consumo|ecommerce|departamental/,'RETAIL'],
-    [/logist|transport|carga|3pl|aduan|mensajer/,'LOGTRANS'],[/aliment|bebid|agro|empac/,'ALIBEB'],[/constru|inmobil|infraestruct/,'CONST'],
+    [/logist|transport|carga|3pl|aduan|mensajer/,'LOGTRANS'],[/constru|inmobil|infraestruct/,'CONST'],
     [/miner|metal/,'MIN'],[/turis|hotel|restaur|hospitalidad|resort|aerolin/,'TURHOSP']];
   for(const [re,k] of T) if(re.test(n)) return k;
   return 'OTRO';
@@ -797,30 +909,62 @@ function rolOf(v){
   return String(v).trim();
 }
 function tempOf(v){const n=norm(v);if(!n)return '';if(/estrat/.test(n))return 'Estratégico';if(/calient|hot/.test(n))return 'Caliente';if(/tib|warm/.test(n))return 'Tibio';if(/fri|cold/.test(n))return 'Frío';return '';}
-function medioOf(v){const n=norm(v);if(!n)return '';if(/whats/.test(n))return 'WhatsApp';if(/correo|mail/.test(n))return 'Correo';if(/linked/.test(n))return 'LinkedIn';if(/video|reunion|meet|zoom|teams/.test(n))return 'Videollamada';if(/llam|tel|call/.test(n))return 'Llamada';return String(v).trim();}
+function medioOf(v){const n=norm(v);if(!n)return '';if(/whats/.test(n))return 'WhatsApp';if(/correo|mail/.test(n))return 'Correo';if(/linked/.test(n))return 'LinkedIn';if(/video|reunion|meet|zoom|teams/.test(n))return 'Videollamada';if(/llam|tel|call/.test(n))return 'Llamada';return '';}
 function bantOf(v){const n=norm(v);if(!n)return null;if(/confirm/.test(n))return 'Confirmado';if(/parcial/.test(n))return 'Parcial';if(/infer/.test(n))return 'Inferido';if(/noaplica|^na$/.test(n))return 'No aplica';if(/noident|descon|^no$/.test(n))return 'No identificado';return 'Parcial';}
-function microNorm(v){const n=norm(v);if(/anti/.test(n))return 'ANTI';const m=n.match(/icp([123])/);return m?'ICP'+m[1]:'';}
+function microNorm(v){
+  const n=norm(v); if(!n) return '';
+  if(/anti/.test(n)) return 'ANTI';
+  const m=n.match(/icp([123])/); if(m) return 'ICP'+m[1];
+  if(/observ/.test(n)) return 'OBS';
+  if(/nuevo/.test(n)) return 'NUEVO';
+  if(/alianz/.test(n)) return 'ALIANZA';
+  return 'SIN_EVAL';
+}
+function correoEstadoOf(v,estado){
+  const n=norm(v);
+  if(/rebot/.test(n)||estado==='rebotado') return 'rebote';
+  if(/generic/.test(n)) return 'generico';
+  if(/faltante|sincorreo|vacio/.test(n)) return 'faltante';
+  if(/^ok$|valid|verific/.test(n)) return 'ok';
+  return '';
+}
 
 function fromRow(r,idx,n){
   const g=k=>idx[k]!=null?String(r[idx[k]]??'').trim():'';
-  const num=k=>{const v=g(k);if(!v)return null;const x=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(x)?null:x;};
-  return {id:g('id')||`L-${String(n+1).padStart(4,'0')}`,empresa:g('empresa'),web:g('web'),sector:sectorOf(g('sector')),ciudad:g('ciudad'),empleados:g('empleados'),
-    fuente:fuenteOf(g('fuente')),canal:g('canal'),resp:g('resp')||'Sin asignar',
-    contacto:g('contacto'),cargo:g('cargo'),area:g('area'),rol:rolOf(g('rol')),correo:g('correo'),telefono:g('telefono'),linkedin:g('linkedin'),
-    canalPref:medioOf(g('canalPref')),consent:yes(g('consent')),
-    fase:faseOf(g('fase')),faseMax:null,temp:tempOf(g('temp')),micro:microNorm(g('micro')),
-    fit:num('fit'),intent:num('intent'),viab:num('viab'),eng:num('eng'),total:num('total'),
+  const num=k=>{let v=g(k);if(!v)return null;v=/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(v)?v.replace(/,/g,''):v.replace(',','.');const x=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(x)?null:x;};
+  const estado=idx.estado!=null?estKey(g('estado')):'';
+  const anti=yes(g('anti')), supr=yes(g('suprimido'));
+  let fase=g('fase')?faseOf(g('fase')):(ESTADOS[estado]?ESTADOS[estado][1]:'Lead');
+  if(anti||supr) fase='Descartado';
+  const correo=g('correo')||g('correo2').split(/[;,\s]+/).find(x=>x.includes('@'))||'';
+  const total=num('total'), pre=num('prescore');
+  const canalAg=g('canalAg');
+  const respondio=yes(g('respondio'))||estado==='respondio'||estado==='agendado';
+  let micro=idx.micro!=null?(microNorm(g('micro'))||'SIN_EVAL'):'';
+  if(anti) micro='ANTI';
+  const sid=g('sourceId');
+  return {id:g('id')||`L-${String(n+1).padStart(4,'0')}`,sourceId:sid,empresa:g('empresa'),web:g('web'),sector:sectorOf(g('sector')),
+    ciudad:g('ciudad'),region:g('region'),empleados:g('empleados'),
+    fuente:sid&&!g('fuente')?sid:(sid&&/\.md$|\.csv$|extraccion/i.test(g('fuente'))?sid:fuenteOf(g('fuente')||sid)),
+    canal:g('canal')||(sid&&g('fuente')&&!/\.md$|\.csv$/i.test(g('fuente'))?'':g('fuente')),resp:g('resp')||'Sin asignar',
+    contacto:g('contacto'),cargo:g('cargo'),area:g('area'),rol:rolOf(g('rol')),
+    correo,correoEstado:correo?correoEstadoOf(g('correoEstado'),estado):'faltante',
+    telefono:g('telefono'),linkedin:g('linkedin'),canalPref:medioOf(g('canalPref')),consent:yes(g('consent')),
+    estado,fase,faseMax:null,temp:tempOf(g('temp')),micro,
+    fit:num('fit'),intent:num('intent'),viab:num('viab'),eng:num('eng'),
+    total:total!=null?total:pre,scoreTipo:total!=null||idx.fit!=null?'completo':(pre!=null?'pre':'completo'),
     eb:yes(g('eb')),aliado:yes(g('aliado')),entrada:dateOf(g('entrada')),ult:dateOf(g('ult')),
-    sigPaso:g('sig'),fsig:dateOf(g('fsig')),medio:medioOf(g('medio')),toque:Math.max(0,Math.min(5,Math.round(num('toque')||0))),
-    respondio:yes(g('respondio')),gancho:g('gancho'),
+    sigPaso:g('sig'),fsig:dateOf(g('fsig')),fsigCol:idx.fsig!=null,medio:medioOf(g('medio'))||medioOf(canalAg),
+    toque:Math.max(0,Math.min(5,Math.round(num('numToques')??num('toque')??0))),respondio,
+    dup:yes(g('correoDup'))||!!g('dupMaestro')||estado==='revisar_duplicado',enriquecer:yes(g('enriquecer')),
+    trigger:g('trigger'),gancho:g('gancho'),notas:g('notas'),asunto:g('asunto'),
     bant:{B:bantOf(g('b')),A:bantOf(g('a')),N:bantOf(g('n')),T:bantOf(g('t'))}};
 }
-function importText(text,name){
-  const rows=parseCSV(text);
+function importRows(rows,name){
   if(rows.length<2) throw new Error('El archivo no tiene filas de datos debajo del encabezado.');
   const hdr=rows[0].map(norm), idx={}, used=new Set();
   for(const [k,al] of Object.entries(COLS)){const i=hdr.findIndex((h,j)=>!used.has(j)&&al.includes(h));if(i>=0){idx[k]=i;used.add(i);}}
-  if(idx.empresa==null) throw new Error('No encontré la columna "Empresa". Usa la plantilla o renombra la columna de la empresa a "Empresa".');
+  if(idx.empresa==null) throw new Error('No encontré la columna "Empresa". Exporta la pestaña Leads_SRC-001 o usa la plantilla.');
   const seen=new Map();
   const leads=rows.slice(1).map((r,n)=>fromRow(r,idx,n)).filter(l=>l.empresa).map(l=>{
     const c=seen.get(l.id)||0; seen.set(l.id,c+1); if(c) l.id=`${l.id}-${c+1}`; return l;});
@@ -828,10 +972,13 @@ function importText(text,name){
   load(leads,{kind:'csv',name});
   return leads.length;
 }
+const importText=(text,name)=>importRows(parseCSV(text),name);
 
 /* ---------- estado y filtros ---------- */
-let LEADS=[], SOURCE={kind:'demo',name:'Datos de ejemplo'};
-const state={periodo:'all',sector:'',micro:'',resp:'',fuente:'',rol:'',q:'',alert:'',sort:{k:'prio',d:1}};
+let LEADS=[], SOURCE={kind:'demo',name:'Datos de ejemplo'}, PRE=false;
+const PAGE=150;
+const state={periodo:'all',sector:'',micro:'',resp:'',fuente:'',familia:'',estado:'',q:'',alert:'',sort:{k:'prio',d:1},page:1};
+let lastSig='';
 function filtered(){
   const q=norm(state.q);
   return LEADS.filter(l=>{
@@ -840,8 +987,9 @@ function filtered(){
     if(state.micro&&l.micro!==state.micro) return false;
     if(state.resp&&l.resp!==state.resp) return false;
     if(state.fuente&&l.fuente!==state.fuente) return false;
-    if(state.rol&&l.rol!==state.rol) return false;
-    if(q&&!norm([l.empresa,l.id,l.ciudad,l.contacto,l.cargo,l.correo,l.web,l.sigPaso,secName(l.sector)].join(' ')).includes(q)) return false;
+    if(state.familia&&l.familia!==state.familia) return false;
+    if(state.estado&&l.estado!==state.estado) return false;
+    if(q&&!(l._q||(l._q=norm([l.empresa,l.id,l.ciudad,l.contacto,l.cargo,l.correo,l.web,l.sigPaso,secName(l.sector)].join(' ')))).includes(q)) return false;
     return true;
   });
 }
@@ -853,10 +1001,12 @@ function fillSelect(sel,all,opts,cur){
 function populateFilters(){
   const uniq=f=>[...new Set(LEADS.map(f).filter(Boolean))];
   state.sector=fillSelect($('#fSector'),'Todos los sectores',uniq(l=>l.sector).sort((a,b)=>secName(a).localeCompare(secName(b),'es')).map(k=>[k,secName(k)]),state.sector);
-  state.micro=fillSelect($('#fMicro'),'Todos',['ICP1','ICP2','ICP3','ANTI'].filter(k=>LEADS.some(l=>l.micro===k)).map(k=>[k,k==='ANTI'?'Anti-ICP':k]),state.micro);
+  const micros=uniq(l=>l.micro).sort((a,b)=>{const ia=MICRO_ORDER.indexOf(a),ib=MICRO_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});
+  state.micro=fillSelect($('#fMicro'),'Todos',micros.map(k=>[k,microLabel(k)]),state.micro);
   state.resp=fillSelect($('#fResp'),'Todos',uniq(l=>l.resp).sort((a,b)=>a.localeCompare(b,'es')).map(k=>[k,k]),state.resp);
   state.fuente=fillSelect($('#fFuente'),'Todas',uniq(l=>l.fuente).sort((a,b)=>a.localeCompare(b,'es')).map(k=>[k,k]),state.fuente);
-  if(state.rol&&!LEADS.some(l=>l.rol===state.rol)) state.rol='';
+  if(state.familia&&!LEADS.some(l=>l.familia===state.familia)) state.familia='';
+  if(state.estado&&!LEADS.some(l=>l.estado===state.estado)) state.estado='';
 }
 
 /* ---------- render ---------- */
@@ -876,23 +1026,24 @@ function hbars(el,rows,o={}){
 function tile(label,value,sub,sev,sevLabel,tip){
   return `<div class="kpi"${tip?` data-tip="${esc(tip)}"`:''}><div class="kpi-top"><span class="kpi-l">${esc(label)}</span>${sev?pill(sev,sevLabel):''}</div><div class="kpi-v">${value}</div><div class="kpi-s">${esc(sub)}</div></div>`;
 }
-const completo=l=>!!(l.contacto&&l.cargo&&l.correo&&l.telefono);
+const completo=l=>!!(l.contacto&&l.cargo&&correoValido(l)&&l.telefono);
 function renderKPIs(set){
-  const act=set.filter(l=>!l.closed);
+  const act=set.filter(l=>!l.closed), seg=act.filter(l=>l.enSeg);
   const nuevos=set.filter(l=>l.diasEntrada!=null&&l.diasEntrada<=30).length;
-  const avg=act.length?sum(act,l=>l.total)/act.length:0;
+  const scored=act.filter(l=>!l.noScore), sinScore=act.length-scored.length;
+  const avg=scored.length?sum(scored,l=>l.total)/scored.length:0;
   const sqls=act.filter(l=>l.fase==='SQL'), sqlOk=sqls.filter(l=>l.eb).length, bloq=sqls.length-sqlOk;
   const venc=act.filter(l=>l.seg.k==='vencido'||l.seg.k==='sinpaso').length;
   const hoy=act.filter(l=>l.seg.k==='hoy').length;
-  const contact=set.filter(l=>l.toque>0||l.ult), resp=contact.filter(l=>l.respondio).length;
-  const comp=act.filter(completo).length, sinMedio=act.filter(l=>!l.correo&&!l.telefono).length;
+  const contact=set.filter(l=>l.toque>0||l.ult||l.respondio), resp=contact.filter(l=>l.respondio).length;
+  const comp=act.filter(completo).length, sinMedio=act.filter(l=>!correoValido(l)&&!l.telefono).length;
   $('#kpis').innerHTML=[
-    tile('Leads en seguimiento',nf.format(act.length),`${nuevos} entraron en los últimos 30 días`,null,null,'Leads activos: todos menos los descartados.'),
-    tile('Score ICP promedio',`${act.length?Math.round(avg):'—'}<small>/100</small>`,act.length?`Clasificación media: ${bandOf(Math.round(avg)).k}`:'Sin leads activos',null,null,'Promedio del Score Total de los leads activos.'),
-    tile('SQL con decisor mapeado',nf.format(sqlOk),bloq?`${bloq} bloqueados por candado de decisor`:'Ningún SQL bloqueado',bloq?'serious':null,'Revisar','SQL con Economic Buyer mapeado. Sin decisor no se entregan como SQL.'),
-    tile('Seguimientos vencidos',nf.format(venc),`${hoy} programados para hoy`,venc?'crit':'ok',venc?'Atender hoy':'Al día','Leads activos con fecha de siguiente paso vencida o sin siguiente paso.'),
-    tile('Tasa de respuesta',contact.length?pct(resp,contact.length):'—',`${resp} de ${contact.length} contactados respondieron`,null,null,'Leads que respondieron sobre los que recibieron al menos un toque.'),
-    tile('Contactos con datos completos',act.length?pct(comp,act.length):'—',sinMedio?`${sinMedio} sin correo ni teléfono`:'Todos tienen correo o teléfono',sinMedio?'warn':null,'Completar','Leads activos con nombre, cargo, correo y teléfono del contacto.')
+    tile('Leads en seguimiento',nf.format(seg.length),`de ${nf.format(act.length)} leads activos${nuevos?` · ${nf.format(nuevos)} nuevos en 30 días`:''}`,null,null,'Leads con al menos un toque, una respuesta o un estado de seguimiento en el agente. El resto está en la cola del agente.'),
+    tile(PRE?'Pre-score promedio':'Score ICP promedio',`${scored.length?Math.round(avg):'—'}<small>/100</small>`,scored.length?`${PRE?'Nivel medio: '+PRE_NAMES[bandOf(Math.round(avg)).i]:'Clasificación media: '+bandOf(Math.round(avg)).k}${sinScore?` · ${nf.format(sinScore)} sin score`:''}`:'Sin leads con score',null,null,PRE?'Promedio del Pre_Score que calcula el agente para los leads activos.':'Promedio del Score Total de los leads activos.'),
+    tile('SQL con decisor mapeado',nf.format(sqlOk),bloq?`${nf.format(bloq)} bloqueados por candado de decisor`:`${nf.format(sqls.length)} en SQL`,bloq?'serious':null,'Revisar','SQL (respuesta con reunión o necesidad viable) con Economic Buyer mapeado. Sin decisor no se entregan como SQL.'),
+    tile('Seguimientos vencidos',nf.format(venc),`${nf.format(hoy)} programados para hoy`,venc?'crit':'ok',venc?'Atender hoy':'Al día','Leads en seguimiento con fecha de siguiente paso vencida o sin siguiente paso.'),
+    tile('Tasa de respuesta',contact.length?pct(resp,contact.length):'—',`${nf.format(resp)} de ${nf.format(contact.length)} contactados respondieron`,null,null,'Leads que respondieron sobre los que recibieron al menos un toque.'),
+    tile('Contactos con datos completos',act.length?pct(comp,act.length):'—',sinMedio?`${nf.format(sinMedio)} sin correo válido ni teléfono`:'Todos tienen correo válido o teléfono',sinMedio?'warn':null,'Completar','Leads activos con nombre, cargo, correo válido y teléfono del contacto.')
   ].join('');
 }
 function renderFunnel(set){
@@ -900,82 +1051,107 @@ function renderFunnel(set){
   if(!c[0]){$('#funnel').innerHTML=empty('Sin leads con los filtros actuales.');return;}
   $('#funnel').innerHTML=`<div class="fn-hd"><span>Fase</span><span></span><span>Leads</span><span>Conv.</span></div><div class="fn">${FUNNEL.map(([k,d],i)=>{
     const conv=i?pct(c[i],c[i-1]):'—';
-    const tip=`${k} · ${d}\n${c[i]} leads (${pct(c[i],c[0])} del total)${i?`\nConversión desde ${FUNNEL[i-1][0]}: ${conv}`:''}`;
-    return `<div class="fn-row" data-tip="${esc(tip)}"><span class="fn-lab"><b>${esc(k)}</b><small>${esc(d)}</small></span><span><span class="fn-bar" style="width:${c[i]?Math.max(1.5,c[i]/c[0]*100):0}%"></span></span><span class="fn-v">${c[i]}</span><span class="fn-c">${i?'→ '+conv:''}</span></div>`;}).join('')}</div>`;
+    const tip=`${k} · ${d}\n${nf.format(c[i])} leads (${pct(c[i],c[0])} del total)${i?`\nConversión desde ${FUNNEL[i-1][0]}: ${conv}`:''}`;
+    return `<div class="fn-row" data-tip="${esc(tip)}"><span class="fn-lab"><b>${esc(k)}</b><small>${esc(d)}</small></span><span><span class="fn-bar" style="width:${c[i]?Math.max(1.5,c[i]/c[0]*100):0}%"></span></span><span class="fn-v">${nf.format(c[i])}</span><span class="fn-c">${i?'→ '+conv:''}</span></div>`;}).join('')}</div>`;
 }
 function renderBands(set){
-  const act=set.filter(l=>!l.closed), c=BANDS.map(()=>0);
+  $('#bandsTitle').textContent=PRE?'Distribución del pre-score':'Distribución del Score ICP';
+  $('#bandsSub').textContent=PRE?'Leads activos por umbral del Pre_Score del agente (0–100)':'Leads activos por umbral del Score Total (0–100)';
+  const all=set.filter(l=>!l.closed), act=all.filter(l=>!l.noScore), c=BANDS.map(()=>0);
   act.forEach(l=>c[l.band.i]++);
-  if(!act.length){$('#bands').innerHTML=empty('Sin leads activos con los filtros actuales.');return;}
+  if(all.length>act.length) $('#bandsSub').textContent+=` · ${nf.format(all.length-act.length)} sin score`;
+  if(!act.length){$('#bands').innerHTML=empty('Sin leads activos con score con los filtros actuales.');return;}
   const m=Math.max(1,...c), H=124;
-  $('#bands').innerHTML=`<div class="cols">${BANDS.map((b,i)=>`<div class="col" data-tip="${esc(`${b.k} · ${b.min}–${b.max} pts\n${c[i]} leads (${pct(c[i],act.length)})\nAcción: ${b.a}`)}"><span class="col-v">${c[i]}</span><span class="col-bar" style="height:${c[i]?Math.max(3,Math.round(c[i]/m*H)):0}px;background:var(--seq-${i+1})"></span></div>`).join('')}</div>
-    <div class="cols-x">${BANDS.map(b=>`<div><b>${esc(b.k)}</b><small>${b.min}–${b.max}</small></div>`).join('')}</div>`;
+  $('#bands').innerHTML=`<div class="cols">${BANDS.map((b,i)=>`<div class="col" data-tip="${esc(`${PRE?PRE_NAMES[i]:b.k} · ${b.min}–${b.max} pts\n${nf.format(c[i])} leads (${pct(c[i],act.length)})\n${PRE?'Prioridad de abordaje según el pre-score':'Acción: '+b.a}`)}"><span class="col-v">${nf.format(c[i])}</span><span class="col-bar" style="height:${c[i]?Math.max(3,Math.round(c[i]/m*H)):0}px;background:var(--seq-${i+1})"></span></div>`).join('')}</div>
+    <div class="cols-x">${BANDS.map((b,i)=>`<div><b>${esc(PRE?PRE_NAMES[i]:b.k)}</b><small>${b.min}–${b.max}</small></div>`).join('')}</div>`;
 }
 const byPrio=(a,b)=>a.pr.r-b.pr.r||(a.fsig?a.fsig.getTime():Infinity)-(b.fsig?b.fsig.getTime():Infinity)||b.total-a.total;
 const quien=l=>[l.contacto,l.cargo].filter(Boolean).join(' · ');
 function renderAgenda(set){
-  const items=set.filter(l=>!l.closed&&(l.seg.k==='vencido'||l.seg.k==='sinpaso'||(l.seg.d!=null&&l.seg.d<=7))).sort(byPrio);
-  $('#agendaSub').textContent=`${items.length} acciones vencidas o en los próximos 7 días, en el orden de prioridad diaria del agente`;
+  const items=set.filter(l=>!l.closed&&(l.seg.k==='vencido'||l.seg.k==='sinpaso'||(l.seg.d!=null&&l.seg.d<=7)||l.pr.r<=3)).sort(byPrio);
+  $('#agendaSub').textContent=`${nf.format(items.length)} acciones vencidas, de los próximos 7 días o prioritarias, en el orden de prioridad diaria del agente`;
   if(!items.length){$('#agenda').innerHTML=empty('Sin acciones pendientes en los próximos 7 días.');return;}
   const top=items.slice(0,8);
   $('#agenda').innerHTML=`<div class="ag-list">${top.map(l=>`<button class="ag" type="button" data-id="${esc(l.id)}">
       <span class="ag-st">${pill(l.seg.sev,l.seg.label)}</span>
-      <span class="ag-main"><b>${esc(l.empresa)}</b>${quien(l)?`<small>${esc(quien(l))}</small>`:''}<span>${esc(l.sigPaso||'Definir siguiente paso')}</span><small>${esc([l.pr.m,l.medio,`Toque ${l.toque} de 5`].filter(Boolean).join(' · '))}</small></span>
+      <span class="ag-main"><b>${esc(l.empresa)}</b>${quien(l)?`<small>${esc(quien(l))}</small>`:''}<span>${esc(l.sigPaso||'Definir siguiente paso')}</span><small>${esc([l.pr.m,l.estadoL,l.medio,`Toque ${l.toque} de 5`].filter(Boolean).join(' · '))}</small></span>
       <span class="ag-side"><b>${esc(fdate(l.fsig))}</b><small>${esc(l.resp)}</small></span></button>`).join('')}</div>
-    ${items.length>top.length?`<button class="btn more" id="agMore" type="button">Ver las ${items.length} en la tabla</button>`:''}`;
+    ${items.length>top.length?`<button class="btn more" id="agMore" type="button">Ver las ${nf.format(items.length)} en la tabla</button>`:''}`;
 }
 function renderAlerts(set){
   $('#alerts').innerHTML=`<div class="al-list">${RULES.map(r=>{
     const n=set.filter(l=>l.flags.includes(r.id)).length, on=state.alert===r.id;
-    return `<button class="al" type="button" data-alert="${r.id}" aria-pressed="${on}" ${n||on?'':'disabled'}>${ICONS[r.sev]}<span><b>${esc(r.t)}</b><small>${esc(r.d)}</small></span><span class="al-n">${n}</span></button>`;}).join('')}</div>`;
-}
-function renderCad(set){
-  const act=set.filter(l=>!l.closed);
-  const labels=['Sin primer toque',...CAD.map((d,i)=>`Toque ${i+1} · ${d}`)];
-  hbars($('#cadencia'),labels.map((lab,i)=>{
-    const ls=act.filter(l=>l.toque===i), rs=ls.filter(l=>l.respondio).length;
-    return {key:String(i),label:lab,v:ls.length,extra:i&&ls.length?` · ${pct(rs,ls.length)} resp.`:'',
-      tip:`${lab}${i?`\n${CAD_D[i-1]}`:''}\n${ls.length} leads activos${i?` · ${rs} respondieron`:''}`};
-  }),{keepZero:act.length>0,emptyText:'Sin leads activos con los filtros actuales.'});
+    return `<button class="al" type="button" data-alert="${r.id}" aria-pressed="${on}" ${n||on?'':'disabled'}>${ICONS[r.sev]}<span><b>${esc(r.t)}</b><small>${esc(r.d)}</small></span><span class="al-n">${nf.format(n)}</span></button>`;}).join('')}</div>`;
 }
 function groupRows(set,keyf){
   const g=new Map();
   set.forEach(l=>{const k=keyf(l);const a=g.get(k)||[];a.push(l);g.set(k,a);});
   return [...g.entries()].sort((a,b)=>b[1].length-a[1].length||String(a[0]).localeCompare(String(b[0]),'es'));
 }
+function renderEstado(set){
+  const act=set.filter(l=>!l.closed||state.estado===l.estado);
+  hbars($('#estado'),groupRows(act,l=>l.estado).slice(0,14).map(([k,ls])=>{
+    const f=ESTADOS[k]?ESTADOS[k][1]:'Lead', p=ESTADOS[k]?ESTADOS[k][2]:'';
+    return {key:k,label:estLabel(k),v:ls.length,extra:` · ${pct(ls.length,act.length)}`,tip:`${estLabel(k)}\n${nf.format(ls.length)} leads · fase ${f}${p?`\nSiguiente paso típico: ${p}`:''}`};
+  }),{key:'estado',active:state.estado,emptyText:'Sin leads activos con los filtros actuales.'});
+}
+function renderCad(set){
+  const act=set.filter(l=>!l.closed);
+  const labels=['Sin toques',...CAD.map((d,i)=>`Toque ${i+1} · ${d}`)];
+  hbars($('#cadencia'),labels.map((lab,i)=>{
+    const ls=act.filter(l=>l.toque===i), rs=ls.filter(l=>l.respondio).length;
+    return {key:String(i),label:lab,v:ls.length,extra:i&&ls.length?` · ${pct(rs,ls.length)} resp.`:'',
+      tip:`${lab}${i?`\n${CAD_D[i-1]}`:''}\n${nf.format(ls.length)} leads activos${i?` · ${nf.format(rs)} respondieron`:''}`};
+  }),{keepZero:act.length>0,emptyText:'Sin leads activos con los filtros actuales.'});
+}
 function renderSector(set){
   hbars($('#sector'),groupRows(set,l=>l.sector).map(([k,ls])=>{
-    const avg=Math.round(sum(ls,l=>l.total)/ls.length);
-    return {key:k,label:secName(k),v:ls.length,extra:` · ${avg} pts`,tip:`${secName(k)}${secCode(k)?`\n${secCode(k)}`:''}\n${ls.length} leads · score promedio ${avg}\nDolor típico: ${sec(k)[1]}`};
+    const sc=ls.filter(l=>!l.noScore), avg=sc.length?Math.round(sum(sc,l=>l.total)/sc.length):'—';
+    return {key:k,label:secName(k),v:ls.length,extra:` · ${avg} pts`,tip:`${secName(k)}${secCode(k)?`\n${secCode(k)}`:''}\n${nf.format(ls.length)} leads · ${PRE?'pre-score':'score'} promedio ${avg}\nDolor típico: ${sec(k)[1]}`};
   }),{key:'sector',active:state.sector});
 }
 function renderFuente(set){
   hbars($('#fuente'),groupRows(set,l=>l.fuente).map(([k,ls])=>{
-    const q=ls.filter(l=>l.maxIdx>=3).length;
-    return {key:k,label:k,v:ls.length,tip:`${k}\n${ls.length} leads · ${q} llegaron a SQL (${pct(q,ls.length)})`};
+    const t=ls.filter(l=>l.toque>0).length, q=ls.filter(l=>l.respondio).length;
+    return {key:k,label:k,v:ls.length,tip:`${k}\n${nf.format(ls.length)} leads · ${nf.format(t)} con toque · ${nf.format(q)} respondieron`};
   }),{key:'fuente',active:state.fuente});
+}
+function renderPuesto(set){
+  const act=set.filter(l=>!l.closed);
+  hbars($('#puesto'),groupRows(act,l=>l.familia).map(([k,ls])=>{
+    const eb=ls.filter(l=>l.eb).length, rs=ls.filter(l=>l.respondio).length;
+    return {key:k,label:k,v:ls.length,extra:` · ${pct(ls.length,act.length)}`,tip:`${k}\n${nf.format(ls.length)} contactos activos · ${nf.format(rs)} respondieron · ${nf.format(eb)} con decisor mapeado`};
+  }),{key:'familia',active:state.familia,emptyText:'Sin leads activos con los filtros actuales.'});
 }
 function renderDatos(set){
   const act=set.filter(l=>!l.closed), n=act.length;
-  const F=[['Nombre del contacto',l=>l.contacto],['Cargo',l=>l.cargo],['Correo',l=>l.correo],['Teléfono',l=>l.telefono],['LinkedIn',l=>l.linkedin],
-    ['Rol en la compra identificado',l=>l.rol&&l.rol!=='Sin identificar'],['Consentimiento de contacto',l=>l.consent],['Sitio web de la empresa',l=>l.web],['Tamaño de la empresa',l=>l.empleados]];
-  hbars($('#datos'),F.map(([lab,f])=>{const c=act.filter(f).length;return {key:lab,label:lab,v:pctN(c,n),extra:` · ${c}`,tip:`${lab}\n${c} de ${n} leads activos lo tienen registrado\nFaltan ${n-c}`};}),
+  const F=[['Nombre del contacto',l=>l.contacto],['Cargo',l=>l.cargo],['Correo válido',correoValido],['Teléfono',l=>l.telefono],['LinkedIn',l=>l.linkedin],
+    ['Decisor mapeado',l=>l.eb],['Sitio web o dominio',l=>l.web],['Tamaño de la empresa',l=>l.empleados],['Consentimiento de contacto',l=>l.consent]];
+  hbars($('#datos'),F.map(([lab,f])=>{const c=act.filter(f).length;return {key:lab,label:lab,v:pctN(c,n),extra:` · ${nf.format(c)}`,tip:`${lab}\n${nf.format(c)} de ${nf.format(n)} leads activos lo tienen registrado\nFaltan ${nf.format(n-c)}`};}),
     {max:100,keepZero:n>0,fmt:v=>v+'%',emptyText:'Sin leads activos con los filtros actuales.'});
 }
-function renderRol(set){
-  const rows=groupRows(set,l=>l.rol).sort((a,b)=>{const ia=ROLES.indexOf(a[0]),ib=ROLES.indexOf(b[0]);return (ia<0?99:ia)-(ib<0?99:ib);});
-  hbars($('#rol'),rows.map(([k,ls])=>{const q=ls.filter(l=>l.fase==='SQL').length;return {key:k,label:k,v:ls.length,tip:`${k}\n${ls.length} contactos · ${q} en SQL`};}),{key:'rol',active:state.rol});
+function renderCorreo(set){
+  const act=set.filter(l=>!l.closed);
+  const cat=l=>!l.correo?'faltante':l.correoEstado==='rebote'?'rebote':l.correoEstado==='generico'?'generico':l.correoEstado==='ok'?'ok':'sinval';
+  const C=[['ok','Válido'],['generico','Genérico (info@, ventas@…)'],['sinval','Sin validar'],['rebote','Rebotado'],['faltante','Sin correo']];
+  const cnt={};act.forEach(l=>{const k=cat(l);cnt[k]=(cnt[k]||0)+1;});
+  hbars($('#correo'),C.map(([k,lab])=>({key:k,label:lab,v:cnt[k]||0,extra:` · ${pct(cnt[k]||0,act.length)}`,tip:`${lab}\n${nf.format(cnt[k]||0)} de ${nf.format(act.length)} leads activos`})),
+    {keepZero:act.length>0,emptyText:'Sin leads activos con los filtros actuales.'});
+  const enr=act.filter(l=>l.enriquecer).length, dup=act.filter(l=>l.dup).length;
+  $('#correoFoot').textContent=`${nf.format(enr)} marcados para enriquecer · ${nf.format(dup)} posibles duplicados`;
 }
 const tempHtml=t=>{const n=TEMPS.indexOf(t)+1;return `<span class="temp"><i aria-hidden="true">${[1,2,3,4].map(k=>`<span class="${k<=n?'on':''}"></span>`).join('')}</i>${esc(t||'—')}</span>`;};
 const ebHtml=l=>l.eb?pill('ok','Mapeado'):(!l.closed&&l.fase==='SQL')?pill('serious','Sin EB'):'<span class="t-mut">Pendiente</span>';
-const COLDEF=[['prio','Seguimiento'],['empresa','Empresa'],['contacto','Contacto'],['sector','Sector'],['micro','ICP'],['total','Score'],['fase','Fase'],['temp','Temperatura'],['eb','Decisor'],['ult','Último contacto'],['sig','Siguiente paso'],['resp','Responsable']];
+const medios=l=>[l.correo?(l.correoEstado==='rebote'?'Correo rebotado':l.correoEstado==='generico'?'Correo genérico':'Correo'):'',l.telefono?'Teléfono':'',l.linkedin?'LinkedIn':''].filter(Boolean).join(' · ')||'Sin medios de contacto';
+const COLDEF=[['prio','Seguimiento'],['empresa','Empresa'],['contacto','Contacto'],['sector','Sector'],['micro','ICP'],['total','Score'],['est','Estado agente'],['fase','Fase'],['temp','Temperatura'],['eb','Decisor'],['ult','Último contacto'],['sig','Siguiente paso'],['resp','Responsable']];
 const SORTS={
   prio:byPrio,
   empresa:(a,b)=>a.empresa.localeCompare(b.empresa,'es'),
   contacto:(a,b)=>(a.contacto||'~').localeCompare(b.contacto||'~','es'),
   sector:(a,b)=>secName(a.sector).localeCompare(secName(b.sector),'es'),
-  micro:(a,b)=>a.micro.localeCompare(b.micro),
-  total:(a,b)=>a.total-b.total,
+  micro:(a,b)=>MICRO_ORDER.indexOf(a.micro)-MICRO_ORDER.indexOf(b.micro),
+  total:(a,b)=>(a.noScore?-1:a.total)-(b.noScore?-1:b.total),
+  est:(a,b)=>a.estadoL.localeCompare(b.estadoL,'es'),
   fase:(a,b)=>a.fi-b.fi,
   temp:(a,b)=>TEMPS.indexOf(a.temp)-TEMPS.indexOf(b.temp),
   eb:(a,b)=>(a.eb?1:0)-(b.eb?1:0),
@@ -983,36 +1159,42 @@ const SORTS={
   sig:(a,b)=>(a.fsig?a.fsig.getTime():Infinity)-(b.fsig?b.fsig.getTime():Infinity),
   resp:(a,b)=>a.resp.localeCompare(b.resp,'es')
 };
+let tableRows=[];
 function renderTable(set){
   const rows=set.filter(l=>!state.alert||l.flags.includes(state.alert));
   const {k,d}=state.sort;
   rows.sort((a,b)=>SORTS[k](a,b)*d||byPrio(a,b));
+  tableRows=rows;
   $('#thead').innerHTML=COLDEF.map(([key,t])=>`<th scope="col" aria-sort="${key===k?(d>0?'ascending':'descending'):'none'}"><button type="button" data-sort="${key}">${esc(t)}<span class="arr" aria-hidden="true">${key===k?(d>0?'▲':'▼'):''}</span></button></th>`).join('');
-  $('#tblCount').textContent=`Mostrando ${rows.length} de ${LEADS.length} leads · clic en una fila para abrir la ficha`;
-  const rule=RULES.find(r=>r.id===state.alert);
+  const shown=Math.min(rows.length,PAGE*state.page);
+  $('#tblCount').textContent=`${nf.format(rows.length)} de ${nf.format(LEADS.length)} leads${shown<rows.length?` · mostrando los primeros ${nf.format(shown)}`:''} · clic en una fila para abrir la ficha`;
   const chips=[];
+  const rule=RULES.find(r=>r.id===state.alert);
   if(rule) chips.push(`<span class="chip-f">Alerta: ${esc(rule.t)}<button type="button" data-clear="alert" aria-label="Quitar filtro de alerta">×</button></span>`);
-  if(state.rol) chips.push(`<span class="chip-f">Rol: ${esc(state.rol)}<button type="button" data-clear="rol" aria-label="Quitar filtro de rol">×</button></span>`);
+  if(state.estado) chips.push(`<span class="chip-f">Estado: ${esc(estLabel(state.estado))}<button type="button" data-clear="estado" aria-label="Quitar filtro de estado">×</button></span>`);
+  if(state.familia) chips.push(`<span class="chip-f">Puesto: ${esc(state.familia)}<button type="button" data-clear="familia" aria-label="Quitar filtro de puesto">×</button></span>`);
   $('#alertChip').innerHTML=chips.join(' ');
-  $('#tbody').innerHTML=rows.length?rows.map(l=>`<tr tabindex="0" data-id="${esc(l.id)}">
+  $('#tbody').innerHTML=rows.length?rows.slice(0,shown).map(l=>`<tr tabindex="0" data-id="${esc(l.id)}">
     <td>${pill(l.seg.sev,l.seg.label)}<span class="t-sm">${esc(l.pr.m)}</span></td>
-    <td class="t-emp"><b>${esc(l.empresa)}</b><span class="t-sm"><span class="mono">${esc(l.id)}</span>${[l.ciudad,l.empleados?l.empleados+' empl.':''].filter(Boolean).map(x=>' · '+esc(x)).join('')}</span></td>
-    <td class="t-con">${l.contacto?`<b>${esc(l.contacto)}</b>`:'<span class="t-mut">Sin nombre</span>'}<span class="t-sm">${esc([l.cargo,l.rol!=='Sin identificar'?l.rol:''].filter(Boolean).join(' · ')||'—')}</span><span class="t-sm">${esc([l.correo?'Correo':'',l.telefono?'Teléfono':'',l.linkedin?'LinkedIn':''].filter(Boolean).join(' · ')||'Sin medios de contacto')}</span></td>
+    <td class="t-emp"><b>${esc(l.empresa)}</b><span class="t-sm"><span class="mono">${esc(l.id)}</span>${[l.ciudad||l.region,l.empleados?l.empleados+' empl.':''].filter(Boolean).map(x=>' · '+esc(x)).join('')}</span></td>
+    <td class="t-con">${l.contacto?`<b>${esc(l.contacto)}</b>`:'<span class="t-mut">Sin nombre</span>'}<span class="t-sm">${esc(l.cargo||'Sin cargo')}</span><span class="t-sm">${esc(medios(l))}</span></td>
     <td>${esc(secName(l.sector))}<span class="t-sm mono">${esc(secCode(l.sector))}</span></td>
-    <td><span class="icp icp-${esc(l.micro)}">${esc(l.micro==='ANTI'?'Anti-ICP':l.micro)}</span></td>
-    <td><div class="sc"><b>${l.total}</b><span class="sc-track"><i style="width:${l.total}%;background:var(--seq-${l.band.i+1})"></i></span></div><span class="t-sm">${esc(l.band.k)}</span></td>
+    <td><span class="icp icp-${esc(l.micro)}">${esc(microLabel(l.micro))}</span></td>
+    <td>${l.noScore?'<span class="t-mut">Sin score</span>':`<div class="sc"><b>${l.total}</b><span class="sc-track"><i style="width:${l.total}%;background:var(--seq-${l.band.i+1})"></i></span></div><span class="t-sm">${esc(bandName(l))}${l.scoreTipo==='pre'?' · pre-score':''}</span>`}</td>
+    <td><span class="est">${esc(l.estadoL)}</span></td>
     <td>${esc(l.fase)}</td>
     <td>${tempHtml(l.temp)}</td>
     <td>${ebHtml(l)}</td>
-    <td>${l.diasSin==null?'<span class="t-mut">Sin contacto</span>':(l.diasSin===0?'Hoy':`Hace ${l.diasSin} d`)}<span class="t-sm">${esc(l.ult?fdate(l.ult):'')}</span></td>
+    <td>${l.diasSin==null?'<span class="t-mut">Sin contacto</span>':(l.diasSin===0?'Hoy':`Hace ${l.diasSin} d`)}<span class="t-sm">${esc(l.ult?fdate(l.ult):'')}${l.toque?` · ${l.toque} toque${l.toque>1?'s':''}`:''}</span></td>
     <td class="t-next">${esc(l.sigPaso||'—')}<span class="t-sm">${esc([l.fsig?fdate(l.fsig):'',l.medio].filter(Boolean).join(' · '))}</span></td>
     <td>${esc(l.resp)}</td></tr>`).join(''):`<tr><td colspan="${COLDEF.length}">${empty('Ningún lead coincide con los filtros.')}</td></tr>`;
+  $('#tblMore').innerHTML=shown<rows.length?`<button class="btn" id="btnMoreRows" type="button">Mostrar ${nf.format(Math.min(PAGE,rows.length-shown))} más</button><span>${nf.format(rows.length-shown)} sin mostrar</span>`:'';
 }
 function renderSource(){
   const real=SOURCE.kind==='csv';
   const chip=$('#srcChip');
   chip.classList.toggle('is-real',real);
-  chip.lastElementChild.textContent=real?`${SOURCE.name} · ${LEADS.length} leads`:`Datos de ejemplo · ${LEADS.length} leads`;
+  chip.lastElementChild.textContent=real?`${SOURCE.name} · ${nf.format(LEADS.length)} leads`:`Datos de ejemplo · ${nf.format(LEADS.length)} leads`;
   $('#notice').hidden=real;
   $('#btnDemo').hidden=!real;
   $('#corte').textContent=`Corte: ${fdateL(TODAY)}`;
@@ -1023,34 +1205,42 @@ function syncControls(){
   if($('#fQ').value!==state.q) $('#fQ').value=state.q;
 }
 function render(){
+  const sig=JSON.stringify([state.periodo,state.sector,state.micro,state.resp,state.fuente,state.familia,state.estado,state.q,state.alert,state.sort,LEADS.length,SOURCE.name]);
+  if(sig!==lastSig){state.page=1;lastSig=sig;}
   const set=filtered();
   syncControls();
-  renderKPIs(set); renderFunnel(set); renderBands(set); renderAgenda(set); renderAlerts(set);
-  renderCad(set); renderSector(set); renderFuente(set); renderDatos(set); renderRol(set); renderTable(set); renderSource();
+  renderKPIs(set); renderFunnel(set); renderBands(set); renderAgenda(set); renderAlerts(set); renderEstado(set);
+  renderCad(set); renderSector(set); renderFuente(set); renderPuesto(set); renderDatos(set); renderCorreo(set); renderTable(set); renderSource();
 }
 function load(leads,source){
-  LEADS=leads.map(prep); SOURCE=source; state.alert='';
+  LEADS=leads.map(prep); SOURCE=source; state.alert=''; state.estado=''; state.familia='';
+  PRE=LEADS.filter(l=>l.scoreTipo==='pre').length>LEADS.length/2;
   populateFilters(); render();
 }
 
 /* ---------- ficha lateral ---------- */
 const meter=(lab,v,max)=>`<div class="mt"><span>${esc(lab)}</span><span class="mt-track"><span style="width:${v==null?0:Math.min(100,v/max*100)}%"></span></span><b>${v==null?'—':v}<small>/${max}</small></b></div>`;
 const cadHtml=l=>`<ol class="cad">${CAD.map((d,i)=>`<li class="${i<l.toque?'done':i===l.toque?'cur':''}"><i></i><b>${d}</b><small>${esc(CAD_D[i])}</small></li>`).join('')}</ol>`;
+const CORREO_EST={ok:'Válido',generico:'Genérico',rebote:'Rebotado',faltante:'Sin correo','':'Sin validar'};
 function drawerHtml(l){
   const flags=RULES.filter(r=>l.flags.includes(r.id));
   const kv=(t,v,o={})=>`<div${o.wide?' class="kv-wide"':''}><dt>${esc(t)}</dt><dd${v?'':' class="t-mut"'}>${v?`<span>${esc(v)}</span>${o.copy?`<button class="cp" type="button" data-copy="${esc(v)}">Copiar</button>`:''}`:'Sin dato'}</dd></div>`;
-  return `<div class="dr-hd"><div><p class="eyebrow">${esc([l.id,secCode(l.sector)].filter(Boolean).join(' · '))}</p><h3 id="drTitle">${esc(l.empresa)}</h3><p class="dr-meta">${esc([quien(l),l.ciudad].filter(Boolean).join(' · '))}</p></div><button class="x" type="button" aria-label="Cerrar ficha">×</button></div>
-  <section class="dr-sec"><div class="dr-score-top"><div class="big">${l.total}<small>/100</small></div><div class="dr-tags"><span class="tag">${esc(l.band.k)}</span><span class="icp icp-${esc(l.micro)}">${esc(l.micro==='ANTI'?'Anti-ICP':l.micro)}</span>${tempHtml(l.temp)}</div></div>
-    ${meter('ICP Fit',l.fit,30)}${meter('Intención',l.intent,30)}${meter('Viabilidad',l.viab,30)}${meter('Engagement',l.eng,10)}</section>
+  const hasComps=[l.fit,l.intent,l.viab,l.eng].some(v=>v!=null);
+  const hasBant=['B','A','N','T'].some(k=>l.bant[k]);
+  return `<div class="dr-hd"><div><p class="eyebrow">${esc([l.id,l.sourceId,secCode(l.sector)].filter(Boolean).join(' · '))}</p><h3 id="drTitle">${esc(l.empresa)}</h3><p class="dr-meta">${esc([quien(l),l.ciudad||l.region].filter(Boolean).join(' · '))}</p></div><button class="x" type="button" aria-label="Cerrar ficha">×</button></div>
+  <section class="dr-sec"><div class="dr-score-top"><div class="big">${l.noScore?'—':l.total}<small>/100</small></div><div class="dr-tags"><span class="tag">${esc(bandName(l))}</span><span class="icp icp-${esc(l.micro)}">${esc(microLabel(l.micro))}</span>${tempHtml(l.temp)}</div></div>
+    ${hasComps?meter('ICP Fit',l.fit,30)+meter('Intención',l.intent,30)+meter('Viabilidad',l.viab,30)+meter('Engagement',l.eng,10)
+      :`<p class="dr-note">${l.scoreTipo==='pre'?'Pre-score calculado por el agente. El desglose ICP Fit, Intención, Viabilidad y Engagement se llena tras el primer contacto real.':'Sin desglose del score.'}</p>`}</section>
   <section class="dr-sec"><h4>Siguiente mejor acción</h4><p class="nba">${esc(l.nba)}</p>
     <div class="dr-row">${pill(l.seg.sev,l.seg.label)}<span>${esc([l.fsig?fdateL(l.fsig):'',l.medio,l.resp].filter(Boolean).join(' · '))}</span></div>
-    <p class="dr-note">Paso registrado: ${esc(l.sigPaso||'—')} · Prioridad: ${esc(l.pr.m)}</p></section>
-  <section class="dr-sec"><h4>Datos del contacto</h4><dl class="kv">${kv('Nombre',l.contacto)}${kv('Cargo',l.cargo)}${kv('Área',l.area)}${kv('Rol en la compra',l.rol)}${kv('Correo',l.correo,{copy:true,wide:true})}${kv('Teléfono',l.telefono,{copy:true})}${kv('LinkedIn',l.linkedin,{copy:/linkedin\.com/i.test(l.linkedin)})}${kv('Canal preferido',l.canalPref)}${kv('Consentimiento de contacto',l.consent?'Registrado':'')}</dl></section>
-  <section class="dr-sec"><h4>Datos de la empresa</h4><dl class="kv">${kv('Sector',secName(l.sector))}${kv('Código',secCode(l.sector))}${kv('Ciudad',l.ciudad)}${kv('Empleados',l.empleados)}${kv('Sitio web',l.web,{copy:true})}${kv('Micro-ICP',l.micro==='ANTI'?'Anti-ICP':l.micro)}${kv('Regulación que presiona',l.sector!=='OTRO'?sec(l.sector)[2]:'',{wide:true})}${kv('Dolor típico del sector',l.sector!=='OTRO'?sec(l.sector)[1]:'',{wide:true})}${kv('Gancho comercial',l.gancho,{wide:true})}</dl></section>
-  <section class="dr-sec"><h4>Cadencia de seguimiento · toque ${l.toque} de 5</h4>${cadHtml(l)}<p class="dr-note">Cada toque aporta valor, evidencia o una decisión. Nunca "solo dando seguimiento".</p></section>
-  <section class="dr-sec"><h4>BANT</h4><div class="bant">${['B','A','N','T'].map(k=>`<div><span>${esc(BANT_N[k])}</span>${bantPill(l.bant[k])}</div>`).join('')}</div></section>
+    <p class="dr-note">Estado en el agente: ${esc(l.estadoL)} · Prioridad: ${esc(l.pr.m)}</p></section>
+  <section class="dr-sec"><h4>Datos del contacto</h4><dl class="kv">${kv('Nombre',l.contacto)}${kv('Cargo',l.cargo)}${kv('Familia de puesto',l.familia)}${kv('Rol en la compra',l.rol!=='Sin identificar'?l.rol:'')}${kv('Correo',l.correo,{copy:true,wide:true})}${kv('Estado del correo',CORREO_EST[l.correoEstado]??l.correoEstado)}${kv('Teléfono',l.telefono,{copy:true})}${kv('LinkedIn',l.linkedin,{copy:/linkedin\.com/i.test(l.linkedin)})}${kv('Área',l.area)}${kv('Canal preferido',l.canalPref)}${kv('Consentimiento de contacto',l.consent?'Registrado':'')}</dl></section>
+  <section class="dr-sec"><h4>Datos de la empresa</h4><dl class="kv">${kv('Sector',secName(l.sector))}${kv('Código',secCode(l.sector))}${kv('Ciudad',l.ciudad)}${kv('Estado',l.region)}${kv('Empleados',l.empleados)}${kv('Sitio web o dominio',l.web,{copy:true})}${kv('Micro-ICP',microLabel(l.micro))}${kv('Trigger regulatorio',l.trigger)}${kv('Regulación que presiona',l.sector!=='OTRO'?sec(l.sector)[2]:'',{wide:true})}${kv('Dolor típico del sector',l.sector!=='OTRO'?sec(l.sector)[1]:'',{wide:true})}${kv('Gancho comercial',l.gancho,{wide:true})}</dl></section>
+  <section class="dr-sec"><h4>Cadencia de seguimiento · ${l.toque} toque${l.toque===1?'':'s'}</h4>${cadHtml(l)}<p class="dr-note">Cada toque aporta valor, evidencia o una decisión. Nunca "solo dando seguimiento".</p></section>
+  <section class="dr-sec"><h4>En el agente</h4><dl class="kv">${kv('Estado',l.estadoL)}${kv('Fuente',[l.fuente,l.canal].filter(Boolean).join(' · '))}${kv('Marcado para enriquecer',l.enriquecer?'Sí':'')}${kv('Duplicado por revisar',l.dup?'Sí':'')}${kv('Último asunto',l.asunto,{wide:true})}${kv('Notas',l.notas,{wide:true})}</dl></section>
+  ${hasBant?`<section class="dr-sec"><h4>BANT</h4><div class="bant">${['B','A','N','T'].map(k=>`<div><span>${esc(BANT_N[k])}</span>${bantPill(l.bant[k])}</div>`).join('')}</div></section>`:''}
   <section class="dr-sec"><h4>Alertas del agente</h4>${flags.length?`<ul class="dr-al">${flags.map(r=>`<li>${ICONS[r.sev]}<div><b>${esc(r.t)}</b><small>${esc(r.d)}</small></div></li>`).join('')}</ul>`:`<div>${pill('ok','Sin alertas')}</div>`}</section>
-  <section class="dr-sec"><h4>Origen y seguimiento</h4><dl class="kv">${kv('Fuente',[l.fuente,l.canal].filter(Boolean).join(' · '))}${kv('Responsable',l.resp)}${kv('Entrada',l.entrada?fdateL(l.entrada):'')}${kv('Última interacción',l.ult?`${fdateL(l.ult)} (hace ${l.diasSin} d)`:'')}${kv('Economic Buyer',l.eb?'Mapeado':'No mapeado')}${kv('Respondió',l.respondio?'Sí':'No')}</dl></section>`;
+  <section class="dr-sec"><h4>Seguimiento</h4><dl class="kv">${kv('Responsable',l.resp)}${kv('Entrada',l.entrada?fdateL(l.entrada):'')}${kv('Última interacción',l.ult?`${fdateL(l.ult)} (hace ${l.diasSin} d)`:'')}${kv('Respondió',l.respondio?'Sí':'No')}${kv('Economic Buyer',l.eb?'Mapeado':'No mapeado')}${kv('Fase',l.fase)}</dl></section>`;
 }
 let lastFocus=null;
 function openDrawer(id){
@@ -1068,23 +1258,24 @@ function closeDrawer(){
 
 /* ---------- CSV de salida, portapapeles, avisos ---------- */
 const csvCell=v=>{const s=v==null?'':String(v);return /[",\n;]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};
-const leadRow=l=>[l.id,l.empresa,l.web,secCode(l.sector),l.ciudad,l.empleados,l.fuente,l.canal,l.resp,
-  l.contacto,l.cargo,l.area,l.rol,l.correo,l.telefono,l.linkedin,l.canalPref,l.consent?'Sí':'No',
-  l.fase,l.temp,l.micro,l.fit,l.intent,l.viab,l.eng,l.total,l.eb?'Sí':'No',l.aliado?'Sí':'No',
-  iso(l.entrada),iso(l.ult),l.sigPaso,iso(l.fsig),l.medio,l.toque,l.respondio?'Sí':'No',l.bant.B,l.bant.A,l.bant.N,l.bant.T,l.gancho];
+const leadRow=l=>[l.id,l.sourceId,l.empresa,l.web,secCode(l.sector),l.ciudad,l.region,l.empleados,l.fuente,l.canal,l.resp,
+  l.contacto,l.cargo,l.area,l.rol,l.correo,l.correoEstado,l.telefono,l.linkedin,l.canalPref,l.consent?'Sí':'No',
+  l.estado,l.fase,l.temp,microLabel(l.micro),l.scoreTipo==='pre'?l.total:'',l.fit,l.intent,l.viab,l.eng,l.scoreTipo==='completo'?l.total:'',
+  l.eb?'Sí':'No',l.aliado?'Sí':'No',l.enriquecer?'Sí':'No',iso(l.entrada),iso(l.ult),l.sigPaso,iso(l.fsig),l.medio,l.toque,l.respondio?'Sí':'No',
+  l.bant.B,l.bant.A,l.bant.N,l.bant.T,l.trigger,l.gancho,l.notas];
 const toCSV=rows=>[TPL.join(','),...rows.map(r=>r.map(csvCell).join(','))].join('\n');
 function templateCSV(){
   return toCSV([
-    ['L-0001','Hospital Ejemplo Norte','www.hospitalejemplo.example','MEM_AIS_MX_SALUD','Monterrey','501–1,000','Marketing','Webinar','Equipo Nuevo León',
-     'Nombre Apellido','CISO','Seguridad de la información','Validador técnico','nombre.apellido@hospitalejemplo.example','+52 81 0123 4567','linkedin.com/in/ejemplo','Correo','Sí',
-     'SQL','Caliente','ICP1',24,21,20,8,73,'Sí','No',iso(addDays(-40)),iso(addDays(-4)),'Sesión de descubrimiento comercial',iso(addDays(3)),'Videollamada',3,'Sí','Parcial','Confirmado','Confirmado','Parcial','Ransomware en hospitales del sector'],
-    ['L-0002','Manufacturera Ejemplo Bajío','www.manufacturaejemplo.example','MEM_AIS_MX_MFG','Querétaro','1,001–5,000','Comercial','Referido','Equipo CDMX',
-     'Nombre Apellido','Director de TI','Tecnología','Champion','nombre.apellido@manufacturaejemplo.example','+52 442 012 3456','','WhatsApp','No',
-     'SAL','Tibio','ICP1',26,18,17,6,67,'No','No',iso(addDays(-25)),iso(addDays(-2)),'Confirmar actores involucrados',iso(addDays(1)),'Llamada',2,'Sí','Inferido','Parcial','Confirmado','No identificado','Cliente OEM exige evidencia de seguridad']
+    ['L-SRC-001-00001','SRC-001','Hospital Ejemplo Norte','hospitalejemplo.example','MEM_AIS_MX_SALUD','Monterrey','N.L.','501–1,000','Marketing','Webinar','Equipo Nuevo León',
+     'Nombre Apellido','CISO','Seguridad de la información','Validador técnico','nombre.apellido@hospitalejemplo.example','ok','+52 81 0123 4567','linkedin.com/in/ejemplo','Correo','Sí',
+     'agendado','SQL','Caliente','ICP-1',72,24,21,20,8,73,'Sí','No','No',iso(addDays(-40)),iso(addDays(-4)),'Sesión de descubrimiento comercial',iso(addDays(3)),'Videollamada',3,'Sí','Parcial','Confirmado','Confirmado','Parcial','Auditoría de cliente','Ransomware en hospitales del sector',''],
+    ['L-SRC-001-00002','SRC-001','Manufacturera Ejemplo Bajío','manufacturaejemplo.example','Manufactura / Alimentos / Confitería','Querétaro','Qro.','1,001–5,000','','','',
+     'Nombre Apellido','Director de TI','Tecnología','','nombre.apellido@manufacturaejemplo.example','generico','','','','No',
+     'contactado','','','ICP-2',62,'','','','','','No','No','No',iso(addDays(-25)),iso(addDays(-2)),'',iso(addDays(1)),'Correo',1,'No','','','','','Anexo 21 SAT','Cliente OEM exige evidencia de seguridad','']
   ]);
 }
 let toastT=0;
-function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true;},4200);}
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true;},ms||4200);}
 function openModal(title,desc,text){
   $('#mdTitle').textContent=title; $('#mdDesc').textContent=desc; $('#mdText').value=text;
   $('#modal').hidden=false; const ta=$('#mdText'); ta.focus(); ta.select();
@@ -1097,11 +1288,52 @@ function copyText(text,okMsg,title){
 
 /* ---------- archivos ---------- */
 const STORE='acces-icp-dashboard:leads-csv';
+const remember=(name,text)=>{try{localStorage.setItem(STORE,JSON.stringify({name,text}));}catch(e){/* archivo grande o almacenamiento bloqueado: no se recuerda */}};
+const XLSX_URL='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+function loadXLSX(){
+  if(window.XLSX) return Promise.resolve(window.XLSX);
+  return new Promise((res,rej)=>{const s=document.createElement('script');s.src=XLSX_URL;
+    s.onload=()=>window.XLSX?res(window.XLSX):rej(new Error('No pude abrir el lector de Excel.'));
+    s.onerror=()=>rej(new Error('No pude cargar el lector de Excel. Descarga la pestaña Leads_SRC-001 como CSV e impórtala.'));
+    document.head.appendChild(s);});
+}
+function pickSheet(X,wb){
+  if(wb.SheetNames.includes('Leads_SRC-001')) return 'Leads_SRC-001';
+  let best=null,bestN=-1;
+  for(const n of wb.SheetNames){
+    const ws=wb.Sheets[n]; if(!ws||!ws['!ref']) continue;
+    const rg=X.utils.decode_range(ws['!ref']);
+    const hdr=(X.utils.sheet_to_json(ws,{header:1,range:{s:{r:rg.s.r,c:rg.s.c},e:{r:rg.s.r,c:rg.e.c}},defval:''})[0]||[]).map(norm);
+    if(!hdr.some(h=>COLS.empresa.includes(h))) continue;
+    if(rg.e.r-rg.s.r>bestN){bestN=rg.e.r-rg.s.r;best=n;}
+  }
+  if(!best) throw new Error('No encontré en el libro una pestaña con la columna "Empresa".');
+  return best;
+}
 function readFile(file){
+  if(/\.xlsx?$/i.test(file.name)){
+    toast('Leyendo el libro de Excel…',60000);
+    const fr=new FileReader();
+    fr.onload=async()=>{
+      try{
+        const X=await loadXLSX();
+        const wb=X.read(new Uint8Array(fr.result),{type:'array',dateNF:'yyyy-mm-dd'});
+        const sheet=pickSheet(X,wb);
+        const rows=X.utils.sheet_to_json(wb.Sheets[sheet],{header:1,raw:false,defval:'',blankrows:false}).map(r=>r.map(v=>String(v??'')));
+        const name=`${file.name} · ${sheet}`;
+        const n=importRows(rows,name);
+        toast(`Importados ${nf.format(n)} leads de la pestaña ${sheet}.`);
+        remember(name,rows.map(r=>r.map(csvCell).join(',')).join('\n'));
+      }catch(err){toast(err.message);}
+    };
+    fr.onerror=()=>toast('No pude leer el archivo. Intenta descargarlo de nuevo.');
+    fr.readAsArrayBuffer(file);
+    return;
+  }
   const go=enc=>{const fr=new FileReader();fr.onload=()=>{
     const text=String(fr.result||'');
     if(enc==='utf-8'&&(text.match(/\uFFFD/g)||[]).length>2){go('windows-1252');return;}
-    try{const n=importText(text,file.name);toast(`Importados ${n} leads de ${file.name}.`);try{localStorage.setItem(STORE,JSON.stringify({name:file.name,text}));}catch(e){}}
+    try{const n=importText(text,file.name);toast(`Importados ${nf.format(n)} leads de ${file.name}.`);remember(file.name,text);}
     catch(err){toast(err.message);}
   };fr.onerror=()=>toast('No pude leer el archivo. Intenta guardarlo de nuevo como CSV.');fr.readAsText(file,enc);};
   go('utf-8');
@@ -1111,26 +1343,23 @@ function readFile(file){
 $('#btnImport').addEventListener('click',()=>$('#fileIn').click());
 $('#fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(f)readFile(f);e.target.value='';});
 $('#btnTpl').addEventListener('click',()=>copyText(templateCSV(),'Plantilla CSV copiada. Pégala en una hoja y guárdala como .csv.','Plantilla CSV de leads'));
-$('#btnCopyView').addEventListener('click',()=>{
-  const set=filtered().filter(l=>!state.alert||l.flags.includes(state.alert)).sort(byPrio);
-  copyText(toCSV(set.map(leadRow)),`${set.length} leads copiados como CSV.`,'Vista actual en CSV');
-});
+$('#btnCopyView').addEventListener('click',()=>copyText(toCSV(tableRows.map(leadRow)),`${nf.format(tableRows.length)} leads copiados como CSV.`,'Vista actual en CSV'));
 $('#btnDemo').addEventListener('click',()=>{try{localStorage.removeItem(STORE);}catch(e){}load(demo(),{kind:'demo',name:'Datos de ejemplo'});toast('Mostrando datos de ejemplo.');});
 $('#fPeriodo').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b)return;state.periodo=b.dataset.p;render();});
 [['#fSector','sector'],['#fMicro','micro'],['#fResp','resp'],['#fFuente','fuente']].forEach(([s,k])=>$(s).addEventListener('change',e=>{state[k]=e.target.value;render();}));
 let qT=0;
-$('#fQ').addEventListener('input',e=>{clearTimeout(qT);qT=setTimeout(()=>{state.q=e.target.value;render();},120);});
-$('#fClear').addEventListener('click',()=>{Object.assign(state,{periodo:'all',sector:'',micro:'',resp:'',fuente:'',rol:'',q:'',alert:''});render();});
+$('#fQ').addEventListener('input',e=>{clearTimeout(qT);qT=setTimeout(()=>{state.q=e.target.value;render();},160);});
+$('#fClear').addEventListener('click',()=>{Object.assign(state,{periodo:'all',sector:'',micro:'',resp:'',fuente:'',familia:'',estado:'',q:'',alert:''});render();});
 const toTable=()=>$('#pTable').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});
 $('#agenda').addEventListener('click',e=>{
   if(e.target.closest('#agMore')){state.sort={k:'prio',d:1};state.alert='';render();toTable();return;}
   const b=e.target.closest('[data-id]');if(b)openDrawer(b.dataset.id);
 });
 $('#alerts').addEventListener('click',e=>{const b=e.target.closest('[data-alert]');if(!b||b.disabled)return;state.alert=state.alert===b.dataset.alert?'':b.dataset.alert;render();if(state.alert)toTable();});
-$('#sector').addEventListener('click',e=>{const b=e.target.closest('[data-sector]');if(!b)return;state.sector=state.sector===b.dataset.sector?'':b.dataset.sector;render();});
-$('#fuente').addEventListener('click',e=>{const b=e.target.closest('[data-fuente]');if(!b)return;state.fuente=state.fuente===b.dataset.fuente?'':b.dataset.fuente;render();});
-$('#rol').addEventListener('click',e=>{const b=e.target.closest('[data-rol]');if(!b)return;state.rol=state.rol===b.dataset.rol?'':b.dataset.rol;render();});
+const toggle=(sel,key)=>$(sel).addEventListener('click',e=>{const b=e.target.closest(`[data-${key}]`);if(!b)return;state[key]=state[key]===b.dataset[key]?'':b.dataset[key];render();});
+toggle('#sector','sector'); toggle('#fuente','fuente'); toggle('#puesto','familia'); toggle('#estado','estado');
 $('#pTable').addEventListener('click',e=>{
+  if(e.target.closest('#btnMoreRows')){state.page++;renderTable(filtered());return;}
   const c=e.target.closest('[data-clear]');
   if(c){state[c.dataset.clear]='';render();return;}
   const s=e.target.closest('[data-sort]');
