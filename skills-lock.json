@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "cold-email": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/cold-email/SKILL.md",
+      "computedHash": "04df3a3569e02bab321ddbf4723a3a9ce59ebb224500ddd8705e272d3ff16d51"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "913b9d37d0d54047dd65222bb8c67b2bf04e3cb87dcad1729068d7a8b2c8c396"
+    },
+    "n8n-agents-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/n8n-agents-official/SKILL.md",
+      "computedHash": "686d04073c00d32aa6049412449cab96b20306059b5f62f802655466a6e88b13"
+    },
+    "n8n-code-nodes-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/n8n-code-nodes-official/SKILL.md",
+      "computedHash": "f496e1ca91e14b507985029fb8d893cd527bd4bff653f15533573b29235972cf"
+    },
+    "n8n-data-tables-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/n8n-data-tables-official/SKILL.md",
+      "computedHash": "a213b0b22aecdfa45c52a8c9dd81db0c3f969b7115e46eb04d4b4854ff46b7bd"
+    },
+    "n8n-debugging-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/n8n-debugging-official/SKILL.md",
+      "computedHash": "d2bd13bf5aa8634cd464625771634b0488863bc524b7938e5251fb051ac61359"
+    },
+    "n8n-error-handling-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/n8n-error-handling-official/SKILL.md",
+      "computedHash": "d0060f0f3cf3ffd4cb21dd372e70cc70cd86406bff54786178dfad830ae04908"
+    },
+    "n8n-expressions-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/n8n-expressions-official/SKILL.md",
+      "computedHash": "e605ff3aa49fdfe16f1129a35b8ee208b34c2787ef76671f495290a3c8b98df9"
+    },
+    "n8n-node-configuration-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/n8n-node-configuration-official/SKILL.md",
+      "computedHash": "772a4e21015c3edbd71df233485c8d4b02c7082c555657e8ebc062113bbd204a"
+    },
+    "using-n8n-skills-official": {
+      "source": "n8n-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/using-n8n-skills-official/SKILL.md",
+      "computedHash": "73cf279da4de724648de5f2cfb1b49aa0ae824c69b4ed6af11ee896bf71d19d4"
+    }
+  }
+}
