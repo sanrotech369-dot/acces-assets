@@ -19,7 +19,8 @@ El archivo se procesa en el navegador; no se sube a ningún servidor ni a este r
 
 Las de `Leads_SRC-001` del agente (`ID_Lead`, `Source_ID`, `Empresa`, `Dominio`, `Sector`, `Contacto`, `Cargo`, `Correo`, `Correo_Estado`, `Telefono`, `Ciudad`, `Estado_Region`, `Estado`, `Anti_ICP`, `Suprimido`, `Correo_Dup`, `Dup_Maestro`, `Enriquecer`, `Micro_ICP`, `Pre_Score`, `Decisor_Mapeado`, `Cadencia_Paso`, `Num_Toques`, `Ultimo_Contacto`, `Fecha_Siguiente_Paso`, `Trigger_Regulatorio`, `Gancho`, `Asunto`, `Notas`…) y las de `plantilla_leads.csv`. Las columnas que falten se calculan o quedan vacías.
 
-- **Estado del agente → fase**: `respondio` es MQL, `agendado` es SQL, `descartado`, `descalificado_sin_contacto`, `suprimido` y `Anti_ICP = SI` son Descartado; el resto (`sin_prescore`, `en_investigacion`, `en_revision`, `revisar_duplicado`, `borrador_creado`, `contactado`, `rebotado`, `nurture`…) sigue como Lead.
+- **Estado del agente → fase**: `respondio` es MQL, `agendado` es SQL, `descartado`, `descalificado_sin_contacto` y `suprimido` son Descartado; el resto (`sin_prescore`, `en_investigacion`, `en_revision`, `revisar_duplicado`, `borrador_creado`, `contactado`, `rebotado`, `nurture`…) sigue como Lead.
+- **Anti-ICP abierto**: `Anti_ICP = SI` (o un motivo de descarte que diga anti-ICP) ya no descarta el lead; aparece como "Anti-ICP reabierto" para abordarlo. Solo los suprimidos (opt-out) y los descartados por otra causa quedan cerrados.
 - **Pre-score**: si solo viene `Pre_Score`, el dashboard lo muestra como prioridad de abordaje (no como fase). El score completo (ICP Fit + Intención + Viabilidad + Engagement) se usa cuando viene en el archivo.
 - **Seguimiento**: un lead está en seguimiento si tiene toques, último contacto, respuesta o un estado de seguimiento. Si la exportación no trae `Fecha_Siguiente_Paso`, esos leads aparecen "En cadencia del agente" en lugar de marcarse como sin siguiente paso.
 

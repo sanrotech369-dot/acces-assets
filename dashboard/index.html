@@ -229,7 +229,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 .sc-track i{display:block;height:100%;border-radius:0 3px 3px 0}
 .icp{display:inline-block;font-family:var(--font-mono);font-size:11.5px;font-weight:500;padding:1px 7px;border-radius:5px;border:1px solid var(--line);color:var(--ink-2);background:var(--panel);white-space:nowrap}
 .icp-ICP1{background:var(--bar-soft);border-color:var(--bar);color:var(--ink)}
-.icp-ANTI{text-decoration:line-through}
+.icp-ANTI{border-style:dashed}
 .est{display:inline-block;font-family:var(--font-mono);font-size:11.5px;padding:1px 7px;border-radius:5px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);white-space:nowrap}
 .temp{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .temp i{display:inline-flex;gap:2px}
@@ -484,7 +484,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
       <div><dt>Candado de decisor</dt><dd>Ningún lead se entrega como SQL sin Economic Buyer mapeado, aunque el total sea alto. Las fases se mueven solo con evidencia: una respuesta es MQL, una reunión agendada es SQL.</dd></div>
       <div><dt>Cadencia sin fecha acordada</dt><dd>D+1 confirmar recepción · D+3 aclaración puntual · D+7 aportar valor · D+12 validar proceso y actores · D+20 cierre de ciclo temporal. La fecha acordada con el prospecto manda.</dd></div>
       <div><dt>Prioridad diaria</dt><dd>Compromiso vencido → sin siguiente paso → correo rebotado → reunión próxima → SQL por entregar → cuenta estratégica → lead nuevo → calificación en curso → reactivación → nutrición.</dd></div>
-      <div><dt>Aliado sin presentación directa</dt><dd>Un lead de aliado tecnológico sin presentación directa tiene pre-score máximo de 40. Pide la presentación antes de invertir esfuerzo.</dd></div>
+      <div><dt>Anti-ICP abierto y aliados</dt><dd>Anti-ICP ya no descarta: las empresas fuera del ICP original, como las grandes, se reabren para abordarlas. Solo quedan cerrados los suprimidos (opt-out) y los descartados por otra causa. Un lead de aliado sin presentación directa tiene pre-score máximo de 40.</dd></div>
     </dl>
   </section>
   </div>
@@ -572,7 +572,7 @@ const CAD_D=['Confirmar recepción','Aclaración puntual','Aportar valor','Valid
 const BANT_N={B:'Budget · presupuesto',A:'Authority · autoridad',N:'Need · necesidad',T:'Timeline · tiempo'};
 const REQ={MQL:50,SAL:65,SQL:75};
 const MICRO_ORDER=['ICP1','ICP2','ICP3','OBS','NUEVO','ALIANZA','SIN_EVAL','ANTI'];
-const microLabel=m=>({ICP1:'ICP-1',ICP2:'ICP-2',ICP3:'ICP-3',ANTI:'Anti-ICP',OBS:'Observación',NUEVO:'Nuevo',ALIANZA:'Alianza',SIN_EVAL:'Sin evaluar'}[m]||m||'—');
+const microLabel=m=>({ICP1:'ICP-1',ICP2:'ICP-2',ICP3:'ICP-3',ANTI:'Anti-ICP (reabierto)',OBS:'Observación',NUEVO:'Nuevo',ALIANZA:'Alianza',SIN_EVAL:'Sin evaluar'}[m]||m||'—');
 
 /* Estados del agente (columna Estado de Leads_SRC-001): etiqueta, fase que implica, siguiente paso típico */
 const ESTADOS={
@@ -594,7 +594,8 @@ const ESTADOS={
   agendado:['Agendado','SQL','Preparar la reunión de descubrimiento'],
   descartado:['Descartado','Descartado',''],
   descalificado_sin_contacto:['Descalificado sin contacto','Descartado',''],
-  suprimido:['Suprimido','Descartado','']
+  suprimido:['Suprimido','Descartado',''],
+  anti_icp:['Anti-ICP reabierto','Lead','Revisar la cuenta y preparar un primer contacto adecuado a su tamaño']
 };
 const EST_ALIAS={respondido:'respondio',respuesta:'respondio',interesado:'respondio',en_conversacion:'respondio',
   reunion_agendada:'agendado',cita_agendada:'agendado',cita:'agendado',rebote:'rebotado',duplicado:'revisar_duplicado',
@@ -610,7 +611,8 @@ const GRUPOS=[
   ['seg','En seguimiento','Ya recibió al menos un toque',['contactado','llamar_manual','en_espera','nurture']],
   ['resp','Respondió o con reunión','Hay conversación con el prospecto',['respondio','agendado']],
   ['prob','Correo rebotado','Hay que conseguir otro correo',['rebotado']],
-  ['desc','Descartado','Fuera de perfil, suprimido o descalificado',['descartado','descalificado_sin_contacto','suprimido']]];
+  ['anti','Anti-ICP reabierto','Fuera del ICP original (por ejemplo, empresas grandes); ahora se abordan',['anti_icp']],
+  ['desc','Descartado o suprimido','Suprimidos (opt-out) o descartados por otra causa',['descartado','descalificado_sin_contacto','suprimido']]];
 function grupoOf(l){
   if(l.closed) return 'desc';
   if(l.estado!=='sin_estado'){const g=GRUPOS.find(g=>g[3].includes(l.estado));return g?g[0]:'otros';}
@@ -622,7 +624,7 @@ function grupoOf(l){
 const RULE_SHORT={vencido:'seguimientos vencidos por retomar',sinpaso:'leads en seguimiento sin fecha de siguiente paso',
   candado:'SQL o reuniones sin decisor mapeado',rebote:'correos rebotados por corregir',silencio:'leads en seguimiento sin interacción en más de 14 días',
   fase:'leads con fase por encima de su score',datos:'contactos sin correo válido ni teléfono',dup:'duplicados por revisar',
-  aliado:'leads de aliado sin presentación directa',sla:'leads nuevos sin primer contacto'};
+  antiab:'empresas Anti-ICP reabiertas por revisar',aliado:'leads de aliado sin presentación directa',sla:'leads nuevos sin primer contacto'};
 const SEV_ORD={crit:0,serious:1,warn:2};
 
 /* Familia de puesto a partir del cargo */
@@ -670,6 +672,7 @@ const RULES=[
   {id:'fase',sev:'warn',t:'Fase por encima del score',d:'La fase registrada supera lo que respalda el Score Total. Mover fases solo con evidencia.',test:l=>!l.closed&&l.scoreTipo==='completo'&&REQ[l.fase]!=null&&l.total<REQ[l.fase]},
   {id:'datos',sev:'warn',t:'Contacto sin correo válido ni teléfono',d:'No hay forma directa de dar seguimiento. Enriquecer el contacto antes del siguiente toque.',test:l=>!l.closed&&!correoValido(l)&&!l.telefono},
   {id:'dup',sev:'warn',t:'Duplicado por revisar',d:'El registro parece duplicado de otro lead. Resolverlo para no escribir dos veces a la misma persona.',test:l=>!l.closed&&l.dup},
+  {id:'antiab',sev:'warn',t:'Anti-ICP reabierto por revisar',d:'Empresa fuera del ICP original (por ejemplo, de gran tamaño). Revisar la cuenta y preparar un primer contacto adecuado.',test:l=>!l.closed&&l.micro==='ANTI'},
   {id:'aliado',sev:'warn',t:'Aliado sin presentación directa',d:'Lead de aliado tecnológico sin presentación directa: pre-score máximo 40.',test:l=>!l.closed&&l.aliado&&l.total>40},
   {id:'sla',sev:'warn',t:'Lead nuevo sin primer contacto',d:'Entró hace más de 2 días y no tiene interacción registrada.',test:l=>l.fase==='Lead'&&!l.enSeg&&!l.ult&&l.diasEntrada!=null&&l.diasEntrada>2}
 ];
@@ -848,7 +851,8 @@ function demo(){
       fuente,canal,resp,contacto:r()<.94?`${nom} ${ape}`:'',cargo,area,rol,
       correo,correoEstado,telefono:r()<.7?tel:'',linkedin:r()<.72?'Registrado':'',
       canalPref:pick(['Correo','WhatsApp','LinkedIn','Llamada']),consent:fuente==='Marketing'?r()<.92:r()<.6,
-      estado,fase,faseMax:closed?ri(0,2):null,temp:fuente==='Dirección'&&r()<.6?'Estratégico':'',micro:closed&&r()<.5?'ANTI':'',
+      ...(closed&&estado!=='suprimido'&&r()<.6?{estado:'anti_icp',fase:'Lead',micro:'ANTI',faseMax:null}:{estado,fase,faseMax:closed?ri(0,2):null,micro:''}),
+      temp:fuente==='Dirección'&&r()<.6?'Estratégico':'',
       fit,intent,viab,eng,total:null,scoreTipo:'completo',eb,aliado,entrada,ult,
       sigPaso:pick(PASOS[fase]),fsig,medio:pick(MEDIOS[fase]),toque,respondio,gancho:pick(GANCHOS[sector]),trigger:'',
       dup:r()<.05,enriquecer:correoEstado!=='ok',notas:'',asunto:'',
@@ -895,6 +899,7 @@ const COLS={
   aliado:['aliadosinpresentacion','aliado'],
   anti:['antiicp'],
   suprimido:['suprimido'],
+  motivo:['motivosupresion','motivodescarte','motivo'],
   correoDup:['correodup'],
   dupMaestro:['dupmaestro'],
   enriquecer:['enriquecer'],
@@ -1009,10 +1014,13 @@ function correoEstadoOf(v,estado){
 function fromRow(r,idx,n){
   const g=k=>idx[k]!=null?String(r[idx[k]]??'').trim():'';
   const num=k=>{let v=g(k);if(!v)return null;v=/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(v)?v.replace(/,/g,''):v.replace(',','.');const x=parseFloat(v.replace(/[^0-9.\-]/g,''));return isNaN(x)?null:x;};
-  const estado=idx.estado!=null?estKey(g('estado')):'';
-  const anti=yes(g('anti')), supr=yes(g('suprimido'));
-  let fase=g('fase')?faseOf(g('fase')):(ESTADOS[estado]?ESTADOS[estado][1]:'Lead');
-  if(anti||supr) fase='Descartado';
+  let estado=idx.estado!=null?estKey(g('estado')):'';
+  const supr=yes(g('suprimido'))||estado==='suprimido';
+  const anti=!supr&&(yes(g('anti'))||/anti/i.test(norm(g('motivo'))));
+  /* Llave abierta: Anti-ICP ya no descarta. Solo los suprimidos (opt-out) quedan cerrados. */
+  if(anti&&['','sin_estado','descartado','descalificado_sin_contacto'].includes(estado)) estado='anti_icp';
+  let fase=g('fase')&&!anti?faseOf(g('fase')):(ESTADOS[estado]?ESTADOS[estado][1]:'Lead');
+  if(supr) fase='Descartado';
   const correo=g('correo')||g('correo2').split(/[;,\s]+/).find(x=>x.includes('@'))||'';
   const total=num('total'), pre=num('prescore');
   const canalAg=g('canalAg');
