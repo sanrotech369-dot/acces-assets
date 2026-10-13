@@ -307,6 +307,32 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 .drop{position:fixed;inset:12px;z-index:70;display:grid;place-items:center;border:2px dashed #0097CD;border-radius:16px;background:var(--overlay);color:#FFFFFF;font-size:18px;font-weight:700;pointer-events:none;text-align:center;padding:16px}
 .tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--panel);font-size:12.5px;line-height:1.45;padding:7px 9px;border-radius:6px;max-width:280px;white-space:pre-line}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--panel);padding:10px 14px;border-radius:8px;font-size:13.5px;max-width:calc(100% - 32px)}
+/* Vistas: Presentación / Operación */
+.tabs{display:inline-flex;align-self:flex-start;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+.tabs button{border:0;background:none;padding:9px 18px;font-weight:700;font-size:14px;color:var(--ink-2);cursor:pointer}
+.tabs button+button{border-left:1px solid var(--line)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+#viewOps,.pres{display:flex;flex-direction:column;gap:16px}
+.pres-hd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px}
+.pres-hd h2{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;font-stretch:108%;line-height:1.15}
+.pres-hd p{margin:4px 0 0;color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;list-style:none;margin:0;padding:0}
+@media (max-width:900px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.step{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;background:var(--panel-2);min-width:0}
+.step .k{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.step b{font-family:var(--font-display);font-size:36px;font-weight:700;line-height:1.05}
+.step span{font-weight:700;font-size:14.5px}
+.step small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.step .conv{font-size:12.5px;color:var(--ink-2);font-weight:600;margin-top:auto;padding-top:6px;border-top:1px solid var(--grid)}
+.pres-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:12px}
+.pres-grid>.panel{grid-column:auto}
+@media (max-width:900px){.pres-grid{grid-template-columns:1fr}}
+.next{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+.next li{display:grid;grid-template-columns:16px 6ch minmax(0,1fr);gap:10px;align-items:start}
+.next svg{width:16px;height:16px;margin-top:4px}
+.next .n{font-family:var(--font-display);font-weight:700;font-size:22px;line-height:1.1;text-align:right;font-variant-numeric:tabular-nums}
+.next b{display:block;font-size:14px}
+.next small{display:block;color:var(--muted);font-size:12.5px;line-height:1.4}
 @media (prefers-reduced-motion:no-preference){.hb-bar,.fn-bar,.col-bar{transition:width .25s ease,height .25s ease}}
 </style>
 </head>
@@ -338,6 +364,34 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     </ol>
   </div>
 
+  <div class="tabs" role="tablist" aria-label="Vista">
+    <button type="button" role="tab" id="tabPres" aria-selected="true" aria-controls="viewPres">Presentación</button>
+    <button type="button" role="tab" id="tabOps" aria-selected="false" aria-controls="viewOps">Operación</button>
+  </div>
+
+  <section class="pres" id="viewPres" role="tabpanel" aria-labelledby="tabPres">
+    <div class="pres-hd">
+      <div><h2>Resultados del agente de leads ICP</h2><p id="presCorte"></p></div>
+      <button class="btn" id="btnResumen" type="button">Copiar resumen</button>
+    </div>
+    <article class="panel">
+      <header class="ph"><h2>Lo que ha hecho el agente</h2><p>Del total de leads generados hasta las reuniones agendadas</p></header>
+      <ol class="flow" id="flow"></ol>
+    </article>
+    <div class="pres-grid">
+      <article class="panel">
+        <header class="ph"><h2>Dónde está cada lead hoy</h2><p>Estados del agente agrupados en etapas</p></header>
+        <div id="grupos"></div>
+        <p class="foot" id="gruposFoot"></p>
+      </article>
+      <article class="panel">
+        <header class="ph"><h2>Qué sigue</h2><p>Lo más importante por resolver, según las alertas del agente</p></header>
+        <ul class="next" id="next"></ul>
+      </article>
+    </div>
+  </section>
+
+  <div id="viewOps" role="tabpanel" aria-labelledby="tabOps" hidden>
   <section class="filters" aria-label="Filtros">
     <div class="fld"><span>Periodo de entrada</span>
       <div class="seg" id="fPeriodo" role="group" aria-label="Periodo de entrada">
@@ -433,6 +487,7 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
       <div><dt>Aliado sin presentación directa</dt><dd>Un lead de aliado tecnológico sin presentación directa tiene pre-score máximo de 40. Pide la presentación antes de invertir esfuerzo.</dd></div>
     </dl>
   </section>
+  </div>
 
   <footer class="foot-pg">
     <span>ACCES GROUP · Empresa certificada ISO/IEC 27001:2022 e ISO/IEC 20000-1:2018</span>
@@ -547,6 +602,28 @@ const EST_ALIAS={respondido:'respondio',respuesta:'respondio',interesado:'respon
 const EN_SEG=new Set(['contactado','borrador_creado','llamar_manual','en_espera','rebotado','respondio','agendado']);
 const estKey=v=>{const k=deacc(v).toLowerCase().trim().replace(/[\s-]+/g,'_');return EST_ALIAS[k]||k||'sin_estado';};
 const estLabel=k=>ESTADOS[k]?ESTADOS[k][0]:k.replace(/_/g,' ').replace(/^./,c=>c.toUpperCase());
+
+/* Etapas para presentar: cada estado del agente cae en una; los que no se reconocen quedan en "Otros estados" */
+const GRUPOS=[
+  ['prep','En preparación','El agente investiga, califica o depura el lead',['sin_estado','sin_prescore','nuevo','en_investigacion','en_revision','revisar_duplicado']],
+  ['listo','Listo para contactar','Calificado; falta el primer correo o llamada',['pendiente','no_contactado','borrador_creado']],
+  ['seg','En seguimiento','Ya recibió al menos un toque',['contactado','llamar_manual','en_espera','nurture']],
+  ['resp','Respondió o con reunión','Hay conversación con el prospecto',['respondio','agendado']],
+  ['prob','Correo rebotado','Hay que conseguir otro correo',['rebotado']],
+  ['desc','Descartado','Fuera de perfil, suprimido o descalificado',['descartado','descalificado_sin_contacto','suprimido']]];
+function grupoOf(l){
+  if(l.closed) return 'desc';
+  if(l.estado!=='sin_estado'){const g=GRUPOS.find(g=>g[3].includes(l.estado));return g?g[0]:'otros';}
+  if(l.respondio||l.fase==='SQL') return 'resp';
+  if(l.correoEstado==='rebote') return 'prob';
+  if(l.toque>0||l.ult) return 'seg';
+  return 'prep';
+}
+const RULE_SHORT={vencido:'seguimientos vencidos por retomar',sinpaso:'leads en seguimiento sin fecha de siguiente paso',
+  candado:'SQL o reuniones sin decisor mapeado',rebote:'correos rebotados por corregir',silencio:'leads en seguimiento sin interacción en más de 14 días',
+  fase:'leads con fase por encima de su score',datos:'contactos sin correo válido ni teléfono',dup:'duplicados por revisar',
+  aliado:'leads de aliado sin presentación directa',sla:'leads nuevos sin primer contacto'};
+const SEV_ORD={crit:0,serious:1,warn:2};
 
 /* Familia de puesto a partir del cargo */
 const FAMILIAS=[
@@ -1190,6 +1267,50 @@ function renderTable(set){
     <td>${esc(l.resp)}</td></tr>`).join(''):`<tr><td colspan="${COLDEF.length}">${empty('Ningún lead coincide con los filtros.')}</td></tr>`;
   $('#tblMore').innerHTML=shown<rows.length?`<button class="btn" id="btnMoreRows" type="button">Mostrar ${nf.format(Math.min(PAGE,rows.length-shown))} más</button><span>${nf.format(rows.length-shown)} sin mostrar</span>`:'';
 }
+function presData(){
+  const all=LEADS, total=all.length;
+  const calif=all.filter(l=>!l.noScore&&l.micro!=='ANTI').length;
+  const CONT=new Set(['contactado','llamar_manual','en_espera','rebotado','respondio','agendado']);
+  const cont=all.filter(l=>l.toque>0||!!l.ult||CONT.has(l.estado)).length;
+  const resp=all.filter(l=>l.respondio).length;
+  const reun=all.filter(l=>l.estado==='agendado'||(l.estado==='sin_estado'&&l.fase==='SQL')).length;
+  const steps=[
+    ['Generados',total,'Leads en la base del agente',''],
+    ['Calificados',calif,PRE?'Con pre-score calculado':'Con score ICP',`${pct(calif,total)} de los generados`],
+    ['Contactados',cont,'Recibieron al menos un toque',`${pct(cont,calif)} de los calificados`],
+    ['Respondieron',resp,'Contestaron al agente',`${pct(resp,cont)} de los contactados`],
+    ['Reuniones',reun,'Agendadas con el prospecto',`${pct(reun,resp)} de los que respondieron`]];
+  const cnt={};all.forEach(l=>{const g=grupoOf(l);cnt[g]=(cnt[g]||0)+1;});
+  const otros={};all.forEach(l=>{if(grupoOf(l)==='otros')otros[l.estadoL]=(otros[l.estadoL]||0)+1;});
+  const next=RULES.map(r=>({r,n:all.filter(l=>l.flags.includes(r.id)).length})).filter(x=>x.n>0)
+    .sort((a,b)=>SEV_ORD[a.r.sev]-SEV_ORD[b.r.sev]||b.n-a.n).slice(0,4);
+  return {total,steps,cnt,otros,next};
+}
+function renderPres(){
+  const P=presData();
+  $('#presCorte').innerHTML=`<span>Corte ${esc(fdateL(TODAY))}</span><span>·</span>${SOURCE.kind==='csv'?`<span>${esc(SOURCE.name)}</span>`:pill('warn','Datos de ejemplo: importa tu CSV antes de presentar')}`;
+  $('#flow').innerHTML=P.steps.map(([k,v,d,c],i)=>`<li class="step" data-tip="${esc(`${k}: ${nf.format(v)}\n${d}${c?'\n'+c:''}`)}"><span class="k">Paso ${i+1}</span><b>${nf.format(v)}</b><span>${esc(k)}</span><small>${esc(d)}</small>${c?`<span class="conv">${esc(c)}</span>`:''}</li>`).join('');
+  const rows=GRUPOS.map(([k,lab,d,ests])=>({key:k,label:lab,v:P.cnt[k]||0,extra:` · ${pct(P.cnt[k]||0,P.total)}`,tip:`${lab}\n${d}\nEstados: ${ests.map(estLabel).join(', ')}`}));
+  if(P.cnt.otros) rows.push({key:'otros',label:'Otros estados',v:P.cnt.otros,extra:` · ${pct(P.cnt.otros,P.total)}`,tip:'Estados del agente que este dashboard todavía no agrupa'});
+  hbars($('#grupos'),rows,{keepZero:P.total>0,emptyText:'Sin leads cargados.'});
+  const ot=Object.entries(P.otros).sort((a,b)=>b[1]-a[1]);
+  $('#gruposFoot').textContent=ot.length?`Estados sin agrupar: ${ot.map(([k,n])=>`${k} (${nf.format(n)})`).join(', ')}.`:'Todos los estados del archivo están agrupados.';
+  $('#next').innerHTML=P.next.length?P.next.map(({r,n})=>`<li>${ICONS[r.sev]}<span class="n">${nf.format(n)}</span><div><b>${esc(RULE_SHORT[r.id]||r.t)}</b><small>${esc(r.d)}</small></div></li>`).join(''):`<li>${ICONS.ok}<span class="n">0</span><div><b>Sin pendientes</b><small>Ninguna alerta activa en el agente.</small></div></li>`;
+}
+function resumenTexto(){
+  const P=presData();
+  const L=[`Agente Seguimiento Gener. ICP Leads · ACCES GROUP`,`Corte ${fdateL(TODAY)} · ${SOURCE.kind==='csv'?SOURCE.name:'DATOS DE EJEMPLO (ficticios)'}`,'',
+    'Lo que ha hecho el agente:',...P.steps.map(([k,v,d,c])=>`- ${k}: ${nf.format(v)}${c?` (${c})`:''}`),'',
+    'Dónde está cada lead hoy:',...GRUPOS.filter(g=>P.cnt[g[0]]).map(([k,lab])=>`- ${lab}: ${nf.format(P.cnt[k])} (${pct(P.cnt[k],P.total)})`)];
+  if(P.cnt.otros) L.push(`- Otros estados: ${nf.format(P.cnt.otros)}`);
+  L.push('','Qué sigue:',...(P.next.length?P.next.map(({r,n})=>`- ${nf.format(n)} ${RULE_SHORT[r.id]||r.t}`):['- Sin pendientes']));
+  return L.join('\n');
+}
+function setView(v){
+  const pres=v!=='ops';
+  $('#viewPres').hidden=!pres; $('#viewOps').hidden=pres;
+  $('#tabPres').setAttribute('aria-selected',String(pres)); $('#tabOps').setAttribute('aria-selected',String(!pres));
+}
 function renderSource(){
   const real=SOURCE.kind==='csv';
   const chip=$('#srcChip');
@@ -1210,7 +1331,7 @@ function render(){
   const set=filtered();
   syncControls();
   renderKPIs(set); renderFunnel(set); renderBands(set); renderAgenda(set); renderAlerts(set); renderEstado(set);
-  renderCad(set); renderSector(set); renderFuente(set); renderPuesto(set); renderDatos(set); renderCorreo(set); renderTable(set); renderSource();
+  renderCad(set); renderSector(set); renderFuente(set); renderPuesto(set); renderDatos(set); renderCorreo(set); renderTable(set); renderSource(); renderPres();
 }
 function load(leads,source){
   LEADS=leads.map(prep); SOURCE=source; state.alert=''; state.estado=''; state.familia='';
@@ -1375,6 +1496,11 @@ $('#ovl').addEventListener('click',closeDrawer);
 $('#mdClose').addEventListener('click',()=>{$('#modal').hidden=true;});
 $('#modal').addEventListener('click',e=>{if(e.target===e.currentTarget)$('#modal').hidden=true;});
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('#modal').hidden){$('#modal').hidden=true;return;}closeDrawer();});
+
+$('#tabPres').addEventListener('click',()=>setView('pres'));
+$('#tabOps').addEventListener('click',()=>setView('ops'));
+$('#btnResumen').addEventListener('click',()=>copyText(resumenTexto(),'Resumen copiado. Pégalo en tu correo, WhatsApp o presentación.','Resumen para presentar'));
+setView(location.hash==='#operacion'?'ops':'pres');
 
 /* arrastrar y soltar */
 let dragDepth=0;

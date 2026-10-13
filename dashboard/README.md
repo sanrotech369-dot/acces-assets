@@ -2,6 +2,11 @@
 
 Dashboard de una sola página (`index.html`) para los leads que genera el agente de ACCES GROUP: su calificación ICP, su seguimiento y los datos de cada empresa y contacto. No necesita servidor: ábrelo en el navegador.
 
+## Dos vistas
+
+- **Presentación** (la que abre por defecto): una sola pantalla para mostrar resultados. Tiene lo que ha hecho el agente en 5 pasos (generados → calificados → contactados → respondieron → reuniones), dónde está cada lead hoy (estados del agente agrupados en etapas) y qué sigue (las alertas más importantes). **Copiar resumen** deja el mismo contenido en texto para pegarlo en un correo, WhatsApp o una lámina. Si el agente usa un estado que el dashboard no conoce, aparece como "Otros estados" con su nombre, para que no se pierda.
+- **Operación**: la herramienta de trabajo diario con filtros, agenda, alertas, paneles y la cartera completa. Se abre directo con `#operacion` al final del enlace.
+
 ## Cargar los leads de hoy del agente
 
 1. Abre la hoja **ICP_CRM_ACCES** en la pestaña `Leads_SRC-001`.
