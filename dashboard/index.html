@@ -318,6 +318,8 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
 .pres-hd p{margin:4px 0 0;color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;list-style:none;margin:0;padding:0}
 @media (max-width:900px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.flow-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.flow-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .step{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;background:var(--panel-2);min-width:0}
 .step .k{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .step b{font-family:var(--font-display);font-size:36px;font-weight:700;line-height:1.05}
@@ -377,6 +379,11 @@ tbody tr:focus-visible{outline:2px solid var(--link);outline-offset:-2px}
     <article class="panel">
       <header class="ph"><h2>Lo que ha hecho el agente</h2><p>Del total de leads generados hasta las reuniones agendadas</p></header>
       <ol class="flow" id="flow"></ol>
+    </article>
+    <article class="panel">
+      <header class="ph"><h2>Correos del agente</h2><p>De la base por escribir a la bandeja de borradores. El envío sigue siendo manual.</p></header>
+      <ol class="flow flow-4" id="mail"></ol>
+      <p class="foot" id="mailFoot"></p>
     </article>
     <div class="pres-grid">
       <article class="panel">
@@ -624,7 +631,7 @@ function grupoOf(l){
 const RULE_SHORT={vencido:'seguimientos vencidos por retomar',sinpaso:'leads en seguimiento sin fecha de siguiente paso',
   candado:'SQL o reuniones sin decisor mapeado',rebote:'correos rebotados por corregir',silencio:'leads en seguimiento sin interacción en más de 14 días',
   fase:'leads con fase por encima de su score',datos:'contactos sin correo válido ni teléfono',dup:'duplicados por revisar',
-  antiab:'empresas Anti-ICP reabiertas por revisar',aliado:'leads de aliado sin presentación directa',sla:'leads nuevos sin primer contacto'};
+  antiab:'empresas Anti-ICP reabiertas por revisar',borrador:'borradores en Outlook sin enviar',aliado:'leads de aliado sin presentación directa',sla:'leads nuevos sin primer contacto'};
 const SEV_ORD={crit:0,serious:1,warn:2};
 
 /* Familia de puesto a partir del cargo */
@@ -674,6 +681,7 @@ const RULES=[
   {id:'dup',sev:'warn',t:'Duplicado por revisar',d:'El registro parece duplicado de otro lead. Resolverlo para no escribir dos veces a la misma persona.',test:l=>!l.closed&&l.dup},
   {id:'antiab',sev:'warn',t:'Anti-ICP reabierto por revisar',d:'Empresa fuera del ICP original (por ejemplo, de gran tamaño). Revisar la cuenta y preparar un primer contacto adecuado.',test:l=>!l.closed&&l.micro==='ANTI'},
   {id:'aliado',sev:'warn',t:'Aliado sin presentación directa',d:'Lead de aliado tecnológico sin presentación directa: pre-score máximo 40.',test:l=>!l.closed&&l.aliado&&l.total>40},
+  {id:'borrador',sev:'warn',t:'Borrador sin enviar',d:'El agente dejó el borrador en Outlook hace más de 2 días y sigue sin enviarse. Revisarlo y enviarlo a mano, o descartarlo.',test:l=>l.estado==='borrador_creado'&&l.diasBorr!=null&&l.diasBorr>2},
   {id:'sla',sev:'warn',t:'Lead nuevo sin primer contacto',d:'Entró hace más de 2 días y no tiene interacción registrada.',test:l=>l.fase==='Lead'&&!l.enSeg&&!l.ult&&l.diasEntrada!=null&&l.diasEntrada>2}
 ];
 
@@ -746,6 +754,7 @@ function prep(l){
   l.maxIdx=l.closed?(l.faseMax!=null?l.faseMax:0):(l.fase==='SQL'&&l.eb?4:l.fi);
   l.diasSin=l.ult?daysBetween(l.ult,TODAY):null;
   l.diasEntrada=l.entrada?daysBetween(l.entrada,TODAY):null;
+  l.diasBorr=l.fechaBorrador?daysBetween(l.fechaBorrador,TODAY):null;
   l.enSeg=!l.closed&&(EN_SEG.has(l.estado)||l.toque>0||!!l.ult||l.respondio);
   if(!l.sigPaso&&ESTADOS[l.estado]) l.sigPaso=ESTADOS[l.estado][2];
   l.seg=segOf(l);
@@ -814,7 +823,7 @@ function demo(){
   const MEDIOS={Lead:['LinkedIn','Correo','Llamada'],MQL:['Correo','LinkedIn','Llamada'],SAL:['Llamada','Correo','WhatsApp'],SQL:['Videollamada','Correo','Llamada'],Descartado:['Correo']};
   const FASE_W=[['Lead',.30],['MQL',.22],['SAL',.17],['SQL',.23],['Descartado',.08]];
   const RANGE={Lead:[[2,11],[3,13],[0,3]],MQL:[[12,19],[11,18],[3,6]],SAL:[[17,23],[16,22],[5,8]],SQL:[[21,28],[20,27],[7,9]],Descartado:[[3,12],[3,12],[0,4]]};
-  return EMP.map(([empresa,sector,ciudad],i)=>{
+  const L=EMP.map(([empresa,sector,ciudad],i)=>{
     const high=HIGH.has(sector);
     const fase=wpick(FASE_W)[0];
     const [ir,vr,er]=RANGE[fase];
@@ -858,6 +867,12 @@ function demo(){
       dup:r()<.05,enriquecer:correoEstado!=='ok',notas:'',asunto:'',
       bant:{B:bp(lvl===3&&r()<.6),A:eb?'Confirmado':(lvl>=2&&lvl<4?'Parcial':'No identificado'),N:bp(lvl>=1&&lvl<4),T:bp(lvl===3)}};
   });
+  const MOT=['Sin datos verificables de la empresa en su sitio web','El correo serviría para cualquier empresa del sector','Cifra sin fuente verificada','Asunto demasiado largo'];
+  L.forEach(l=>{
+    if(l.estado==='borrador_creado') Object.assign(l,{versionPrompt:'V5.0',puntaje:ri(90,98),dictamen:'APROBADO',fechaBorrador:addDays(-ri(0,5))});
+    else if(l.estado==='en_revision') Object.assign(l,{versionPrompt:'V5.0',puntaje:ri(62,88),dictamen:'REQUIERE_CORRECCION',motivoRev:pick(MOT)});
+  });
+  return L;
 }
 
 /* ---------- importación CSV / Excel (columnas de Leads_SRC-001 y de la plantilla) ---------- */
@@ -915,7 +930,12 @@ const COLS={
   trigger:['triggerregulatorio','trigger'],
   gancho:['gancho','triggereventprobable','triggerevent','descripcion','description'],
   notas:['notas','notes'],
-  asunto:['asunto','subject']
+  asunto:['asunto','subject'],
+  versionPrompt:['versionprompt'],
+  puntaje:['puntaje','puntajecorreo','puntajeauditor','scorecorreo'],
+  dictamen:['dictamen','dictamenauditor'],
+  motivoRev:['motivorevision','motivoderevision','motivoenrevision'],
+  fechaBorrador:['fechaborrador','fechadeborrador']
 };
 const TPL=['ID_Lead','Source_ID','Empresa','Dominio','Sector','Ciudad','Estado_Region','Empleados','Fuente_Lead','Canal_Fuente','Responsable',
   'Contacto','Cargo','Area','Rol_Compra','Correo','Correo_Estado','Telefono','LinkedIn','Canal_Preferido','Consentimiento_Contacto',
@@ -1043,6 +1063,7 @@ function fromRow(r,idx,n){
     toque:Math.max(0,Math.min(5,Math.round(num('numToques')??num('toque')??0))),respondio,
     dup:yes(g('correoDup'))||!!g('dupMaestro')||estado==='revisar_duplicado',enriquecer:yes(g('enriquecer')),
     trigger:g('trigger'),gancho:g('gancho'),notas:g('notas'),asunto:g('asunto'),
+    versionPrompt:g('versionPrompt'),puntaje:num('puntaje'),dictamen:g('dictamen'),motivoRev:g('motivoRev'),fechaBorrador:dateOf(g('fechaBorrador')),
     bant:{B:bantOf(g('b')),A:bantOf(g('a')),N:bantOf(g('n')),T:bantOf(g('t'))}};
 }
 function importRows(rows,name){
@@ -1275,6 +1296,27 @@ function renderTable(set){
     <td>${esc(l.resp)}</td></tr>`).join(''):`<tr><td colspan="${COLDEF.length}">${empty('Ningún lead coincide con los filtros.')}</td></tr>`;
   $('#tblMore').innerHTML=shown<rows.length?`<button class="btn" id="btnMoreRows" type="button">Mostrar ${nf.format(Math.min(PAGE,rows.length-shown))} más</button><span>${nf.format(rows.length-shown)} sin mostrar</span>`:'';
 }
+/* Leads de la base que el agente ya puede redactar: correo usable, sin duplicado y sin ningún toque */
+const LISTO_EST=new Set(['sin_estado','sin_prescore','nuevo','en_investigacion','pendiente','no_contactado','anti_icp']);
+const listoEscribir=l=>!l.closed&&LISTO_EST.has(l.estado)&&!l.toque&&!l.ult&&!l.respondio&&correoValido(l)&&!l.dup;
+const topN=(arr,f,n)=>Object.entries(arr.reduce((m,x)=>{const k=f(x);m[k]=(m[k]||0)+1;return m;},{})).sort((a,b)=>b[1]-a[1]).slice(0,n);
+const dictLabel=d=>d?d.replace(/_/g,' ').toLowerCase().replace(/^./,c=>c.toUpperCase()):'';
+function mailData(all,cont,resp){
+  const listos=all.filter(listoEscribir), borr=all.filter(l=>l.estado==='borrador_creado'), rev=all.filter(l=>l.estado==='en_revision');
+  const porSector=topN(listos,l=>secName(l.sector),3);
+  const motivos=topN(rev.filter(l=>l.motivoRev),l=>l.motivoRev.length>70?l.motivoRev.slice(0,67)+'…':l.motivoRev,3);
+  const viejos=borr.filter(l=>l.diasBorr!=null&&l.diasBorr>2).length;
+  const aud=all.filter(l=>l.puntaje!=null||l.dictamen), aprob=aud.filter(l=>/^aprob/.test(norm(l.dictamen))).length;
+  const conP=aud.filter(l=>l.puntaje!=null), prom=conP.length?Math.round(sum(conP,l=>l.puntaje)/conP.length):null;
+  const steps=[
+    ['Base',listos.length,'Por escribir','Leads activos con correo usable, sin duplicado y sin ningún toque',porSector.length?`Más en ${porSector[0][0]} (${nf.format(porSector[0][1])})`:''],
+    ['Bandeja',borr.length,'Borradores en Outlook','Hechos por el agente; falta revisarlos y enviarlos a mano',viejos?`${nf.format(viejos)} con más de 2 días sin enviar`:''],
+    ['Revisión',rev.length,'En revisión','Esperan revisión humana o no pasaron el control de calidad',motivos.length?`Motivo más común: ${motivos[0][0]}`:''],
+    ['Enviados',cont,'Enviados a mano','Recibieron al menos un toque',cont?`${pct(resp,cont)} respondieron`:'']];
+  const calidad=aud.length?`${nf.format(aud.length)} ${aud.length===1?'correo auditado':'correos auditados'} · ${nf.format(aprob)} ${aprob===1?'aprobado':'aprobados'}${prom!=null?` · puntaje promedio ${prom}/100`:''}`:'';
+  const foot=[porSector.length?`Por escribir, por sector: ${porSector.map(([k,n])=>`${k} (${nf.format(n)})`).join(' · ')}.`:'',calidad?`Calidad de redacción: ${calidad}.`:''].filter(Boolean).join(' ');
+  return {steps,foot,calidad};
+}
 function presData(){
   const all=LEADS, total=all.length;
   const calif=all.filter(l=>!l.noScore&&l.micro!=='ANTI').length;
@@ -1292,12 +1334,14 @@ function presData(){
   const otros={};all.forEach(l=>{if(grupoOf(l)==='otros')otros[l.estadoL]=(otros[l.estadoL]||0)+1;});
   const next=RULES.map(r=>({r,n:all.filter(l=>l.flags.includes(r.id)).length})).filter(x=>x.n>0)
     .sort((a,b)=>SEV_ORD[a.r.sev]-SEV_ORD[b.r.sev]||b.n-a.n).slice(0,4);
-  return {total,steps,cnt,otros,next};
+  return {total,steps,cnt,otros,next,mail:mailData(all,cont,resp)};
 }
 function renderPres(){
   const P=presData();
   $('#presCorte').innerHTML=`<span>Corte ${esc(fdateL(TODAY))}</span><span>·</span>${SOURCE.kind==='csv'?`<span>${esc(SOURCE.name)}</span>`:pill('warn','Datos de ejemplo: importa tu CSV antes de presentar')}`;
   $('#flow').innerHTML=P.steps.map(([k,v,d,c],i)=>`<li class="step" data-tip="${esc(`${k}: ${nf.format(v)}\n${d}${c?'\n'+c:''}`)}"><span class="k">Paso ${i+1}</span><b>${nf.format(v)}</b><span>${esc(k)}</span><small>${esc(d)}</small>${c?`<span class="conv">${esc(c)}</span>`:''}</li>`).join('');
+  $('#mail').innerHTML=P.mail.steps.map(([k,v,lab,d,c])=>`<li class="step" data-tip="${esc(`${lab}: ${nf.format(v)}\n${d}${c?'\n'+c:''}`)}"><span class="k">${esc(k)}</span><b>${nf.format(v)}</b><span>${esc(lab)}</span><small>${esc(d)}</small>${c?`<span class="conv">${esc(c)}</span>`:''}</li>`).join('');
+  $('#mailFoot').textContent=P.mail.foot;
   const rows=GRUPOS.map(([k,lab,d,ests])=>({key:k,label:lab,v:P.cnt[k]||0,extra:` · ${pct(P.cnt[k]||0,P.total)}`,tip:`${lab}\n${d}\nEstados: ${ests.map(estLabel).join(', ')}`}));
   if(P.cnt.otros) rows.push({key:'otros',label:'Otros estados',v:P.cnt.otros,extra:` · ${pct(P.cnt.otros,P.total)}`,tip:'Estados del agente que este dashboard todavía no agrupa'});
   hbars($('#grupos'),rows,{keepZero:P.total>0,emptyText:'Sin leads cargados.'});
@@ -1309,6 +1353,7 @@ function resumenTexto(){
   const P=presData();
   const L=[`Agente Seguimiento Gener. ICP Leads · ACCES GROUP`,`Corte ${fdateL(TODAY)} · ${SOURCE.kind==='csv'?SOURCE.name:'DATOS DE EJEMPLO (ficticios)'}`,'',
     'Lo que ha hecho el agente:',...P.steps.map(([k,v,d,c])=>`- ${k}: ${nf.format(v)}${c?` (${c})`:''}`),'',
+    'Correos:',...P.mail.steps.map(([k,v,lab])=>`- ${lab}: ${nf.format(v)}`),...(P.mail.calidad?[`- Calidad de redacción: ${P.mail.calidad}`]:[]),'',
     'Dónde está cada lead hoy:',...GRUPOS.filter(g=>P.cnt[g[0]]).map(([k,lab])=>`- ${lab}: ${nf.format(P.cnt[k])} (${pct(P.cnt[k],P.total)})`)];
   if(P.cnt.otros) L.push(`- Otros estados: ${nf.format(P.cnt.otros)}`);
   L.push('','Qué sigue:',...(P.next.length?P.next.map(({r,n})=>`- ${nf.format(n)} ${RULE_SHORT[r.id]||r.t}`):['- Sin pendientes']));
@@ -1366,7 +1411,7 @@ function drawerHtml(l){
   <section class="dr-sec"><h4>Datos del contacto</h4><dl class="kv">${kv('Nombre',l.contacto)}${kv('Cargo',l.cargo)}${kv('Familia de puesto',l.familia)}${kv('Rol en la compra',l.rol!=='Sin identificar'?l.rol:'')}${kv('Correo',l.correo,{copy:true,wide:true})}${kv('Estado del correo',CORREO_EST[l.correoEstado]??l.correoEstado)}${kv('Teléfono',l.telefono,{copy:true})}${kv('LinkedIn',l.linkedin,{copy:/linkedin\.com/i.test(l.linkedin)})}${kv('Área',l.area)}${kv('Canal preferido',l.canalPref)}${kv('Consentimiento de contacto',l.consent?'Registrado':'')}</dl></section>
   <section class="dr-sec"><h4>Datos de la empresa</h4><dl class="kv">${kv('Sector',secName(l.sector))}${kv('Código',secCode(l.sector))}${kv('Ciudad',l.ciudad)}${kv('Estado',l.region)}${kv('Empleados',l.empleados)}${kv('Sitio web o dominio',l.web,{copy:true})}${kv('Micro-ICP',microLabel(l.micro))}${kv('Trigger regulatorio',l.trigger)}${kv('Regulación que presiona',l.sector!=='OTRO'?sec(l.sector)[2]:'',{wide:true})}${kv('Dolor típico del sector',l.sector!=='OTRO'?sec(l.sector)[1]:'',{wide:true})}${kv('Gancho comercial',l.gancho,{wide:true})}</dl></section>
   <section class="dr-sec"><h4>Cadencia de seguimiento · ${l.toque} toque${l.toque===1?'':'s'}</h4>${cadHtml(l)}<p class="dr-note">Cada toque aporta valor, evidencia o una decisión. Nunca "solo dando seguimiento".</p></section>
-  <section class="dr-sec"><h4>En el agente</h4><dl class="kv">${kv('Estado',l.estadoL)}${kv('Fuente',[l.fuente,l.canal].filter(Boolean).join(' · '))}${kv('Marcado para enriquecer',l.enriquecer?'Sí':'')}${kv('Duplicado por revisar',l.dup?'Sí':'')}${kv('Último asunto',l.asunto,{wide:true})}${kv('Notas',l.notas,{wide:true})}</dl></section>
+  <section class="dr-sec"><h4>En el agente</h4><dl class="kv">${kv('Estado',l.estadoL)}${kv('Fuente',[l.fuente,l.canal].filter(Boolean).join(' · '))}${kv('Marcado para enriquecer',l.enriquecer?'Sí':'')}${kv('Duplicado por revisar',l.dup?'Sí':'')}${kv('Último asunto',l.asunto,{wide:true})}${l.fechaBorrador||l.puntaje!=null||l.dictamen||l.motivoRev?`${kv('Borrador creado',l.fechaBorrador?fdateL(l.fechaBorrador):'')}${kv('Calidad del correo',[l.puntaje!=null?l.puntaje+'/100':'',dictLabel(l.dictamen),l.versionPrompt?'Prompt '+l.versionPrompt:''].filter(Boolean).join(' · '))}${kv('Motivo de revisión',l.motivoRev,{wide:true})}`:''}${kv('Notas',l.notas,{wide:true})}</dl></section>
   ${hasBant?`<section class="dr-sec"><h4>BANT</h4><div class="bant">${['B','A','N','T'].map(k=>`<div><span>${esc(BANT_N[k])}</span>${bantPill(l.bant[k])}</div>`).join('')}</div></section>`:''}
   <section class="dr-sec"><h4>Alertas del agente</h4>${flags.length?`<ul class="dr-al">${flags.map(r=>`<li>${ICONS[r.sev]}<div><b>${esc(r.t)}</b><small>${esc(r.d)}</small></div></li>`).join('')}</ul>`:`<div>${pill('ok','Sin alertas')}</div>`}</section>
   <section class="dr-sec"><h4>Seguimiento</h4><dl class="kv">${kv('Responsable',l.resp)}${kv('Entrada',l.entrada?fdateL(l.entrada):'')}${kv('Última interacción',l.ult?`${fdateL(l.ult)} (hace ${l.diasSin} d)`:'')}${kv('Respondió',l.respondio?'Sí':'No')}${kv('Economic Buyer',l.eb?'Mapeado':'No mapeado')}${kv('Fase',l.fase)}</dl></section>`;

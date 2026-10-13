@@ -4,7 +4,7 @@ Dashboard de una sola página (`index.html`) para los leads que genera el agente
 
 ## Dos vistas
 
-- **Presentación** (la que abre por defecto): una sola pantalla para mostrar resultados. Tiene lo que ha hecho el agente en 5 pasos (generados → calificados → contactados → respondieron → reuniones), dónde está cada lead hoy (estados del agente agrupados en etapas) y qué sigue (las alertas más importantes). **Copiar resumen** deja el mismo contenido en texto para pegarlo en un correo, WhatsApp o una lámina. Si el agente usa un estado que el dashboard no conoce, aparece como "Otros estados" con su nombre, para que no se pierda.
+- **Presentación** (la que abre por defecto): una sola pantalla para mostrar resultados. Tiene lo que ha hecho el agente en 5 pasos (generados → calificados → contactados → respondieron → reuniones), los correos del agente (por escribir → borradores en Outlook → en revisión → enviados a mano), dónde está cada lead hoy (estados del agente agrupados en etapas) y qué sigue (las alertas más importantes). **Copiar resumen** deja el mismo contenido en texto para pegarlo en un correo, WhatsApp o una lámina. Si el agente usa un estado que el dashboard no conoce, aparece como "Otros estados" con su nombre, para que no se pierda.
 - **Operación**: la herramienta de trabajo diario con filtros, agenda, alertas, paneles y la cartera completa. Se abre directo con `#operacion` al final del enlace.
 
 ## Cargar los leads de hoy del agente
@@ -22,11 +22,12 @@ Las de `Leads_SRC-001` del agente (`ID_Lead`, `Source_ID`, `Empresa`, `Dominio`,
 - **Estado del agente → fase**: `respondio` es MQL, `agendado` es SQL, `descartado`, `descalificado_sin_contacto` y `suprimido` son Descartado; el resto (`sin_prescore`, `en_investigacion`, `en_revision`, `revisar_duplicado`, `borrador_creado`, `contactado`, `rebotado`, `nurture`…) sigue como Lead.
 - **Anti-ICP abierto**: `Anti_ICP = SI` (o un motivo de descarte que diga anti-ICP) ya no descarta el lead; aparece como "Anti-ICP reabierto" para abordarlo. Solo los suprimidos (opt-out) y los descartados por otra causa quedan cerrados.
 - **Pre-score**: si solo viene `Pre_Score`, el dashboard lo muestra como prioridad de abordaje (no como fase). El score completo (ICP Fit + Intención + Viabilidad + Engagement) se usa cuando viene en el archivo.
+- **Correos**: "Por escribir" son los leads activos con correo válido o genérico, sin duplicado y sin ningún toque (estados `sin_estado`, `sin_prescore`, `nuevo`, `en_investigacion`, `pendiente`, `no_contactado` o Anti-ICP reabierto). Un borrador (`borrador_creado`) no cuenta como enviado: el envío sigue siendo manual. Si la hoja trae `Puntaje`, `Dictamen`, `Motivo_Revision`, `Version_Prompt` o `Fecha_Borrador`, el dashboard muestra la calidad de redacción, el motivo más común de revisión, los borradores con más de 2 días sin enviar y esos datos en la ficha del lead. Si no vienen, el bloque funciona solo con el `Estado`.
 - **Seguimiento**: un lead está en seguimiento si tiene toques, último contacto, respuesta o un estado de seguimiento. Si la exportación no trae `Fecha_Siguiente_Paso`, esos leads aparecen "En cadencia del agente" en lugar de marcarse como sin siguiente paso.
 
 ## Qué muestra
 
-KPIs, embudo de calificación, distribución del score o pre-score, agenda del agente, alertas (compromisos vencidos, sin siguiente paso, candado de decisor, correo rebotado, silencio prolongado, fase por encima del score, contacto sin correo válido ni teléfono, duplicado por revisar, aliado sin presentación, lead nuevo sin contacto), estado en el agente, avance de la cadencia, leads por sector (`MEM_AIS_MX_*`), por fuente y por puesto del contacto, calidad de datos, estado del correo y la cartera completa (paginada) con ficha por lead.
+KPIs, embudo de calificación, distribución del score o pre-score, agenda del agente, alertas (compromisos vencidos, sin siguiente paso, candado de decisor, correo rebotado, silencio prolongado, fase por encima del score, contacto sin correo válido ni teléfono, duplicado por revisar, Anti-ICP reabierto, borrador sin enviar, aliado sin presentación, lead nuevo sin contacto), estado en el agente, avance de la cadencia, leads por sector (`MEM_AIS_MX_*`), por fuente y por puesto del contacto, calidad de datos, estado del correo y la cartera completa (paginada) con ficha por lead.
 
 ## Reglas que aplica
 
